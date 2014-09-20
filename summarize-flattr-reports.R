@@ -48,7 +48,7 @@ all_Flattrs <- ddply(raw_Flattrs,
 ordered_Flattrs <- all_Flattrs[order(all_Flattrs$all_revenue, decreasing = TRUE),]
 
 # exports summary to same folder
-write.table(ordered_Flattrs[2:4],
+write.table(ordered_Flattrs,
             file = "flattr-revenue-summary.csv", # Change only in combination with RegEx pattern "flattr-revenue-[0-9]*.csv" above! Summary file must not be inported on next run of script.
             # restore column and decimal separators to Flattr defaults
             sep = ";",
