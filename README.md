@@ -1,12 +1,12 @@
 Summarize Flattr Reports
-========================
+---
 
 R script to create summary CSV file from [Flattr's individual Monthly Revenue reports](https://flattr.com/dashboard/transactions).
 
 
 
 Usage Instructions
-==================
+---
 
 1. Open your ["Monthly Revenue" reports on Flattr](https://flattr.com/dashboard/transactions)
 2. Click "Download as CSV" for all of them and save them to a folder of your choice.
@@ -18,14 +18,17 @@ Usage Instructions
 
 
 To Do (Ideas and Contributions Welcome!)
-========================================
+---
+
 - simplify data input (better file/folder selection, or download from flattr.com)
 - sort data usefully
 - draw useful diagrams
 
 
+
 Thanks and Greetings :-)
-=======================
+---
+
 - Dr. Rick Scavetta of [Science Craft](http://www.science-craft.com/) and  [Konstanz Graduate School Chemical Biology](http://www.chembiol.uni-konstanz.de/) for the Data Analysis course
 - [RegExr](http://www.regexr.com/) for help with finding regular expression
 - [R-help Archives](https://stat.ethz.ch/pipermail/r-help/) of the ETH Zürich's [Seminar For Statistics](https://stat.ethz.ch/)
