@@ -20,8 +20,8 @@ Usage Instructions
 To Do (Ideas and Contributions Welcome!)
 ---
 
+- ~~sort data usefully~~ [Done](https://github.com/KonScience/Summarize-Flattr-Reports/pull/1)
 - simplify data input (better file/folder selection, or download from flattr.com)
-- sort data usefully
 - draw useful diagrams
 
 
