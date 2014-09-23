@@ -49,14 +49,18 @@ per_thing <- ddply(raw,
 # order by revenue 
 per_thing_ordered <- per_thing[order(per_thing$all_revenue, decreasing = TRUE),]
 
+# define export function for CSV export
+export_csv <- function(data_source, filename) {
+  write.table(data_source,
+              file = filename,
+              sep = ";",
+              dec = ",",
+              row.names = FALSE
+              )}
+
+
 # exports summary to same folder
-write.table(per_thing_ordered,
-            file = "flattr-revenue-summary.csv", # Change only in combination with RegEx pattern "flattr-revenue-[0-9]*.csv" above! Summary file must not be inported on next run of script.
-            # restore column and decimal separators to Flattr defaults
-            sep = ";",
-            dec = ",",
-            row.names = FALSE
-            )
+export_csv(per_thing_ordered, "flattr-revenue-summary.csv")
 
 # sets sensible number of decimals for EUR/click calculation
 options(digits = 2)
@@ -86,12 +90,7 @@ per_period_orderd <- per_period[order(per_period$title),]
 
 # export to same folder
 # // TODO functionalize export with dataframe & filename objects
-write.table(per_period_orderd,
-            file = "flattr-revenue-click-value.csv",
-            sep = ";",
-            dec = ",",
-            row.names = FALSE
-            )
+export_csv(per_period_orderd, "flattr-revenue-click-value.csv")
 
 # restore original working directory
 setwd(original_wd)
