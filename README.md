@@ -19,8 +19,8 @@ Usage Instructions
 To Do (Ideas and Contributions Welcome!)
 ---
 
-- ~~sort data usefully~~ [Done](https://github.com/KonScience/Summarize-Flattr-Reports/pull/1)
-- simplify data input (~better file/folder selection~~[Done](https://github.com/KonScience/Summarize-Flattr-Reports/commit/c4b8f15d4d0bdb8001b3a7255bb71077e76b8638), or download from flattr.com)
+- ~~sort data usefully~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/pull/1)
+- simplify data input (~~better file/folder selection~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/c4b8f15d4d0bdb8001b3a7255bb71077e76b8638), or download from flattr.com)
 - draw more useful diagrams (coloration of datapoints per Flattr thing, etc.)
 
 
