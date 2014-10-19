@@ -65,16 +65,15 @@ per_period <- ddply(raw,
                     all_revenue = sum(revenue)
                     )
 
-# plots Flattr clicks over time
-# // TODO colorize by "title"-category
+# plots Flattr clicks over time, colored by thing
 per_period$EUR_per_click <- (per_period$all_revenue / per_period$all_clicks)
 library(ggplot2)
-qplot(x = per_period$period,
-      y = per_period$EUR_per_click,
-      xlab = "time",
-      ylab = "EUR per click"
-      )
-ggsave("flattr-revenue-clicks.png")
+plot <- ggplot(data = per_period, aes(x = period, y = EUR_per_click, color = factor(title))) + 
+  geom_point(size = 5) +
+  xlab("time") +
+  ylab("EUR per click")
+plot
+ggsave("flattr-revenue-clicks.png", height = 12, width = 12)
 
 # orders by title 
 per_period_orderd <- per_period[order(per_period$title),]
