@@ -14,12 +14,12 @@ Flattr_filenames <- list.files(flattr_dir,
                                )
 
 # read data from CSVs into data frame
-raw <- do.call("rbind",
-               lapply(Flattr_filenames,
+raw <- do.call("rbind",  #  constructs and executes a call of the rbind function  => combines R objects
+               lapply(Flattr_filenames, # applies function read.csv over list or vector
                       read.csv,
                       sep = ";",
                       dec = ",", # convert decimal separator from , to . for following calculations
-                      stringsAsFactors = FALSE # 
+                      stringsAsFactors = FALSE
                       )
                ) # Function structure learned from https://stat.ethz.ch/pipermail/r-help/2010-October/255593.html
 
@@ -73,7 +73,7 @@ plot <- ggplot(data = per_period, aes(x = period, y = EUR_per_click, color = fac
   xlab("time") +
   ylab("EUR per click")
 plot
-ggsave("flattr-revenue-clicks.png", height = 12, width = 12)
+ggsave("flattr-revenue-clicks.png", height = 12, width = 18)
 
 # orders by title 
 per_period_orderd <- per_period[order(per_period$title),]
