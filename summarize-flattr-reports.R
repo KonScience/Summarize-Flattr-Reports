@@ -1,11 +1,11 @@
 # READ ME: https://github.com/KonScience/Summarize-Flattr-Reports#summarize-flattr-reports
 
 # assumes all .csv files were downloaded into same folder
-#first_flattr_file <- file.choose()
-#flattr_dir <- dirname(first_flattr_file) #learned from http://stackoverflow.com/a/18003224
+first_flattr_file <- file.choose()
+flattr_dir <- dirname(first_flattr_file) #learned from http://stackoverflow.com/a/18003224
 
 # saves original working directory and sets new one as provided above
-# original_wd <- getwd()
+original_wd <- getwd()
 setwd(flattr_dir)
 
 # get filenames of Flattr Monthly Revenue CSVs
@@ -65,15 +65,25 @@ per_period <- ddply(raw,
                     all_revenue = sum(revenue)
                     )
 
-# plots Flattr clicks over time, colored by thing
+# Flattr clicks over time, colored by thing
+# with trendlines for everyting & best thing
 per_period$EUR_per_click <- (per_period$all_revenue / per_period$all_clicks)
+best_thing <- subset(per_period, title == per_thing_ordered[1,1])  #  reduces data frame to best thing, for later trendline
 library(ggplot2)
 scatter_plot <- ggplot(data = per_period, aes(x = period, y = EUR_per_click, colour = factor(title))) + 
   geom_point(size = 5) + 
   xlab("time") +
   ylab("EUR per click") +
   labs(colour = "Things") + 
-  stat_smooth(method = "lm", se = FALSE)
+  stat_smooth(mapping = aes(best_thing$period,
+                            best_thing$EUR_per_click,
+                            size = best_thing$all_revenue),
+              data = best_thing, 
+              method = "auto",
+              se = FALSE) + 
+  stat_smooth(aes(group = 1),  # plots trendlone over all values; otherwise: one for each thing; learned from http://stackoverflow.com/a/12810890
+              method = "auto",
+              se = FALSE)  #  removes confidence interval indicator
 scatter_plot
 ggsave(plot = scatter_plot, filename = "flattr-revenue-clicks.png", height = 12, width = 18)
 
