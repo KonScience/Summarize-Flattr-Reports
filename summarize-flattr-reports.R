@@ -75,7 +75,7 @@ scatter_plot <- ggplot(data = per_period, aes(x = period, y = EUR_per_click, col
   labs(colour = "Things") + 
   stat_smooth(method = "lm", se = FALSE)
 scatter_plot
-ggsave("flattr-revenue-clicks.png", height = 12, width = 18)
+ggsave(plot = scatter_plot, filename = "flattr-revenue-clicks.png", height = 12, width = 18)
 
 # same, but with points as bubbles
 bubble_plot <- ggplot(per_period,  #  data source
@@ -86,7 +86,7 @@ bubble_plot <- ggplot(per_period,  #  data source
                           )) + geom_point() + xlab("time") + ylab("EUR per click") + 
   labs(color = "Things", size = "Total revenue")  #  set legend titles; arguments have to be same as in ggplot() call 
 bubble_plot
-ggsave("flattr-revenue-clicks-bubles.png", height = 12, width = 18)
+ggsave(plot = bubble_plot, filename = "flattr-revenue-clicks-bubles.png", height = 12, width = 18)
 
 
 # orders by title 
