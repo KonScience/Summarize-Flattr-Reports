@@ -1,11 +1,11 @@
 # READ ME: https://github.com/KonScience/Summarize-Flattr-Reports#summarize-flattr-reports
 
 # assumes all .csv files were downloaded into same folder
-first_flattr_file <- file.choose()
-flattr_dir <- dirname(first_flattr_file) #learned from http://stackoverflow.com/a/18003224
+#first_flattr_file <- file.choose()
+#flattr_dir <- dirname(first_flattr_file) #learned from http://stackoverflow.com/a/18003224
 
 # saves original working directory and sets new one as provided above
-original_wd <- getwd()
+# original_wd <- getwd()
 setwd(flattr_dir)
 
 # get filenames of Flattr Monthly Revenue CSVs
@@ -68,18 +68,31 @@ per_period <- ddply(raw,
 # plots Flattr clicks over time, colored by thing
 per_period$EUR_per_click <- (per_period$all_revenue / per_period$all_clicks)
 library(ggplot2)
-plot <- ggplot(data = per_period, aes(x = period, y = EUR_per_click, color = factor(title))) + 
-  geom_point(size = 5) +
+plot <- ggplot(data = per_period, aes(x = period, y = EUR_per_click, colour = factor(title))) + 
+  geom_point(size = 5) + 
   xlab("time") +
-  ylab("EUR per click")
+  ylab("EUR per click") +
+  labs(colour = "Things")
 plot
 ggsave("flattr-revenue-clicks.png", height = 12, width = 18)
 
+# same, but with points as bubbles
+plot <- ggplot(per_period,  #  data source
+               aes(period,  #  variable for x-axis
+                   EUR_per_click,  #  variable for y-axis
+                   size = per_period$all_revenue,  #  variable for point sizes => bublechart
+                   color = factor(title)  #  coloration by title; factor() needed for discrete values, although with so many, the color spectrum is pretty much continous anyway, see http://stackoverflow.com/a/15070814
+                   )) + geom_point() + xlab("time") + ylab("EUR per click") + 
+  labs(color = "Things", size = "Total revenue")  #  set legend titles; arguments have to be same as in ggplot() call 
+plot
+ggsave("flattr-revenue-clicks-bubles.png", height = 12, width = 18)
+
+
 # orders by title 
-per_period_orderd <- per_period[order(per_period$title),]
+per_period_by_title <- per_period[order(per_period$title),]
 
 # export to same folder
-export_csv(per_period_orderd, "flattr-revenue-click-value.csv")
+export_csv(per_period_by_title, "flattr-revenue-click-value.csv")
 
 # restore original working directory
-setwd(original_wd)
+#setwd(original_wd)
