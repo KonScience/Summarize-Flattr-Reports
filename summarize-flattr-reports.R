@@ -68,23 +68,24 @@ per_period <- ddply(raw,
 # plots Flattr clicks over time, colored by thing
 per_period$EUR_per_click <- (per_period$all_revenue / per_period$all_clicks)
 library(ggplot2)
-plot <- ggplot(data = per_period, aes(x = period, y = EUR_per_click, colour = factor(title))) + 
+scatter_plot <- ggplot(data = per_period, aes(x = period, y = EUR_per_click, colour = factor(title))) + 
   geom_point(size = 5) + 
   xlab("time") +
   ylab("EUR per click") +
-  labs(colour = "Things")
-plot
+  labs(colour = "Things") + 
+  stat_smooth(method = "lm", se = FALSE)
+scatter_plot
 ggsave("flattr-revenue-clicks.png", height = 12, width = 18)
 
 # same, but with points as bubbles
-plot <- ggplot(per_period,  #  data source
-               aes(period,  #  variable for x-axis
-                   EUR_per_click,  #  variable for y-axis
-                   size = per_period$all_revenue,  #  variable for point sizes => bublechart
-                   color = factor(title)  #  coloration by title; factor() needed for discrete values, although with so many, the color spectrum is pretty much continous anyway, see http://stackoverflow.com/a/15070814
-                   )) + geom_point() + xlab("time") + ylab("EUR per click") + 
+bubble_plot <- ggplot(per_period,  #  data source
+                      aes(period,  #  variable for x-axis
+                          EUR_per_click,  #  variable for y-axis
+                          size = per_period$all_revenue,  #  variable for point sizes => bublechart
+                          color = factor(title)  #  coloration by title; factor() needed for discrete values, although with so many, the color spectrum is pretty much continous anyway, see http://stackoverflow.com/a/15070814
+                          )) + geom_point() + xlab("time") + ylab("EUR per click") + 
   labs(color = "Things", size = "Total revenue")  #  set legend titles; arguments have to be same as in ggplot() call 
-plot
+bubble_plot
 ggsave("flattr-revenue-clicks-bubles.png", height = 12, width = 18)
 
 
