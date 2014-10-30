@@ -1,7 +1,7 @@
 Summarize Flattr Reports
 ---
 
-R script to create summary CSV file from [Flattr's individual Monthly Revenue reports](https://flattr.com/dashboard/transactions).
+R script to create summary CSV files and diagrams from Flattr's Monthly Revenue reports.
 
 
 
@@ -20,7 +20,7 @@ To Do (Ideas and Contributions Welcome!)
 ---
 
 - ~~sort data usefully~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/pull/1)
-- simplify data input (~~better file/folder selection~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/c4b8f15d4d0bdb8001b3a7255bb71077e76b8638), or download from flattr.com)
+- simplify data input (~~better file/folder selection~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/c4b8f15d4d0bdb8001b3a7255bb71077e76b8638), or automatic download from flattr.com)
 - draw more useful diagrams (~~coloration of datapoints per Flattr thing~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/1e5ddef18fa89015688f3b9d3dc30db35c2b8652?diff=unified#diff-aecf3d2d8db8e5ca05c6f01653041e00L68), etc.)
 
 
