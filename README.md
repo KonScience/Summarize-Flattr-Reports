@@ -8,11 +8,10 @@ R script to create summary CSV files and diagrams from Flattr's Monthly Revenue 
 Usage Instructions
 ---
 
-1. Open your ["Monthly Revenue" reports on Flattr](https://flattr.com/dashboard/transactions)
-2. Click "Download as CSV" for all of them and save them to a folder of your choice.
-2. Download [script](https://github.com/KonScience/Summarise-Flattr-Reports/blob/master/summarise-flattr-reports.R) to same or any other folder.
-4. Download [R](http://www.r-project.org/) (directly for [Windows](http://cran.rstudio.com/bin/windows/base/), [Mac OS X](http://cran.rstudio.com/bin/macosx/) or [Linux](http://cran.rstudio.com/bin/linux/)) or [RStudio](http://www.rstudio.com/products/rstudio/download/) and install.
-6. Run downloaded summarise-flattr-reports.R and either look at the "all_Flattrs"-dataframe in RStudio or the "flattr-revenue-summary.csv"-file.
+1. In [your "Transactions"-list on Flattr](https://flattr.com/dashboard/transactions), open each "Monthly revenue"-report, click "Download as CSV"and save them to a folder of your choice.
+1. Download [this script](https://github.com/KonScience/Summarise-Flattr-Reports/blob/master/summarise-flattr-reports.R) to the same or any other folder.
+1. Download [R](http://www.r-project.org/) (directly for [Windows](http://cran.rstudio.com/bin/windows/base/), [Mac OS X](http://cran.rstudio.com/bin/macosx/) or [Linux](http://cran.rstudio.com/bin/linux/)) or [RStudio](http://www.rstudio.com/products/rstudio/download/) and install.
+1. Run the script and find the summary files and diagrams in the same folder afterwards.
 
 
 
