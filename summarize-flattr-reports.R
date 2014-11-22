@@ -10,6 +10,8 @@ original_wd <- getwd()
 setwd(flattr_dir)
 
 # load packages for data frame manipulation & diagram drawing
+install.packages("ggplot2")
+install.packages("plyr")
 library(plyr)
 library(ggplot2)
 
