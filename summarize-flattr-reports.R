@@ -5,8 +5,7 @@ first_flattr_file <- file.choose()
 flattr_dir <- dirname(first_flattr_file) #learned from http://stackoverflow.com/a/18003224
 Flattr_filenames <- list.files(flattr_dir, pattern = "flattr-revenue-[0-9]*.csv")
 
-
-# saves original working directory and sets new one as provided above
+# moves working directory to .csv files but saves original 
 original_wd <- getwd()
 setwd(flattr_dir)
 
@@ -88,15 +87,14 @@ ggsave(plot = scatter_plot, filename = "flattr-revenue-clicks.png", height = 12,
 
 # same, but with points as bubbles
 bubble_plot <- ggplot(per_period,  #  data source
-                      aes(period,  #  variable for x-axis
-                          EUR_per_click,  #  variable for y-axis
-                          size = per_period$all_revenue,  #  variable for point sizes => bublechart
+                      aes(x = period,
+                          y = EUR_per_click,
+                          size = per_period$all_revenue,  #  point sizes in bublechart
                           color = factor(title)  #  coloration by title; factor() needed for discrete values, although with so many, the color spectrum is pretty much continous anyway, see http://stackoverflow.com/a/15070814
                           )) + geom_point() + xlab("time") + ylab("EUR per click") + 
   labs(color = "Things", size = "Total revenue")  #  set legend titles; arguments have to be same as in ggplot() call 
 bubble_plot
 ggsave(plot = bubble_plot, filename = "flattr-revenue-clicks-bubles.png", height = 12, width = 18)
-
 
 # orders by title 
 per_period_by_title <- per_period[order(per_period$title),]
