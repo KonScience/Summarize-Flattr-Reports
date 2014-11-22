@@ -1,22 +1,21 @@
 # READ ME: https://github.com/KonScience/Summarize-Flattr-Reports#summarize-flattr-reports
 
-# assumes all .csv files were downloaded into same folder
+# get all filenames of Flattr Monthly Revenue CSV; sassumes that all were downloaded into same folder
 first_flattr_file <- file.choose()
 flattr_dir <- dirname(first_flattr_file) #learned from http://stackoverflow.com/a/18003224
+Flattr_filenames <- list.files(flattr_dir, pattern = "flattr-revenue-[0-9]*.csv")
+
 
 # saves original working directory and sets new one as provided above
 original_wd <- getwd()
 setwd(flattr_dir)
 
-# load plyr package for data frame manipulation & ggplot2 for drawing diagrams
+# load packages for data frame manipulation & diagram drawing
 library(plyr)
 library(ggplot2)
 
-# sets sensible number of decimals for EUR/click calculation
+# sets sensible number of decimals for EUR/click calculation, no effect though #TODO
 options(digits = 2)
-
-# get filenames of Flattr Monthly Revenue CSVs
-Flattr_filenames <- list.files(flattr_dir, pattern = "flattr-revenue-[0-9]*.csv")
 
 # read data from CSVs into data frame
 raw <- do.call("rbind",  #  constructs and executes a call of the rbind function  => combines R objects
@@ -28,8 +27,7 @@ raw <- do.call("rbind",  #  constructs and executes a call of the rbind function
                       )
                ) # Function structure learned from https://stat.ethz.ch/pipermail/r-help/2010-October/255593.html
 
-# append 1st days to months & convert to date format
-# learned from http://stackoverflow.com/a/4594269
+# append 1st days to months & convert to date format; learned from http://stackoverflow.com/a/4594269
 raw$period <- as.Date(paste(raw$period, "-01"), format="%Y-%m -%d")
 
 # summarizes raw data by title, thus accounting for changes in Flattr Thing ID and URLs
@@ -64,8 +62,7 @@ per_period <- ddply(raw,
                     all_revenue = sum(revenue)
                     )
 
-# Flattr clicks over time, colored by thing
-# with trendlines for everything & best thing
+# Flattr clicks over time, colored by thing, with trendlines for everything & best thing
 per_period$EUR_per_click <- (per_period$all_revenue / per_period$all_clicks)
 best_thing <- subset(per_period, title == per_thing_ordered[1,1])  #  reduces data frame to best thing, for later trendline
 
