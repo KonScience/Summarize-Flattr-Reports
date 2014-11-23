@@ -12,8 +12,8 @@ Usage Instructions
 1. Download [this script](https://github.com/KonScience/Summarise-Flattr-Reports/blob/master/summarise-flattr-reports.R) to the same or any other folder.
 1. Download [RStudio](http://www.rstudio.com/products/rstudio/download/) and install.
 1. Open and run the script in RStudio (should take just a few seconds). Afterwards, find the summary files and diagrams in the same folder as the .csv files you downloaded from Flattr.
-
-
+1. If default diagrams aren't helpful, adjust `height` and `width` parameters in `ggsave` function(s)
+1. Tell me how to improve this, by [opening an issue](https://github.com/KonScience/Summarize-Flattr-Reports/issues/new) or [forking](https://github.com/KonScience/Summarize-Flattr-Reports/fork) and sending a pull request.
 
 To Do (Ideas and Contributions Welcome!)
 ---
