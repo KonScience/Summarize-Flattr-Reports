@@ -12,18 +12,22 @@ Usage Instructions
 1. Download [this script](https://github.com/KonScience/Summarise-Flattr-Reports/blob/master/summarise-flattr-reports.R) to the same or any other folder.
 1. Download [RStudio](http://www.rstudio.com/products/rstudio/download/) and install.
 1. Open and run the script in RStudio (should take just a few seconds). Afterwards, find the summary files and diagrams in the same folder as the .csv files you downloaded from Flattr.
-1. If default diagrams aren't helpful, adjust `height` and `width` parameters in `ggsave` function(s)
-1. Tell me how to improve this, by [opening an issue](https://github.com/KonScience/Summarize-Flattr-Reports/issues/new) or [forking](https://github.com/KonScience/Summarize-Flattr-Reports/fork) and sending a pull request.
+1. If the default diagrams aren't helpful to you, adjust `height` and `width` parameters in `ggsave` function(s)
+1. Please  me how to improve this, by [opening an issue](https://github.com/KonScience/Summarize-Flattr-Reports/issues/new) or [forking](https://github.com/KonScience/Summarize-Flattr-Reports/fork) and sending a pull request.
 
-To Do (Ideas and Contributions Welcome!)
+Ideas
 ---
 
 - ~~sort data usefully~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/pull/1)
 - simplify data input (~~better file/folder selection~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/c4b8f15d4d0bdb8001b3a7255bb71077e76b8638), or automatic download from flattr.com)
   - also read out withdrawals & draw Flattr "balance" diagram
 - draw more useful diagrams (~~coloration of datapoints per Flattr thing~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/1e5ddef18fa89015688f3b9d3dc30db35c2b8652?diff=unified#diff-aecf3d2d8db8e5ca05c6f01653041e00L68), etc.)
-
-
+- auto-determine useful diagram dimensions
+- summarise Flattr clicks per month, not ordered by thing
+- predictions (anybody knows the statistics behind this?)
+- episodes vs. other things (probably needs reg-ex on slugs)
+- webapp via Shiny that processes given data for a Flattr-click
+- install on server to auto-run & publish diagram 
 
 Thanks and Greetings :-)
 ---
