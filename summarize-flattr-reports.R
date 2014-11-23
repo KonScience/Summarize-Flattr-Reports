@@ -9,10 +9,9 @@ Flattr_filenames <- list.files(flattr_dir, pattern = "flattr-revenue-[0-9]*.csv"
 original_wd <- getwd()
 setwd(flattr_dir)
 
-# load packages for data frame manipulation & diagram drawing
-# TODO: wrap in if/ifelse check
-install.packages("ggplot2")
-install.packages("plyr")
+# load packages for data frame manipulation & diagram drawing; learned from http://stackoverflow.com/a/9341735
+if (!"ggplot2" %in% installed.packages()) install.packages("ggplot2")
+if (!"plyr" %in% installed.packages()) install.packages("plyr")
 library(plyr)
 library(ggplot2)
 
