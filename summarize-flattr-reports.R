@@ -10,6 +10,9 @@ original_wd <- getwd()
 setwd(flattr_dir)
 
 # load packages for data frame manipulation & diagram drawing
+# TODO: wrap in if/ifelse check
+#install.packages("ggplot2")
+#install.packages("plyr")
 library(plyr)
 library(ggplot2)
 
@@ -86,6 +89,7 @@ scatter_plot
 ggsave(plot = scatter_plot, filename = "flattr-revenue-clicks.png", height = 12, width = 18)
 
 # same, but with points as bubbles
+# TODO: merge into scatter plot, but without smoothing lines in legend
 bubble_plot <- ggplot(per_period,  #  data source
                       aes(x = period,
                           y = EUR_per_click,
