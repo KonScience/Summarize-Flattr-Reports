@@ -15,6 +15,7 @@ if (!"plyr" %in% installed.packages()) install.packages("plyr")
 library(ggplot2)
 library(plyr)
 
+
 # read data from CSVs into data frame
 raw <- do.call("rbind",  #  constructs and executes a call of the rbind function  => combines R objects
                lapply(Flattr_filenames, # applies function read.csv over list or vector
@@ -28,16 +29,6 @@ raw <- do.call("rbind",  #  constructs and executes a call of the rbind function
 # append 1st days to months & convert to date format; learned from http://stackoverflow.com/a/4594269
 raw$period <- as.Date(paste(raw$period, "-01"), format="%Y-%m -%d")
 
-# summarizes raw data by title, thus accounting for changes in Flattr Thing ID and URLs
-per_thing <- ddply(.data = raw,
-                   .variables = "title",
-                   .fun = summarize, 
-                   all_clicks = sum(clicks),
-                   all_revenue = sum(revenue)
-                   )
-
-# order by revenue 
-per_thing_ordered <- per_thing[order(per_thing$all_revenue, decreasing = TRUE),]
 
 # define export function for CSV export
 export_csv <- function(data_source, filename) {
@@ -46,21 +37,33 @@ export_csv <- function(data_source, filename) {
               sep = ";",
               dec = ",",
               row.names = FALSE
-              )
+  )
 }
 
-# exports summary to same folder
+# summarizes raw data by title, thus accounting for changes in Flattr Thing ID and URLs
+per_thing <- ddply(.data = raw,
+                   .variables = "title",
+                   .fun = summarize, 
+                   all_clicks = sum(clicks),
+                   all_revenue = sum(revenue)
+                   )
+# order by revenue 
+per_thing_ordered <- per_thing[order(per_thing$all_revenue, decreasing = TRUE),]
 export_csv(per_thing_ordered, "flattr-revenue-summary.csv")
 
-# summarizes by title and period, thus enabling overview of click-value development over time
+# summarize by title and period to provide click-value development over time
 per_period <- ddply(raw,
                     c("period", "title"),
                     summarize,
                     all_clicks = sum(clicks),
                     all_revenue = sum(revenue)
                     )
+# order by title 
+per_period_by_title <- per_period[order(per_period$title),]
+export_csv(per_period_by_title, "flattr-revenue-click-value.csv")
 
-# Flattr clicks over time, colored by thing, with trendlines for everything & best thing
+
+# plot clicks over time, colored by thing, with trendlines for everything & best thing
 per_period$EUR_per_click <- (per_period$all_revenue / per_period$all_clicks)
 best_thing <- subset(per_period, title == per_thing_ordered[1,1])  #  reduces data frame to best thing, for later trendline
 
@@ -84,7 +87,7 @@ scatter_plot <- ggplot(data = per_period, aes(x = period, y = EUR_per_click, col
 scatter_plot
 ggsave(plot = scatter_plot, filename = "flattr-revenue-clicks.png", height = 12, width = 18)
 
-# same, but with points as bubbles
+# plot clicks as above, but with bubbles from total thing revenue & without stats
 # TODO: merge into scatter plot, but without smoothing lines in legend
 bubble_plot <- ggplot(per_period,  #  data source
                       aes(x = period,
@@ -96,11 +99,6 @@ bubble_plot <- ggplot(per_period,  #  data source
 bubble_plot
 ggsave(plot = bubble_plot, filename = "flattr-revenue-clicks-bubles.png", height = 12, width = 18)
 
-# orders by title 
-per_period_by_title <- per_period[order(per_period$title),]
-
-# export to same folder
-export_csv(per_period_by_title, "flattr-revenue-click-value.csv")
 
 # restore original working directory
 #setwd(original_wd)
