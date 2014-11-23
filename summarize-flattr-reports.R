@@ -5,18 +5,15 @@ first_flattr_file <- file.choose()
 flattr_dir <- dirname(first_flattr_file) #learned from http://stackoverflow.com/a/18003224
 Flattr_filenames <- list.files(flattr_dir, pattern = "flattr-revenue-[0-9]*.csv")
 
-# moves working directory to .csv files but saves original 
+# move working directory to .csv files but saves original 
 original_wd <- getwd()
 setwd(flattr_dir)
 
 # load packages for data frame manipulation & diagram drawing; learned from http://stackoverflow.com/a/9341735
 if (!"ggplot2" %in% installed.packages()) install.packages("ggplot2")
 if (!"plyr" %in% installed.packages()) install.packages("plyr")
-library(plyr)
 library(ggplot2)
-
-# sets sensible number of decimals for EUR/click calculation, no effect though #TODO
-options(digits = 2)
+library(plyr)
 
 # read data from CSVs into data frame
 raw <- do.call("rbind",  #  constructs and executes a call of the rbind function  => combines R objects
