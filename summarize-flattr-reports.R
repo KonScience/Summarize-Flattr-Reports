@@ -67,7 +67,7 @@ per_period <- ddply(raw,
 per_period$EUR_per_click <- (per_period$all_revenue / per_period$all_clicks)
 best_thing <- subset(per_period, title == per_thing_ordered[1,1])  #  reduces data frame to best thing, for later trendline
 
-scatter_plot <- ggplot(data = per_period,
+flattr_plot <- ggplot(data = per_period,
                        aes(x = period,
                            y = EUR_per_click,
                            size = (per_period$all_revenue*10),  #  point sizes in bublechart
@@ -83,30 +83,18 @@ scatter_plot <- ggplot(data = per_period,
                             size = best_thing$all_revenue),
               data = best_thing, 
               method = "auto",
-              #se = FALSE,  #  confidence interval indicator
-              linetype = "dashed"  # learned from http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
+              se = FALSE,  #  confidence interval indicator
+              linetype = "dashed",  # learned from http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
+              show_guide = FALSE
               ) + 
   stat_smooth(aes(group = 1),  # plots trendlone over all values; otherwise: one for each thing; learned from http://stackoverflow.com/a/12810890
               method = "auto",
-              #se = FALSE,  #  confidence interval indicator
-              color = "black")
-scatter_plot
-ggsave(plot = scatter_plot, filename = "flattr-revenue-clicks.png", height = 12, width = 18)
-
-# same, but with points as bubbles
-bubble_plot <- ggplot(per_period,  #  data source
-                      aes(x = period,
-                          y = EUR_per_click,
-                          size = per_period$all_revenue,  #  point sizes in bublechart
-                          color = factor(title)  #  coloration by title; factor() needed for discrete values, although with so many, the color spectrum is pretty much continous anyway, see http://stackoverflow.com/a/15070814
-                          )
-                      ) + 
-  geom_point() + 
-  xlab("time") + 
-  ylab("EUR per click") + 
-  labs(color = "Things", size = "Total revenue")  #  set legend titles; arguments have to be same as in ggplot() call 
-bubble_plot
-ggsave(plot = bubble_plot, filename = "flattr-revenue-clicks-bubles.png", height = 12, width = 18)
+              #se = FALSE,
+              color = "black",
+              show_guide = FALSE
+              )
+flattr_plot
+ggsave(plot = flattr_plot, filename = "flattr-revenue-clicks.png", height = 12, width = 18)
 
 # orders by title 
 per_period_by_title <- per_period[order(per_period$title),]
