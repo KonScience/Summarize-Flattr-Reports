@@ -100,5 +100,5 @@ bubble_plot
 ggsave(plot = bubble_plot, filename = "flattr-revenue-clicks-bubles.png", height = 12, width = 18)
 
 
-# restore original working directory
+# restore original working directory; useful if you use other scripts in parallel
 #setwd(original_wd)
