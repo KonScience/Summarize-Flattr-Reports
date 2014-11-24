@@ -17,7 +17,7 @@ Ideas
 - simplify data input (~~better file/folder selection~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/c4b8f15d4d0bdb8001b3a7255bb71077e76b8638), or automatic download from flattr.com)
   - also read out withdrawals & draw Flattr "balance" diagram
 - draw more useful diagrams
-  - ~~coloration of datapoints per Flattr thing~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/1e5ddef18fa89015688f3b9d3dc30db35c2b8652?diff=unified#diff-aecf3d2d8db8e5ca05c6f01653041e00L68), etc.)
+  - ~~coloration of datapoints per Flattr thing~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/1e5ddef18fa89015688f3b9d3dc30db35c2b8652?diff=unified#diff-aecf3d2d8db8e5ca05c6f01653041e00L68)
   - auto-determine useful diagram dimensions
   - improve visualisation for very large datasets
 - summarise Flattr clicks per month, not ordered by thing
