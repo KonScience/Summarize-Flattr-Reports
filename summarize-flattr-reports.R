@@ -10,8 +10,6 @@ original_wd <- getwd()
 setwd(flattr_dir)
 
 # load packages for data frame manipulation & diagram drawing
-install.packages("ggplot2")
-install.packages("plyr")
 library(plyr)
 library(ggplot2)
 
@@ -75,9 +73,9 @@ flattr_plot <- ggplot(data = per_period,
                            )
                        ) + 
   geom_point() + 
-  xlab("time") +
-  ylab("EUR per click") +
-  labs(color = "Things", size = "Total revenue") +  #  set legend titles; arguments have to be same as in ggplot() call
+  xlab("Zeit") +
+  ylab("EUR pro Klick") +
+  labs(color = "Flattr-Things", size = "Spendensumme") +  #  set legend titles; arguments have to be same as in ggplot() call
   stat_smooth(mapping = aes(best_thing$period,
                             best_thing$EUR_per_click,
                             size = best_thing$all_revenue),
