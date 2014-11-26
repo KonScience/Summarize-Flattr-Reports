@@ -89,7 +89,6 @@ flattr_plot <- ggplot(data = per_period_and_thing,
                            )
                        ) + 
   geom_point() + 
-  xlab("Zeit") +
   ylab("EUR pro Klick") +
   labs(color = "Flattr-Things", size = "Spendensumme") +  #  set legend titles; arguments have to be same as in ggplot() call
   stat_smooth(mapping = aes(best_thing$period,
@@ -107,8 +106,9 @@ flattr_plot <- ggplot(data = per_period_and_thing,
               color = "black",
               show_guide = FALSE
               ) +
-  theme(axis.title = element_text(size = 24),
-        axis.text = element_text(size = 24), 
+  theme(axis.text = element_text(size = 24),
+        axis.title.x = element_blank(), # remove axis title, because month labels are unambigous already
+        axis.title.y = element_text(size = 24),
         panel.grid.major = element_line(color = "white", size = 2),
         complete = FALSE
         ) # learned from http://docs.ggplot2.org/0.9.3/theme.html
@@ -116,7 +116,7 @@ flattr_plot <- ggplot(data = per_period_and_thing,
 
 ggsave(plot = flattr_plot,
        filename = "flattr-revenue-clicks.png",
-       height = dim(per_period_and_thing)[1]/10,  # number of things
+       height = dim(per_period_and_thing)[1]/12,  # number of things
        width = length(Flattr_filenames)  # number of time points
        )
 
