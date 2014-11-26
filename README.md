@@ -20,7 +20,7 @@ Ideas
   - ~~auto-determine useful diagram dimensions~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/3ad233725442802cebed5d4b0d8aea757a002fed)
   - improve visualisation for very large datasets
   - ~~merge bubble & scatter plots into single diagram~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/4f5f6011f8ace2f92d7e3bd47a65ad4922c586b0)
-- summarise Flattr clicks per month, not ordered by thing
+- ~~summarise Flattr clicks per month, not ordered by thing~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/000f9f18bba90586aa47155dbdcea4448680fff9)
 - predictions (anybody knows the statistics behind this?)
 - episodes vs. other things (probably needs reg-ex on slugs)
 - webapp via Shiny that processes given data for a Flattr-click
