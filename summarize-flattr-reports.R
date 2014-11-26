@@ -5,7 +5,7 @@ first_flattr_file <- file.choose()
 flattr_dir <- dirname(first_flattr_file) #learned from http://stackoverflow.com/a/18003224
 Flattr_filenames <- list.files(flattr_dir, pattern = "flattr-revenue-[0-9]*.csv")
 
-# move working directory to .csv files but saves original 
+# move working directory to .csv files but saves original
 original_wd <- getwd()
 setwd(flattr_dir)
 
@@ -37,7 +37,7 @@ export_csv <- function(data_source, filename) {
               sep = ";",
               dec = ",",
               row.names = FALSE
-  )
+              )
 }
 
 # summarizes raw data by title, thus accounting for changes in Flattr Thing ID and URLs
@@ -47,30 +47,44 @@ per_thing <- ddply(.data = raw,
                    all_clicks = sum(clicks),
                    all_revenue = sum(revenue)
                    )
-# order by revenue 
-per_thing_ordered <- per_thing[order(per_thing$all_revenue, decreasing = TRUE),]
-export_csv(per_thing_ordered, "flattr-revenue-summary.csv")
+# order by revenue
+per_thing <- per_thing[order(per_thing$all_revenue, decreasing = TRUE),]
+per_thing$EUR_per_click <- (per_thing$all_revenue / per_thing$all_clicks)
+export_csv(per_thing, "flattr-revenue-things.csv")
 
 # summarize by title and period to provide click-value development over time
+per_period_and_thing <- ddply(raw,
+                              c("period", "title"),
+                              summarize,
+                              all_clicks = sum(clicks),
+                              all_revenue = sum(revenue)
+                              )
+# order by time and thing
+per_period_and_thing <- per_period_and_thing[order(per_period_and_thing$title),]
+per_period_and_thing$EUR_per_click <- (per_period_and_thing$all_revenue / per_period_and_thing$all_clicks)
+export_csv(per_period_and_thing, "flattr-revenue-clicks.csv")
+
+# summarize by period to provide revenue development over time
 per_period <- ddply(raw,
-                    c("period", "title"),
+                    "period",
                     summarize,
                     all_clicks = sum(clicks),
                     all_revenue = sum(revenue)
                     )
-# order by title 
-per_period_by_title <- per_period[order(per_period$title),]
-export_csv(per_period_by_title, "flattr-revenue-click-value.csv")
+# order by period
+per_period <- per_period[order(per_period$period),]
+per_period$EUR_per_click <- (per_period$all_revenue / per_period$all_clicks)
+export_csv(per_period, "flattr-revenue-months.csv")
 
 
 # plot clicks over time, colored by thing, with trendlines for everything & best thing
-per_period$EUR_per_click <- (per_period$all_revenue / per_period$all_clicks)
-best_thing <- subset(per_period, title == per_thing_ordered[1,1])  #  reduces data frame to best thing, for later trendline
+per_period_and_thing$EUR_per_click <- (per_period_and_thing$all_revenue / per_period_and_thing$all_clicks)
+best_thing <- subset(per_period_and_thing, title == per_thing[1,1])  #  reduces data frame to best thing, for later trendline
 
-flattr_plot <- ggplot(data = per_period,
+flattr_plot <- ggplot(data = per_period_and_thing,
                        aes(x = period,
                            y = EUR_per_click,
-                           size = (per_period$all_revenue),  #  point sizes in bublechart
+                           size = (per_period_and_thing$all_revenue),  #  point sizes in bublechart
                            colour = factor(title)
                            )
                        ) + 
@@ -102,7 +116,7 @@ flattr_plot <- ggplot(data = per_period,
 
 ggsave(plot = flattr_plot,
        filename = "flattr-revenue-clicks.png",
-       height = dim(per_period)[1]/10,  # number of things
+       height = dim(per_period_and_thing)[1]/10,  # number of things
        width = length(Flattr_filenames)  # number of time points
        )
 
