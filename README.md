@@ -18,9 +18,9 @@ Ideas
   - also read out withdrawals & draw Flattr "balance" diagram
 - draw more useful diagrams
   - ~~coloration of datapoints per Flattr thing~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/1e5ddef18fa89015688f3b9d3dc30db35c2b8652?diff=unified#diff-aecf3d2d8db8e5ca05c6f01653041e00L68)
-  - auto-determine useful diagram dimensions
+  - ~~auto-determine useful diagram dimensions~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/3ad233725442802cebed5d4b0d8aea757a002fed)
   - improve visualisation for very large datasets
-  - ~~merge bubble & scatter plots into single diagram~~[DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/4f5f6011f8ace2f92d7e3bd47a65ad4922c586b0)
+  - ~~merge bubble & scatter plots into single diagram~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/4f5f6011f8ace2f92d7e3bd47a65ad4922c586b0)
 - summarise Flattr clicks per month, not ordered by thing
 - predictions (anybody knows the statistics behind this?)
 - episodes vs. other things (probably needs reg-ex on slugs)
