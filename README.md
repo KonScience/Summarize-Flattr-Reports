@@ -8,7 +8,6 @@ Usage Instructions
 1. Download [this script](https://github.com/KonScience/Summarise-Flattr-Reports/blob/master/summarise-flattr-reports.R) to the same or any other folder.
 1. Download [RStudio](http://www.rstudio.com/products/rstudio/download/) and install.
 1. Open the script (.r file) in RStudio and run it with `alt+CMD+R` (should take just a few seconds) and find the newly generated files in the same folder as the .csv files you downloaded from Flattr.
-1. If you have more than 40-50 Flattr things and/or more than 18-24 monthly reports, increase `height` and `width` parameters in `ggsave` function(s). Expect some trial & error until you find fitting values.
 1. Please contribute ideas, criticism and code, by [opening an issue](https://github.com/KonScience/Summarize-Flattr-Reports/issues/new) or [forking](https://github.com/KonScience/Summarize-Flattr-Reports/fork) and sending a pull request.
 
 Ideas

@@ -99,7 +99,12 @@ flattr_plot <- ggplot(data = per_period,
         complete = FALSE
         ) # learned from http://docs.ggplot2.org/0.9.3/theme.html
   flattr_plot
-ggsave(plot = flattr_plot, filename = "flattr-revenue-clicks.png", height = dim(per_period)[1]/10, width = length(Flattr_filenames))
+
+ggsave(plot = flattr_plot,
+       filename = "flattr-revenue-clicks.png",
+       height = dim(per_period)[1]/10,  # number of things
+       width = length(Flattr_filenames)  # number of time points
+       )
 
 
 # restore original working directory; useful if you use other scripts in parallel
