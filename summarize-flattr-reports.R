@@ -92,9 +92,14 @@ flattr_plot <- ggplot(data = per_period,
               se = FALSE,
               color = "black",
               show_guide = FALSE
-              )
-flattr_plot
-ggsave(plot = flattr_plot, filename = "flattr-revenue-clicks.png", height = 12, width = 18)
+              ) +
+  theme(axis.title = element_text(size = 24),
+        axis.text = element_text(size = 24), 
+        panel.grid.major = element_line(color = "white", size = 2),
+        complete = FALSE
+        ) # learned from http://docs.ggplot2.org/0.9.3/theme.html
+  flattr_plot
+ggsave(plot = flattr_plot, filename = "flattr-revenue-clicks.png", height = dim(per_period)[1]/10, width = length(Flattr_filenames))
 
 
 # restore original working directory; useful if you use other scripts in parallel
