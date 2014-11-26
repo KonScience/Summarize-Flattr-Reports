@@ -113,12 +113,20 @@ flattr_plot <- ggplot(data = per_period_and_thing,
         complete = FALSE
         ) # learned from http://docs.ggplot2.org/0.9.3/theme.html
   flattr_plot
-
 ggsave(plot = flattr_plot,
        filename = "flattr-revenue-clicks.png",
        height = dim(per_period_and_thing)[1]/12,  # number of things
        width = length(Flattr_filenames)  # number of time points
        )
+
+monthly_plot <- qplot(x = per_period$period,
+                      y = per_period$all_revenue,
+                      geom = "bar", stat = "identity",  # have to be used together, or points are drawn instead of bars
+                      ylab = "Spendensumme [EUR]",
+                      xlab = NULL  # learned from http://www.talkstats.com/showthread.php/54720-ggplot2-ylab-and-xlab-hell?s=445d87d53add5909ac683c187166c9fd&p=154224&viewfull=1#post154224
+                      )
+monthly_plot
+ggsave(plot = monthly_plot, filename = "flattr-revenue-months.png")
 
 
 # restore original working directory; useful if you use other scripts in parallel
