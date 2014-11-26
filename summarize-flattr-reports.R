@@ -64,17 +64,20 @@ per_period_and_thing <- per_period_and_thing[order(per_period_and_thing$title),]
 per_period_and_thing$EUR_per_click <- (per_period_and_thing$all_revenue / per_period_and_thing$all_clicks)
 export_csv(per_period_and_thing, "flattr-revenue-clicks.csv")
 
-# summarize by period to provide revenue development over time
-per_period <- ddply(raw,
-                    "period",
-                    summarize,
-                    all_clicks = sum(clicks),
-                    all_revenue = sum(revenue)
-                    )
-# order by period
+
+# summarize, export & plot revenue per month
+per_period <- ddply(raw, "period", summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
 per_period <- per_period[order(per_period$period),]
 per_period$EUR_per_click <- (per_period$all_revenue / per_period$all_clicks)
 export_csv(per_period, "flattr-revenue-months.csv")
+monthly_plot <- qplot(x = per_period$period,
+                      y = per_period$all_revenue,
+                      geom = "bar", stat = "identity",  # have to be used together, or points are drawn instead of bars
+                      ylab = "Spendensumme [EUR]",
+                      xlab = NULL  # learned from http://www.talkstats.com/showthread.php/54720-ggplot2-ylab-and-xlab-hell?s=445d87d53add5909ac683c187166c9fd&p=154224&viewfull=1#post154224
+                      )
+monthly_plot
+ggsave(plot = monthly_plot, filename = "flattr-revenue-months.png")
 
 
 # plot clicks over time, colored by thing, with trendlines for everything & best thing
@@ -118,15 +121,6 @@ ggsave(plot = flattr_plot,
        height = dim(per_period_and_thing)[1]/12,  # number of things
        width = length(Flattr_filenames)  # number of time points
        )
-
-monthly_plot <- qplot(x = per_period$period,
-                      y = per_period$all_revenue,
-                      geom = "bar", stat = "identity",  # have to be used together, or points are drawn instead of bars
-                      ylab = "Spendensumme [EUR]",
-                      xlab = NULL  # learned from http://www.talkstats.com/showthread.php/54720-ggplot2-ylab-and-xlab-hell?s=445d87d53add5909ac683c187166c9fd&p=154224&viewfull=1#post154224
-                      )
-monthly_plot
-ggsave(plot = monthly_plot, filename = "flattr-revenue-months.png")
 
 
 # restore original working directory; useful if you use other scripts in parallel
