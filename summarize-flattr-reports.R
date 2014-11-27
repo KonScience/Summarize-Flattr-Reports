@@ -95,15 +95,23 @@ flattr_plot
 export_plot(flattr_plot, "flattr-revenue-clicks.png", height_modifier = 12)
 
 
-monthly_plot <- ggplot(data = per_period_and_thing, aes(x = period, y = all_revenue, fill = factor(title))) +
+monthly_advanced_plot <- ggplot(data = per_period_and_thing, aes(x = period, y = all_revenue, fill = factor(title))) +
   geom_bar(stat = "identity") +
   ylab("Spendensumme [EUR]") +
   xlab(NULL) +  # learned from http://www.talkstats.com/showthread.php/54720-ggplot2-ylab-and-xlab-hell?s=445d87d53add5909ac683c187166c9fd&p=154224&viewfull=1#post154224
   labs(fill = "Flattr-Things") +
   set_theme()
 monthly_plot
-export_plot(monthly_plot, "flattr-revenue-months.png", height_modifier = 15)
+export_plot(monthly_advanced_plot, "flattr-revenue-months.png", height_modifier = 15)
 
+
+monthly_simple_plot <- ggplot(data = per_period_and_thing, aes(x = period, y = all_revenue)) +
+  geom_bar(stat = "identity", fill = "#ED8C3B") + 
+  ylab("Spendensumme [EUR]") + xlab(NULL) + labs(fill = "Flattr-Things") +
+  stat_smooth(data = per_period, method = "auto", color = "#80B04A", size = dim(per_period)[1]/5) +
+  scale_y_continuous(limits = c(0, max(per_period$all_revenue) * 1.1), expand = c(0, 0)) + scale_x_date(expand = c(0, 0)) + theme_minimal()
+monthly_simple_plot
+ggsave("flattr-revenue-months-nothings.png", monthly_simple_plot)
 
 # restore original working directory; useful if you use other scripts in parallel
 #setwd(original_wd)
