@@ -31,42 +31,26 @@ raw$period <- as.Date(paste(raw$period, "-01"), format="%Y-%m -%d")
 
 
 # define export function for tables & plots
-export_csv <- function(data_source, filename) {
-  write.table(data_source,
-              file = filename,
-              sep = ";",
-              dec = ",",
-              row.names = FALSE
-              )
-}
+export_csv <- function(data_source, filename){
+  write.table(data_source, file = filename, sep = ";", dec = ",", row.names = FALSE)}
 
-export_plot <- function(plot_name, filename, height_modifier) {
-  ggsave(plot = plot_name,
-         filename,
+export_plot <- function(plot_name, filename, height_modifier){
+  ggsave(plot = plot_name, filename,
          height = dim(per_period_and_thing)[1]/height_modifier,  # number of things
-         width = length(Flattr_filenames)  # number of time points
-         )
-}
+         width = length(Flattr_filenames))}  # number of time points
+
 
 # summarizes raw data by title, thus accounting for changes in Flattr Thing ID and URLs
-per_thing <- ddply(.data = raw,
-                   .variables = "title",
-                   .fun = summarize, 
-                   all_clicks = sum(clicks),
-                   all_revenue = sum(revenue)
-                   )
+per_thing <- ddply(.data = raw, .variables = "title", .fun = summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
+
 # order by revenue
 per_thing <- per_thing[order(per_thing$all_revenue, decreasing = TRUE),]
 per_thing$EUR_per_click <- (per_thing$all_revenue / per_thing$all_clicks)
 export_csv(per_thing, "flattr-revenue-things.csv")
 
 # summarize by title and period to provide click-value development over time
-per_period_and_thing <- ddply(raw,
-                              c("period", "title"),
-                              summarize,
-                              all_clicks = sum(clicks),
-                              all_revenue = sum(revenue)
-                              )
+per_period_and_thing <- ddply(raw, c("period", "title"), summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
+
 # order by time and thing
 per_period_and_thing <- per_period_and_thing[order(per_period_and_thing$title),]
 per_period_and_thing$EUR_per_click <- (per_period_and_thing$all_revenue / per_period_and_thing$all_clicks)
@@ -86,37 +70,25 @@ per_period_and_thing$EUR_per_click <- (per_period_and_thing$all_revenue / per_pe
 best_thing <- subset(per_period_and_thing, title == per_thing[1,1])  #  reduces data frame to best thing, for later trendline
 
 flattr_plot <- ggplot(data = per_period_and_thing,
-                       aes(x = period,
-                           y = EUR_per_click,
+                       aes(x = period, y = EUR_per_click,
                            size = (per_period_and_thing$all_revenue),  #  point sizes in bublechart
-                           colour = factor(title)
-                           )
-                       ) + 
+                           colour = factor(title))) + 
   geom_point() + 
   ylab("EUR pro Klick") +
   labs(color = "Flattr-Things", size = "Spendensumme") +  #  set legend titles; arguments have to be same as in ggplot() call
-  stat_smooth(mapping = aes(best_thing$period,
-                            best_thing$EUR_per_click,
-                            size = best_thing$all_revenue),
-              data = best_thing, 
-              method = "auto",
+  stat_smooth(mapping = aes(best_thing$period, best_thing$EUR_per_click, size = best_thing$all_revenue),
+              data = best_thing, method = "auto",
               se = FALSE,  #  confidence interval indicator
               linetype = "dashed",  # learned from http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
-              show_guide = FALSE
-              ) + 
+              show_guide = FALSE) + 
   stat_smooth(aes(group = 1),  # plots trendlone over all values; otherwise: one for each thing; learned from http://stackoverflow.com/a/12810890
-              method = "auto",
-              se = FALSE,
-              color = "black",
-              show_guide = FALSE
-              ) +
+              method = "auto", se = FALSE, color = "black", show_guide = FALSE) +
   theme(axis.text = element_text(size = 24),
         axis.title.x = element_blank(), # remove axis title, because month labels are unambigous already
         axis.title.y = element_text(size = 24),
         panel.grid.major = element_line(color = "white", size = 2),
-        complete = FALSE
-        ) # learned from http://docs.ggplot2.org/0.9.3/theme.html
-  flattr_plot
+        complete = FALSE) # learned from http://docs.ggplot2.org/0.9.3/theme.html
+flattr_plot
 export_plot(flattr_plot, "flattr-revenue-clicks.png", height_modifier = 12)
 
 
@@ -129,8 +101,7 @@ monthly_plot <- ggplot(data = per_period_and_thing, aes(x = period, y = all_reve
         axis.title.x = element_blank(), # remove axis title, because month labels are unambigous already
         axis.title.y = element_text(size = 24),
         panel.grid.major = element_line(color = "white", size = 2),
-        complete = FALSE
-        ) # learned from http://docs.ggplot2.org/0.9.3/theme.html
+        complete = FALSE) # learned from http://docs.ggplot2.org/0.9.3/theme.html
 monthly_plot
 export_plot(monthly_plot, "flattr-revenue-months.png", height_modifier = 15)
 
