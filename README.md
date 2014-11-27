@@ -14,7 +14,7 @@ Ideas
 ---
 - ~~sort data usefully~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/pull/1)
 - simplify data input (~~better file/folder selection~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/c4b8f15d4d0bdb8001b3a7255bb71077e76b8638), or automatic download from flattr.com)
-  - also read out withdrawals & draw Flattr "balance" diagram
+  - also read out withdrawals, deposits & draw Flattr "balance" diagram
 - draw more useful diagrams
   - ~~coloration of datapoints per Flattr thing~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/1e5ddef18fa89015688f3b9d3dc30db35c2b8652?diff=unified#diff-aecf3d2d8db8e5ca05c6f01653041e00L68)
   - ~~auto-determine useful diagram dimensions~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/3ad233725442802cebed5d4b0d8aea757a002fed)
