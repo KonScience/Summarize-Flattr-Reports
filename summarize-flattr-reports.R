@@ -30,7 +30,7 @@ raw <- do.call("rbind",  #  constructs and executes a call of the rbind function
 raw$period <- as.Date(paste(raw$period, "-01"), format="%Y-%m -%d")
 
 
-# define export function for CSV export
+# define export function for tables & plots
 export_csv <- function(data_source, filename) {
   write.table(data_source,
               file = filename,
@@ -38,6 +38,14 @@ export_csv <- function(data_source, filename) {
               dec = ",",
               row.names = FALSE
               )
+}
+
+export_plot <- function(plot_name, filename, height_modifier) {
+  ggsave(plot = plot_name,
+         filename,
+         height = dim(per_period_and_thing)[1]/height_modifier,  # number of things
+         width = length(Flattr_filenames)  # number of time points
+         )
 }
 
 # summarizes raw data by title, thus accounting for changes in Flattr Thing ID and URLs
@@ -109,11 +117,7 @@ flattr_plot <- ggplot(data = per_period_and_thing,
         complete = FALSE
         ) # learned from http://docs.ggplot2.org/0.9.3/theme.html
   flattr_plot
-ggsave(plot = flattr_plot,
-       filename = "flattr-revenue-clicks.png",
-       height = dim(per_period_and_thing)[1]/12,  # number of things
-       width = length(Flattr_filenames)  # number of time points
-       )
+export_plot(flattr_plot, "flattr-revenue-clicks.png", height_modifier = 12)
 
 
 monthly_plot <- ggplot(data = per_period_and_thing, aes(x = period, y = all_revenue, fill = factor(title))) +
@@ -128,11 +132,7 @@ monthly_plot <- ggplot(data = per_period_and_thing, aes(x = period, y = all_reve
         complete = FALSE
         ) # learned from http://docs.ggplot2.org/0.9.3/theme.html
 monthly_plot
-ggsave(plot = monthly_plot,
-       filename = "flattr-revenue-months.png",
-       height = dim(per_period_and_thing)[1]/15,  # number of things
-       width = length(Flattr_filenames)  # number of time points
-       )
+export_plot(monthly_plot, "flattr-revenue-months.png", height_modifier = 15)
 
 
 # restore original working directory; useful if you use other scripts in parallel
