@@ -65,19 +65,12 @@ per_period_and_thing$EUR_per_click <- (per_period_and_thing$all_revenue / per_pe
 export_csv(per_period_and_thing, "flattr-revenue-clicks.csv")
 
 
-# summarize, export & plot revenue per month
+# summarize & export revenue per month
 per_period <- ddply(raw, "period", summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
 per_period <- per_period[order(per_period$period),]
 per_period$EUR_per_click <- (per_period$all_revenue / per_period$all_clicks)
 export_csv(per_period, "flattr-revenue-months.csv")
-monthly_plot <- qplot(x = per_period$period,
-                      y = per_period$all_revenue,
-                      geom = "bar", stat = "identity",  # have to be used together, or points are drawn instead of bars
-                      ylab = "Spendensumme [EUR]",
-                      xlab = NULL  # learned from http://www.talkstats.com/showthread.php/54720-ggplot2-ylab-and-xlab-hell?s=445d87d53add5909ac683c187166c9fd&p=154224&viewfull=1#post154224
-                      )
-monthly_plot
-ggsave(plot = monthly_plot, filename = "flattr-revenue-months.png")
+
 
 
 # plot clicks over time, colored by thing, with trendlines for everything & best thing
@@ -119,6 +112,25 @@ flattr_plot <- ggplot(data = per_period_and_thing,
 ggsave(plot = flattr_plot,
        filename = "flattr-revenue-clicks.png",
        height = dim(per_period_and_thing)[1]/12,  # number of things
+       width = length(Flattr_filenames)  # number of time points
+       )
+
+
+monthly_plot <- ggplot(data = per_period_and_thing, aes(x = period, y = all_revenue, fill = factor(title))) +
+  geom_bar(stat = "identity") +
+  ylab("Spendensumme [EUR]") +
+  xlab(NULL) +  # learned from http://www.talkstats.com/showthread.php/54720-ggplot2-ylab-and-xlab-hell?s=445d87d53add5909ac683c187166c9fd&p=154224&viewfull=1#post154224
+  labs(fill = "Flattr-Things") +
+  theme(axis.text = element_text(size = 24),
+        axis.title.x = element_blank(), # remove axis title, because month labels are unambigous already
+        axis.title.y = element_text(size = 24),
+        panel.grid.major = element_line(color = "white", size = 2),
+        complete = FALSE
+        ) # learned from http://docs.ggplot2.org/0.9.3/theme.html
+monthly_plot
+ggsave(plot = monthly_plot,
+       filename = "flattr-revenue-months.png",
+       height = dim(per_period_and_thing)[1]/15,  # number of things
        width = length(Flattr_filenames)  # number of time points
        )
 
