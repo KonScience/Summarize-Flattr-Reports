@@ -1,6 +1,6 @@
 Summarize Flattr Reports
 ---
-R script to create summary CSV files and diagrams from Flattr's Monthly Revenue reports.
+R script to create summary CSV files and diagrams from Flattr's Monthly Revenue reports. [Example here](http://www.konscience.de/uber-uns/#flattr-auswertung).
 
 Usage Instructions
 ---
