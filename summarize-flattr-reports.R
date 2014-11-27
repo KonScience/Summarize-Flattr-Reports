@@ -56,13 +56,20 @@ per_period_and_thing <- per_period_and_thing[order(per_period_and_thing$title),]
 per_period_and_thing$EUR_per_click <- (per_period_and_thing$all_revenue / per_period_and_thing$all_clicks)
 export_csv(per_period_and_thing, "flattr-revenue-clicks.csv")
 
-
 # summarize & export revenue per month
 per_period <- ddply(raw, "period", summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
 per_period <- per_period[order(per_period$period),]
 per_period$EUR_per_click <- (per_period$all_revenue / per_period$all_clicks)
 export_csv(per_period, "flattr-revenue-months.csv")
 
+
+# themeing function for following plots
+set_theme <- function(){
+  theme(axis.text = element_text(size = 24),
+        axis.title.x = element_blank(), # remove axis title, because month labels are unambigous already
+        axis.title.y = element_text(size = 24),
+        panel.grid.major = element_line(color = "white", size = 2),
+        complete = FALSE)} # learned from http://docs.ggplot2.org/0.9.3/theme.html
 
 
 # plot clicks over time, colored by thing, with trendlines for everything & best thing
@@ -83,11 +90,7 @@ flattr_plot <- ggplot(data = per_period_and_thing,
               show_guide = FALSE) + 
   stat_smooth(aes(group = 1),  # plots trendlone over all values; otherwise: one for each thing; learned from http://stackoverflow.com/a/12810890
               method = "auto", se = FALSE, color = "black", show_guide = FALSE) +
-  theme(axis.text = element_text(size = 24),
-        axis.title.x = element_blank(), # remove axis title, because month labels are unambigous already
-        axis.title.y = element_text(size = 24),
-        panel.grid.major = element_line(color = "white", size = 2),
-        complete = FALSE) # learned from http://docs.ggplot2.org/0.9.3/theme.html
+  set_theme()
 flattr_plot
 export_plot(flattr_plot, "flattr-revenue-clicks.png", height_modifier = 12)
 
@@ -97,11 +100,7 @@ monthly_plot <- ggplot(data = per_period_and_thing, aes(x = period, y = all_reve
   ylab("Spendensumme [EUR]") +
   xlab(NULL) +  # learned from http://www.talkstats.com/showthread.php/54720-ggplot2-ylab-and-xlab-hell?s=445d87d53add5909ac683c187166c9fd&p=154224&viewfull=1#post154224
   labs(fill = "Flattr-Things") +
-  theme(axis.text = element_text(size = 24),
-        axis.title.x = element_blank(), # remove axis title, because month labels are unambigous already
-        axis.title.y = element_text(size = 24),
-        panel.grid.major = element_line(color = "white", size = 2),
-        complete = FALSE) # learned from http://docs.ggplot2.org/0.9.3/theme.html
+  set_theme()
 monthly_plot
 export_plot(monthly_plot, "flattr-revenue-months.png", height_modifier = 15)
 
