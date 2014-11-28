@@ -88,8 +88,10 @@ flattr_plot <- ggplot(data = per_period_and_thing,
               se = FALSE,  #  confidence interval indicator
               linetype = "dashed",  # learned from http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
               show_guide = FALSE) + 
-  stat_smooth(aes(group = 1),  # plots trendlone over all values; otherwise: one for each thing; learned from http://stackoverflow.com/a/12810890
+  stat_smooth(aes(group = 1),  # plots trendline over all values; otherwise: one for each thing; learned from http://stackoverflow.com/a/12810890
               method = "auto", se = FALSE, color = "black", show_guide = FALSE) +
+  scale_y_continuous(limits = c(0,max(per_period_and_thing$EUR_per_click) * 1.1), expand = c(0, 0)) +
+  scale_x_date(expand = c(0, 0)) +
   set_theme()
 flattr_plot
 export_plot(flattr_plot, "flattr-revenue-clicks.png", height_modifier = 12)
@@ -100,16 +102,19 @@ monthly_advanced_plot <- ggplot(data = per_period_and_thing, aes(x = period, y =
   ylab("Spendensumme [EUR]") +
   xlab(NULL) +  # learned from http://www.talkstats.com/showthread.php/54720-ggplot2-ylab-and-xlab-hell?s=445d87d53add5909ac683c187166c9fd&p=154224&viewfull=1#post154224
   labs(fill = "Flattr-Things") +
+  scale_y_continuous(limits = c(0,max(per_period$all_revenue) * 1.1), expand = c(0, 0)) +
+  scale_x_date(expand = c(0, 0)) +
   set_theme()
-monthly_plot
+monthly_advanced_plot
 export_plot(monthly_advanced_plot, "flattr-revenue-months.png", height_modifier = 15)
 
 
 monthly_simple_plot <- ggplot(data = per_period_and_thing, aes(x = period, y = all_revenue)) +
-  geom_bar(stat = "identity", fill = "#ED8C3B") + 
+  geom_bar(stat = "identity", group = 1, fill = "#ED8C3B") + 
   ylab("Spendensumme [EUR]") + xlab(NULL) + labs(fill = "Flattr-Things") +
   stat_smooth(data = per_period, method = "auto", color = "#80B04A", size = dim(per_period)[1]/5) +
-  scale_y_continuous(limits = c(0, max(per_period$all_revenue) * 1.1), expand = c(0, 0)) + scale_x_date(expand = c(0, 0)) + theme_minimal()
+  scale_y_continuous(limits = c(0, max(per_period$all_revenue) * 1.1), expand = c(0, 0)) + scale_x_date(expand = c(0, 0)) +
+  theme_minimal(base_size = 24)
 monthly_simple_plot
 ggsave("flattr-revenue-months-nothings.png", monthly_simple_plot)
 
