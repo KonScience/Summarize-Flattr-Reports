@@ -80,9 +80,9 @@ flattr_plot <- ggplot(data = per_period_and_thing,
                        aes(x = period, y = EUR_per_click,
                            size = (per_period_and_thing$all_revenue),  #  point sizes in bublechart
                            colour = factor(title))) + 
-  geom_point() + 
-  ylab("EUR pro Klick") +
-  labs(color = "Flattr-Things", size = "Spendensumme") +  #  set legend titles; arguments have to be same as in ggplot() call
+  geom_point(position = 'jitter') + 
+  ylab("EUR per Flattr") +
+  labs(color = "Flattred Things", size = "EUR per Thing") +  #  set legend titles; arguments have to be same as in ggplot() call
   stat_smooth(mapping = aes(best_thing$period, best_thing$EUR_per_click, size = best_thing$all_revenue),
               data = best_thing, method = "auto",
               se = FALSE,  #  confidence interval indicator
@@ -99,7 +99,7 @@ export_plot(flattr_plot, "flattr-revenue-clicks.png", height_modifier = 12)
 
 monthly_advanced_plot <- ggplot(data = per_period_and_thing, aes(x = period, y = all_revenue, fill = factor(title))) +
   geom_bar(stat = "identity") +
-  ylab("Spendensumme [EUR]") +
+  ylab("EUR received") +
   xlab(NULL) +  # learned from http://www.talkstats.com/showthread.php/54720-ggplot2-ylab-and-xlab-hell?s=445d87d53add5909ac683c187166c9fd&p=154224&viewfull=1#post154224
   labs(fill = "Flattr-Things") +
   scale_y_continuous(limits = c(0,max(per_period$all_revenue) * 1.1), expand = c(0, 0)) +
@@ -111,12 +111,12 @@ export_plot(monthly_advanced_plot, "flattr-revenue-months.png", height_modifier 
 
 monthly_simple_plot <- ggplot(data = per_period_and_thing, aes(x = period, y = all_revenue)) +
   geom_bar(stat = "identity", group = 1, fill = "#ED8C3B") + 
-  ylab("Spendensumme [EUR]") + xlab(NULL) + labs(fill = "Flattr-Things") +
+  ylab("EUR received") + xlab(NULL) + labs(fill = "Flattred Things") +
   stat_smooth(data = per_period, method = "auto", color = "#80B04A", size = dim(per_period)[1]/5) +
   scale_y_continuous(limits = c(0, max(per_period$all_revenue) * 1.1), expand = c(0, 0)) + scale_x_date(expand = c(0, 0)) +
   theme_minimal(base_size = 24)
 monthly_simple_plot
-ggsave("flattr-revenue-months-nothings.png", monthly_simple_plot)
+ggsave("flattr-revenue-months-summarized.png", monthly_simple_plot)
 
 # restore original working directory; useful if you use other scripts in parallel
 #setwd(original_wd)
