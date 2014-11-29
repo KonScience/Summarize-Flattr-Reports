@@ -20,25 +20,25 @@ library(plyr)
 raw <- do.call("rbind",  #  constructs and executes a call of the rbind function  => combines R objects
                lapply(Flattr_filenames, # applies function read.csv over list or vector
                       read.csv,
-                      sep = ";",
-                      dec = ",", # convert decimal separator from , to . for following calculations
-                      stringsAsFactors = FALSE
-                      )
-               ) # Function structure learned from https://stat.ethz.ch/pipermail/r-help/2010-October/255593.html
+                      sep = ";", dec = ",",  # csv defaults: , & . but Flattr uses "European" style
+                      stringsAsFactors = FALSE)) # Function structure learned from https://stat.ethz.ch/pipermail/r-help/2010-October/255593.html
 
 # append 1st days to months & convert to date format; learned from http://stackoverflow.com/a/4594269
 raw$period <- as.Date(paste(raw$period, "-01"), format="%Y-%m -%d")
 
 
-# define export function for tables & plots
-export_csv <- function(data_source, filename){
-  write.table(data_source, file = filename, sep = ";", dec = ",", row.names = FALSE)}
-
-export_plot <- function(plot_name, filename, height_modifier){
-  ggsave(plot = plot_name, filename,
-         height = dim(per_month_and_thing)[1]/height_modifier,  # number of things
-         width = length(Flattr_filenames))}  # number of time points
-
+# define export functions for tables & plots
+{
+  export_csv <- function(data_source, filename){
+    write.table(data = data_source, file = filename,
+                sep = ";", dec = ",",  # adhere to Flattr's csv style
+                row.names = FALSE)}
+  export_plot <- function(plot_name, filename, height_modifier){
+    ggsave(plot = plot_name, filename,
+           height = dim(per_month_and_thing)[1]/height_modifier,  # number of things determined by 1st entry in dataframe dimension result 
+           width = length(Flattr_filenames))  # number of months determined by number of report files
+  }
+}
 
 # summarizes raw data by title, thus accounting for changes in Flattr Thing ID and URLs
 per_thing <- ddply(.data = raw, .variables = "title", .fun = summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
@@ -67,14 +67,18 @@ N_months <- dim(per_month)[1]
 
 
 # themeing function for following plots
-set_advanced_theme <- function(){
-  theme(axis.text = element_text(size = N_months*1.5),
-        axis.title.x = element_blank(), # remove axis title, because month labels are unambiguous already
-        axis.title.y = element_text(size = N_months*1.5),
-        panel.grid.major = element_line(color = "lightgrey", size = N_months/20),
-        panel.grid.minor = element_line(color = "lightgrey", size = N_months/40),
-        panel.background = element_rect(fill = "white"),
-        complete = FALSE)} # learned from http://docs.ggplot2.org/0.9.3/theme.html
+{
+  set_advanced_theme <- function(){
+    theme(axis.text = element_text(size = N_months),
+          axis.text.x = element_text(angle = 30, hjust = 1),  # hjust prevents overlap with panel; learned from http://stackoverflow.com/a/1331400
+          axis.title.x = element_blank(), # remove axis title, because months labels are unambiguous already
+          axis.title.y = element_text(size = N_months*1.2),
+          panel.grid.major = element_line(color = "lightgrey", size = N_months/40),
+          panel.grid.minor.x = element_blank(),
+          panel.grid.major.y = element_line(color = "lightgrey", size = N_months/40)
+          panel.background = element_rect(fill = "white"),
+          complete = FALSE)} # learned from http://docs.ggplot2.org/0.9.3/theme.html
+}
 
 
 # plot clicks over time, colored by thing, with trendlines for everything & best thing
@@ -82,10 +86,10 @@ per_month_and_thing$EUR_per_click <- (per_month_and_thing$all_revenue / per_mont
 best_thing <- subset(per_month_and_thing, title == per_thing[1,1])  #  reduces data frame to best thing, for later trendline
 
 flattr_plot <- ggplot(data = per_month_and_thing,
-                       aes(x = period, y = EUR_per_click,
-                           size = (per_month_and_thing$all_revenue),  #  point sizes in bublechart
-                           colour = factor(title))) + 
-  geom_point(position = 'jitter') + 
+                      aes(x = period, y = EUR_per_click,
+                          size = per_month_and_thing$all_revenue,  #  point sizes in bublechart
+                          colour = factor(title))) + 
+  geom_jitter() + 
   ylab("EUR per Flattr") +
   labs(color = "Flattred Things", size = "EUR per Thing") +  #  set legend titles; arguments have to be same as in ggplot() call
   stat_smooth(mapping = aes(best_thing$period, best_thing$EUR_per_click, size = best_thing$all_revenue),
@@ -94,7 +98,11 @@ flattr_plot <- ggplot(data = per_month_and_thing,
               linetype = "dashed") +   # learned from http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
   stat_smooth(aes(group = 1),  # plots trendline over all values; otherwise: one for each thing; learned from http://stackoverflow.com/a/12810890
               method = "auto", se = FALSE, color = "darkgrey", show_guide = FALSE, size = N_months/20) +
-  scale_y_continuous(limits = c(0,max(per_month_and_thing$EUR_per_click) * 1.1), expand = c(0, 0)) +  scale_x_date(expand = c(0, 0)) +  # limit y axis to positive values with 10% overhead & remove blank space around data; learned from http://stackoverflow.com/a/26558070
+  ylim(0,max(per_month_and_thing$EUR_per_click) * 1.1, expand = c(0, 0)) +
+  scale_x_date(labels = date_format(format = "%b '%y"),  # month name abbr. & short year
+               breaks = "1 month",  # force major gridlines; learned from http://stackoverflow.com/a/9742126
+               expand = c(0.01, 0.01)) +  # limit y axis to positive values with 10% overhead & remove blank space around data; learned from http://stackoverflow.com/a/26558070
+  guides(col = guide_legend(reverse = TRUE)) +  # aligns legend order with col(our) order in plot; learned from http://docs.ggplot2.org/0.9.3.1/guide_legend.html
   set_advanced_theme()
 flattr_plot
 export_plot(flattr_plot, "flattr-revenue-clicks.png", height_modifier = 12)
@@ -105,8 +113,9 @@ monthly_advanced_plot <- ggplot(data = per_month_and_thing, aes(x = period, y = 
   ylab("EUR received") +
   xlab(NULL) +  # learned from http://www.talkstats.com/showthread.php/54720-ggplot2-ylab-and-xlab-hell?s=445d87d53add5909ac683c187166c9fd&p=154224&viewfull=1#post154224
   labs(fill = "Flattr-Things") +
-  scale_y_continuous(limits = c(0,max(per_month$all_revenue) * 1.1), expand = c(0, 0)) +
+  ylim(0,max(per_month$all_revenue) * 1.1, expand = c(0, 0)) +
   scale_x_date(expand = c(0, 0)) +
+  guides(fill = guide_legend(reverse = TRUE)) +  # aligns legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
   set_advanced_theme()
 monthly_advanced_plot
 export_plot(monthly_advanced_plot, "flattr-revenue-months.png", height_modifier = 15)
@@ -116,8 +125,8 @@ monthly_simple_plot <- ggplot(data = per_month_and_thing, aes(x = period, y = al
   geom_bar(stat = "identity", group = 1, fill = "#ED8C3B") + 
   ylab("EUR received") + xlab(NULL) + 
   stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_months/5) +  # draws a fitted trendline with confidence interval
-  scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1), expand = c(0, 0)) + scale_x_date(expand = c(0, 0)) +
-  theme_minimal(base_size = N_months*1.5)
+  ylim(0,max(per_month$all_revenue) * 1.1, expand = c(0, 0)) +
+  set_advanced_theme()
 monthly_simple_plot
 ggsave("flattr-revenue-months-summarized.png", monthly_simple_plot)
 
