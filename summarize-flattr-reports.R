@@ -14,6 +14,7 @@ if (!"ggplot2" %in% installed.packages()) install.packages("ggplot2")
 if (!"plyr" %in% installed.packages()) install.packages("plyr")
 library(ggplot2)
 library(plyr)
+library(scales)
 
 
 # read data from CSVs into data frame
@@ -30,7 +31,7 @@ raw$period <- as.Date(paste(raw$period, "-01"), format="%Y-%m -%d")
 # define export functions for tables & plots
 {
   export_csv <- function(data_source, filename){
-    write.table(data = data_source, file = filename,
+    write.table(x = data_source, file = filename,
                 sep = ";", dec = ",",  # adhere to Flattr's csv style
                 row.names = FALSE)}
   export_plot <- function(plot_name, filename, height_modifier){
@@ -75,7 +76,7 @@ N_months <- dim(per_month)[1]
           axis.title.y = element_text(size = N_months*1.2),
           panel.grid.major = element_line(color = "lightgrey", size = N_months/40),
           panel.grid.minor.x = element_blank(),
-          panel.grid.major.y = element_line(color = "lightgrey", size = N_months/40)
+          panel.grid.major.y = element_line(color = "lightgrey", size = N_months/40),
           panel.background = element_rect(fill = "white"),
           complete = FALSE)} # learned from http://docs.ggplot2.org/0.9.3/theme.html
 }
@@ -98,7 +99,7 @@ flattr_plot <- ggplot(data = per_month_and_thing,
               linetype = "dashed") +   # learned from http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
   stat_smooth(aes(group = 1),  # plots trendline over all values; otherwise: one for each thing; learned from http://stackoverflow.com/a/12810890
               method = "auto", se = FALSE, color = "darkgrey", show_guide = FALSE, size = N_months/20) +
-  ylim(0,max(per_month_and_thing$EUR_per_click) * 1.1, expand = c(0, 0)) +
+  scale_y_continuous(limits = c(0,max(per_month_and_thing$EUR_per_click) * 1.1), expand = c(0, 0)) +  # limit y axis to positive values with 10% overhead & remove blank space around data; learned from http://stackoverflow.com/a/26558070
   scale_x_date(labels = date_format(format = "%b '%y"),  # month name abbr. & short year
                breaks = "1 month",  # force major gridlines; learned from http://stackoverflow.com/a/9742126
                expand = c(0.01, 0.01)) +  # limit y axis to positive values with 10% overhead & remove blank space around data; learned from http://stackoverflow.com/a/26558070
@@ -113,7 +114,7 @@ monthly_advanced_plot <- ggplot(data = per_month_and_thing, aes(x = period, y = 
   ylab("EUR received") +
   xlab(NULL) +  # learned from http://www.talkstats.com/showthread.php/54720-ggplot2-ylab-and-xlab-hell?s=445d87d53add5909ac683c187166c9fd&p=154224&viewfull=1#post154224
   labs(fill = "Flattr-Things") +
-  ylim(0,max(per_month$all_revenue) * 1.1, expand = c(0, 0)) +
+  scale_y_continuous(limits = c(0,max(per_month$all_revenue) * 1.1), expand = c(0, 0)) +
   scale_x_date(expand = c(0, 0)) +
   guides(fill = guide_legend(reverse = TRUE)) +  # aligns legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
   set_advanced_theme()
@@ -125,7 +126,7 @@ monthly_simple_plot <- ggplot(data = per_month_and_thing, aes(x = period, y = al
   geom_bar(stat = "identity", group = 1, fill = "#ED8C3B") + 
   ylab("EUR received") + xlab(NULL) + 
   stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_months/5) +  # draws a fitted trendline with confidence interval
-  ylim(0,max(per_month$all_revenue) * 1.1, expand = c(0, 0)) +
+  scale_y_continuous(limits = c(0,max(per_month$all_revenue) * 1.1), expand = c(0, 0)) +
   set_advanced_theme()
 monthly_simple_plot
 ggsave("flattr-revenue-months-summarized.png", monthly_simple_plot)
