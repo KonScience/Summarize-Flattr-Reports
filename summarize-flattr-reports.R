@@ -1,21 +1,40 @@
 # READ ME: https://github.com/KonScience/Summarize-Flattr-Reports#summarize-flattr-reports
 
+# load packages for data frame manipulation & diagram drawing; learned from http://stackoverflow.com/a/9341735
+# update.packages(checkBuilt = TRUE, ask = FALSE) # update all packages
+
+if (!"scales" %in% installed.packages()) {
+  install.packages("scales")
+}
+
+if (!"ggplot2" %in% installed.packages()) {
+  install.packages("ggplot2")
+}
+
+if (!"plyr" %in% installed.packages()) {
+  install.packages("plyr")
+}
+
+library(scales)
+library(ggplot2)
+library(plyr)
+
 # get all filenames of Flattr Monthly Revenue CSV; assumes that all were downloaded into same folder
-first_flattr_file <- file.choose()
-flattr_dir <- dirname(first_flattr_file) #learned from http://stackoverflow.com/a/18003224
+
+args = (commandArgs(TRUE))
+
+if (length(args) == 0) { # execute via: Rscript path/to/script.r path/to/flattr-revenue-YYYYMM.csv
+  first_flattr_file <- file.choose()
+  flattr_dir <- dirname(first_flattr_file) # learned from http://stackoverflow.com/a/18003224
+} else {
+  flattr_dir <- dirname(paste(getwd(), args[1], sep="/")) # set directory by cli argument
+}
+
 Flattr_filenames <- list.files(flattr_dir, pattern = "flattr-revenue-[0-9]*.csv")
 
 # move working directory to .csv files but saves original
 original_wd <- getwd()
 setwd(flattr_dir)
-
-# load packages for data frame manipulation & diagram drawing; learned from http://stackoverflow.com/a/9341735
-if (!"ggplot2" %in% installed.packages()) install.packages("ggplot2")
-if (!"plyr" %in% installed.packages()) install.packages("plyr")
-library(ggplot2)
-library(plyr)
-library(scales)
-
 
 # read data from CSVs into data frame
 raw <- do.call("rbind",  #  constructs and executes a call of the rbind function  => combines R objects
@@ -37,7 +56,8 @@ raw$period <- as.Date(paste(raw$period, "-01"), format="%Y-%m -%d")
   export_plot <- function(plot_name, filename, height_modifier){
     ggsave(plot = plot_name, filename,
            height = dim(per_month_and_thing)[1]/height_modifier,  # number of things determined by 1st entry in dataframe dimension result 
-           width = length(Flattr_filenames))  # number of months determined by number of report files
+           width = length(Flattr_filenames),  # number of months determined by number of report files
+           limitsize = FALSE)
   }
 }
 
@@ -99,9 +119,10 @@ flattr_plot <- ggplot(data = per_month_and_thing,
               linetype = "dashed") +   # learned from http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
   stat_smooth(aes(group = 1),  # plots trendline over all values; otherwise: one for each thing; learned from http://stackoverflow.com/a/12810890
               method = "auto", se = FALSE, color = "darkgrey", show_guide = FALSE, size = N_months/20) +
-  scale_y_continuous(limits = c(0,max(per_month_and_thing$EUR_per_click) * 1.1), expand = c(0, 0)) +  # limit y axis to positive values with 10% overhead & remove blank space around data; learned from http://stackoverflow.com/a/26558070
-  scale_x_date(labels = date_format(format = "%b '%y"),  # month name abbr. & short year
-               breaks = "1 month",  # force major gridlines; learned from http://stackoverflow.com/a/9742126
+  scale_y_continuous(limits = c(0,max(per_month_and_thing$EUR_per_click) * 1.1),  # limit y axis to positive values with 10% overhead & remove blank space around data; learned from http://stackoverflow.com/a/26558070
+                     expand = c(0, 0)) + 
+  scale_x_date(labels = date_format("%b '%y"),  # month name abbr. & short year
+               breaks = date_breaks(width = "1 month"),  # force major gridlines; learned from http://stackoverflow.com/a/9742126
                expand = c(0.01, 0.01)) +  # limit y axis to positive values with 10% overhead & remove blank space around data; learned from http://stackoverflow.com/a/26558070
   guides(col = guide_legend(reverse = TRUE)) +  # aligns legend order with col(our) order in plot; learned from http://docs.ggplot2.org/0.9.3.1/guide_legend.html
   set_advanced_theme()
@@ -129,7 +150,7 @@ monthly_simple_plot <- ggplot(data = per_month_and_thing, aes(x = period, y = al
   scale_y_continuous(limits = c(0,max(per_month$all_revenue) * 1.1), expand = c(0, 0)) +
   set_advanced_theme()
 monthly_simple_plot
-ggsave("flattr-revenue-months-summarized.png", monthly_simple_plot)
+ggsave("flattr-revenue-months-summarized.png", monthly_simple_plot, limitsize = FALSE)
 
 # restore original working directory; useful if you use other scripts in parallel
-#setwd(original_wd)
+setwd(original_wd)
