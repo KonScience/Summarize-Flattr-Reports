@@ -27,6 +27,8 @@ raw <- do.call("rbind",  #  constructs and executes a call of the rbind function
 # append 1st days to months & convert to date format; learned from http://stackoverflow.com/a/4594269
 raw$period <- as.Date(paste(raw$period, "-01"), format="%Y-%m -%d")
 
+# append domain of flattr-thing by splitting by "/" and selecting the 3rd value
+raw$domain <- sapply(strsplit(raw$url, "/"),"[",3)
 
 # define export functions for tables & plots
 {
@@ -52,10 +54,18 @@ export_csv(per_thing, "flattr-revenue-things.csv")
 # summarize by title and period to provide click-value development over time
 per_month_and_thing <- ddply(raw, c("period", "title"), summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
 
+# summarize by domain and period to provide click-value development over time
+per_month_and_domain <- ddply(raw, c("period", "domain"), summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
+
 # order by time and thing
 per_month_and_thing <- per_month_and_thing[order(per_month_and_thing$title),]
 per_month_and_thing$EUR_per_click <- (per_month_and_thing$all_revenue / per_month_and_thing$all_clicks)
 export_csv(per_month_and_thing, "flattr-revenue-clicks.csv")
+
+# order by time and domain
+per_month_and_domain <- per_month_and_domain[order(per_month_and_domain$domain),]
+per_month_and_domain$EUR_per_click <- (per_month_and_domain$all_revenue / per_month_and_domain$all_clicks)
+export_csv(per_month_and_domain, "flattr-revenue-clicks-domain.csv")
 
 # summarize & export revenue per month
 per_month <- ddply(raw, "period", summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
@@ -120,6 +130,19 @@ monthly_advanced_plot <- ggplot(data = per_month_and_thing, aes(x = period, y = 
   set_advanced_theme()
 monthly_advanced_plot
 export_plot(monthly_advanced_plot, "flattr-revenue-months.png", height_modifier = 15)
+
+
+monthly_advanced_domain_plot <- ggplot(data = per_month_and_domain, aes(x = period, y = all_revenue, fill = factor(domain))) +
+  geom_bar(stat = "identity") +
+  ylab("EUR received") +
+  xlab(NULL) +  # learned from http://www.talkstats.com/showthread.php/54720-ggplot2-ylab-and-xlab-hell?s=445d87d53add5909ac683c187166c9fd&p=154224&viewfull=1#post154224
+  labs(fill = "Domains") +
+  scale_y_continuous(limits = c(0,max(per_month$all_revenue) * 1.1), expand = c(0, 0), breaks = seq(0, round(max(per_month$all_revenue)*1.1), round(max(per_month$all_revenue)/10))) +
+  scale_x_date(labels = date_format("%b '%y"), breaks = date_breaks(width = "1 month"), expand = c(0, 0)) +
+  guides(fill = guide_legend(reverse = TRUE)) +  # aligns legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
+  set_advanced_theme()
+monthly_advanced_domain_plot
+export_plot(monthly_advanced_domain_plot, "flattr-revenue-months-domain.png", height_modifier = 15)
 
 
 monthly_simple_plot <- ggplot(data = per_month_and_thing, aes(x = period, y = all_revenue)) +
