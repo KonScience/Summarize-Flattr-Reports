@@ -45,6 +45,7 @@ raw <- do.call("rbind",  #  constructs and executes a call of the rbind function
 
 # append 1st days to months & convert to date format; learned from http://stackoverflow.com/a/4594269
 raw$period <- as.Date(paste(raw$period, "-01"), format="%Y-%m -%d")
+raw$EUR_per_click <- raw$revenue / raw$clicks
 
 # define export functions for tables & plots
 
@@ -67,19 +68,16 @@ per_thing <- ddply(.data = raw, .variables = "title", .fun = summarize, all_clic
 
 # order by revenue
 per_thing <- per_thing[order(per_thing$all_revenue, decreasing = TRUE),]
-per_thing$EUR_per_click <- (per_thing$all_revenue / per_thing$all_clicks)
 export_csv(per_thing, "flattr-revenue-things.csv")
 
 # summarize & order by month and thing to provide click-value development over time
-per_month_and_thing <- ddply(raw, c("period", "title"), summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
+per_month_and_thing <- ddply(raw, c("period", "title"), summarize, all_clicks = sum(clicks), all_revenue = sum(revenue), EUR_per_click = all_revenue / all_clicks)
 per_month_and_thing <- per_month_and_thing[order(per_month_and_thing$title),]
-per_month_and_thing$EUR_per_click <- (per_month_and_thing$all_revenue / per_month_and_thing$all_clicks)
 export_csv(per_month_and_thing, "flattr-revenue-clicks.csv")
 
 # summarize & export revenue per month
 per_month <- ddply(raw, "period", summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
 per_month <- per_month[order(per_month$period),]
-per_month$EUR_per_click <- (per_month$all_revenue / per_month$all_clicks)
 export_csv(per_month, "flattr-revenue-months.csv")
 
 # length of dataset for auto-sizing diagrams
@@ -99,6 +97,7 @@ set_advanced_theme <- function(){
 
 # find out how revenue per click developed over time; colored by thing, with trendlines for everything & best thing
 best_thing <- subset(per_month_and_thing, title == per_thing[1,1])  #  reduces data frame to best thing, for later trendline
+best_thing$EUR_per_click <- best_thing$all_revenue / best_thing$all_clicks
 
 flattr_plot <- ggplot(data = per_month_and_thing,
                       aes(x = period, y = EUR_per_click,
@@ -113,7 +112,7 @@ flattr_plot <- ggplot(data = per_month_and_thing,
               linetype = "dashed") +   # learned from http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
   stat_smooth(aes(group = 1),  # plots trendline over all values; otherwise: one for each thing; learned from http://stackoverflow.com/a/12810890
               method = "auto", se = FALSE, color = "darkgrey", show_guide = FALSE, size = N_months/20) +
-  scale_y_continuous(limits = c(0,max(per_month_and_thing$EUR_per_click) * 1.1),  # limit y axis to positive values with 10% overhead & remove blank space around data; learned from http://stackoverflow.com/a/26558070
+  scale_y_continuous(limits = c(0,max(raw$EUR_per_click) * 1.1),  # limit y axis to positive values with 10% overhead & remove blank space around data; learned from http://stackoverflow.com/a/26558070
                      expand = c(0, 0)) + 
   scale_x_date(labels = date_format("%b '%y"),  # month name abbr. & short year
                breaks = date_breaks(width = "1 month"),  # force major gridlines; learned from http://stackoverflow.com/a/9742126
@@ -153,7 +152,6 @@ raw$domain <- sapply(strsplit(raw$url, "/"),"[",3)
 # summarize & order by month and domain
 per_month_and_domain <- ddply(raw, c("period", "domain"), summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
 per_month_and_domain <- per_month_and_domain[order(per_month_and_domain$domain),]
-per_month_and_domain$EUR_per_click <- (per_month_and_domain$all_revenue / per_month_and_domain$all_clicks)
 export_csv(per_month_and_domain, "flattr-revenue-clicks-domain.csv")
 
 monthly_domain_plot <- ggplot(data = per_month_and_domain, aes(x = period, y = all_revenue, fill = factor(domain))) +
