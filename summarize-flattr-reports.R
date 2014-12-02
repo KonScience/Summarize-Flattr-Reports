@@ -104,9 +104,9 @@ best_thing <- subset(per_month_and_thing, title == per_thing[1,1])  #  reduces d
 best_thing$EUR_per_click <- best_thing$all_revenue / best_thing$all_clicks
 
 flattr_plot <- ggplot(data = raw,
-                      aes(x = period, y = EUR_per_click,
-                          size = raw$revenue,  #  points sized according to revenue of that thing in that month => bubble plot
-                          colour = factor(title))) + 
+                      mapping = aes(x = period, y = EUR_per_click,
+                                    size = raw$revenue,  #  points sized according to revenue of that thing in that month => bubble plot
+                                    colour = factor(title))) + 
   geom_jitter() + 
   ylab("EUR per Flattr") +
   labs(color = "Flattred Things", size = "EUR per Thing") +  #  set legend titles; arguments have to be same as in ggplot() call
@@ -116,7 +116,7 @@ flattr_plot <- ggplot(data = raw,
               linetype = "dashed") +   # learned from http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
   stat_smooth(aes(group = 1),  # plots trendline over all values; otherwise: one for each thing; learned from http://stackoverflow.com/a/12810890
               method = "auto", se = FALSE, color = "darkgrey", show_guide = FALSE, size = N_months/20) +
-  scale_y_continuous(limits = c(0,max(raw$EUR_per_click) * 1.1),  # limit y axis to positive values with 10% overhead & remove blank space around data; learned from http://stackoverflow.com/a/26558070
+  scale_y_continuous(limits = c(0,mean(raw$EUR_per_click) * 5),  # limit y axis to positive values with 10% overhead & remove blank space around data; learned from http://stackoverflow.com/a/26558070
                      expand = c(0, 0)) + 
   scale_x_date(labels = date_format("%b '%y"),  # month name abbr. & short year
                breaks = date_breaks(width = "1 month"),  # force major gridlines; learned from http://stackoverflow.com/a/9742126
@@ -131,14 +131,14 @@ monthly_advanced_plot <- ggplot(data = per_month_and_thing, aes(x = period, y = 
   ylab("EUR received") +
   xlab(NULL) +  # learned from http://www.talkstats.com/showthread.php/54720-ggplot2-ylab-and-xlab-hell?s=445d87d53add5909ac683c187166c9fd&p=154224&viewfull=1#post154224
   labs(fill = "Flattr-Things") +
-  scale_y_continuous(limits = c(0,max(per_month$all_revenue) * 1.1), expand = c(0, 0)) +
+  scale_y_continuous(limits = c(0,max(per_month_and_thing$all_revenue) * 1.1), expand = c(0, 0)) +
   scale_x_date(expand = c(0, 0)) +
   guides(fill = guide_legend(reverse = TRUE)) +  # aligns legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
   set_advanced_theme()
 monthly_advanced_plot
 export_plot(monthly_advanced_plot, "flattr-revenue-months.png", height_modifier = 15)
 
-monthly_simple_plot <- ggplot(data = per_month_and_thing, aes(x = period, y = all_revenue)) +
+monthly_simple_plot <- ggplot(data = per_month, aes(x = period, y = all_revenue)) +
   geom_bar(stat = "identity", group = 1, fill = "#ED8C3B") + 
   ylab("EUR received") + xlab(NULL) + 
   stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_months/5) +  # draws a fitted trendline with confidence interval
@@ -163,7 +163,7 @@ monthly_domain_plot <- ggplot(data = per_month_and_domain, aes(x = period, y = a
   ylab("EUR received") +
   xlab(NULL) +  # learned from http://www.talkstats.com/showthread.php/54720-ggplot2-ylab-and-xlab-hell?s=445d87d53add5909ac683c187166c9fd&p=154224&viewfull=1#post154224
   labs(fill = "Domains") +
-  scale_y_continuous(limits = c(0,max(per_month$all_revenue) * 1.1), expand = c(0, 0), breaks = seq(0, round(max(per_month$all_revenue)*1.1), round(max(per_month$all_revenue)/10))) +
+  scale_y_continuous(limits = c(0,max(per_month_and_domain$all_revenue) * 1.1), expand = c(0, 0), breaks = seq(0, round(max(per_month$all_revenue)*1.1), round(max(per_month$all_revenue)/10))) +
   scale_x_date(labels = date_format("%b '%y"), breaks = date_breaks(width = "1 month"), expand = c(0, 0)) +
   guides(fill = guide_legend(reverse = TRUE)) +  # aligns legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
   set_advanced_theme()
