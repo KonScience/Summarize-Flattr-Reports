@@ -84,7 +84,7 @@ per_month <- per_month[order(per_month$period),]
 export_csv(per_month, "flattr-revenue-months.csv")
 
 # length of dataset for auto-sizing diagrams
-N_months <- dim(per_month)[1]
+N_months <- length(unique(raw$period))
 
 # themeing function for following plots
 set_advanced_theme <- function(){
