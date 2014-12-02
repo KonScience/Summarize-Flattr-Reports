@@ -15,6 +15,7 @@ if (!"plyr" %in% installed.packages()) {
   install.packages("plyr")
 }
 
+# see http://www.r-bloggers.com/library-vs-require-in-r/ for require() vs. library() discussion
 library(scales)
 library(ggplot2)
 library(plyr)
@@ -47,6 +48,11 @@ raw <- do.call("rbind",  #  constructs and executes a call of the rbind function
 raw$period <- as.Date(paste(raw$period, "-01"), format="%Y-%m -%d")
 raw$EUR_per_click <- raw$revenue / raw$clicks
 
+# populate raw data with all_revenue for each thing
+for (i in 1:dim(raw)[1]){
+  raw$all_revenue[i] <- sum(subset(raw, title == raw$title[i])$revenue)
+}
+
 # define export functions for tables & plots
 
 export_csv <- function(data_source, filename){
@@ -62,16 +68,13 @@ export_plot <- function(plot_name, filename, height_modifier){
          limitsize = FALSE)
 }
 
-
-# summarizes raw data by title, thus accounting for changes in Flattr Thing ID and URLs (due to redirection after permalink changes)
+# summarize & order by title to account for changes in Thing ID and URLs (due to redirection after permalink changes)
 per_thing <- ddply(.data = raw, .variables = "title", .fun = summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
-
-# order by revenue
 per_thing <- per_thing[order(per_thing$all_revenue, decreasing = TRUE),]
 export_csv(per_thing, "flattr-revenue-things.csv")
 
 # summarize & order by month and thing to provide click-value development over time
-per_month_and_thing <- ddply(raw, c("period", "title"), summarize, all_clicks = sum(clicks), all_revenue = sum(revenue), EUR_per_click = all_revenue / all_clicks)
+per_month_and_thing <- ddply(raw, c("period", "title", "EUR_per_click"), summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
 per_month_and_thing <- per_month_and_thing[order(per_month_and_thing$title),]
 export_csv(per_month_and_thing, "flattr-revenue-clicks.csv")
 
@@ -95,13 +98,14 @@ set_advanced_theme <- function(){
           panel.background = element_rect(fill = "white"),
           complete = FALSE)} # learned from http://docs.ggplot2.org/0.9.3/theme.html
 
-# find out how revenue per click developed over time; colored by thing, with trendlines for everything & best thing
+
+# plot revenue per click over time; colored by thing, with trendlines for everything & best thing
 best_thing <- subset(per_month_and_thing, title == per_thing[1,1])  #  reduces data frame to best thing, for later trendline
 best_thing$EUR_per_click <- best_thing$all_revenue / best_thing$all_clicks
 
-flattr_plot <- ggplot(data = per_month_and_thing,
+flattr_plot <- ggplot(data = raw,
                       aes(x = period, y = EUR_per_click,
-                          size = per_month_and_thing$all_revenue,  #  point sizes in bublechart
+                          size = raw$revenue,  #  points sized according to revenue of that thing in that month => bubble plot
                           colour = factor(title))) + 
   geom_jitter() + 
   ylab("EUR per Flattr") +
