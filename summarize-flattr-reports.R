@@ -116,11 +116,11 @@ flattr_plot <- ggplot(data = raw,
               linetype = "dashed") +   # learned from http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
   stat_smooth(aes(group = 1),  # plots trendline over all values; otherwise: one for each thing; learned from http://stackoverflow.com/a/12810890
               method = "auto", se = FALSE, color = "darkgrey", show_guide = FALSE, size = N_months/20) +
-  scale_y_continuous(limits = c(0,mean(raw$EUR_per_click) * 5),  # limit y axis to positive values with 10% overhead & remove blank space around data; learned from http://stackoverflow.com/a/26558070
+  scale_y_continuous(limits = c(0,mean(raw$EUR_per_click) * 5),  # omit y-values larger than 5x arithmetic mean learned from http://stackoverflow.com/a/26558070
                      expand = c(0, 0)) + 
   scale_x_date(labels = date_format("%b '%y"),  # month name abbr. & short year
                breaks = date_breaks(width = "1 month"),  # force major gridlines; learned from http://stackoverflow.com/a/9742126
-               expand = c(0.01, 0.01)) +  # limit y axis to positive values with 10% overhead & remove blank space around data; learned from http://stackoverflow.com/a/26558070
+               expand = c(0.01, 0.01)) +  # remove blank space around data; learned from http://stackoverflow.com/a/26558070
   guides(col = guide_legend(reverse = TRUE)) +  # aligns legend order with col(our) order in plot; learned from http://docs.ggplot2.org/0.9.3.1/guide_legend.html
   set_advanced_theme()
 flattr_plot
@@ -142,7 +142,8 @@ monthly_simple_plot <- ggplot(data = per_month, aes(x = period, y = all_revenue)
   geom_bar(stat = "identity", group = 1, fill = "#ED8C3B") + 
   ylab("EUR received") + xlab(NULL) + 
   stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_months/5) +  # draws a fitted trendline with confidence interval
-  scale_y_continuous(limits = c(0,max(per_month$all_revenue) * 1.1), expand = c(0, 0)) +
+  scale_y_continuous(limits = c(0,max(per_month$all_revenue) * 1.1),  # omit negative y-values & limit positive y-axis to 10% overhead over maximum value
+                     expand = c(0, 0)) +
   set_advanced_theme()
 monthly_simple_plot
 ggsave("flattr-revenue-months-summarized.png", monthly_simple_plot, limitsize = FALSE)
