@@ -88,15 +88,15 @@ N_months <- length(unique(raw$period))
 
 # themeing function for following plots
 set_advanced_theme <- function(){
-    theme(axis.text = element_text(size = N_months),
-          axis.text.x = element_text(angle = 30, hjust = 1),  # hjust prevents overlap with panel; learned from http://stackoverflow.com/a/1331400
-          axis.title.x = element_blank(), # remove axis title, because months labels are unambiguous already
-          axis.title.y = element_text(size = N_months*1.2),
-          panel.grid.major = element_line(color = "lightgrey", size = N_months/40),
-          panel.grid.minor.x = element_blank(),
-          panel.grid.major.y = element_line(color = "lightgrey", size = N_months/40),
-          panel.background = element_rect(fill = "white"),
-          complete = FALSE)} # learned from http://docs.ggplot2.org/0.9.3/theme.html
+  theme(axis.text = element_text(size = N_months),
+        axis.text.x = element_text(angle = 30, hjust = 1),  # hjust prevents overlap with panel; learned from http://stackoverflow.com/a/1331400
+        axis.title.x = element_blank(), # remove axis title, because months labels are unambiguous already
+        axis.title.y = element_text(size = N_months*1.2),
+        panel.grid.major = element_line(color = "lightgrey", size = N_months/40),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_line(color = "lightgrey", size = N_months/40),
+        panel.background = element_rect(fill = "white"),
+        complete = FALSE)} # learned from http://docs.ggplot2.org/0.9.3/theme.html
 
 
 # plot revenue per click over time; colored by thing, with trendlines for everything & best thing
@@ -107,7 +107,7 @@ flattr_plot <- ggplot(data = raw,
                       mapping = aes(x = period, y = EUR_per_click,
                                     size = raw$revenue,  #  points sized according to revenue of that thing in that month => bubble plot
                                     colour = factor(title))) + 
-  geom_jitter() + 
+  geom_jitter() +  # same as geom_point(position = "jitter"); spreads data points randomly around true x value bit; day-exact resolution not (yet) possible
   ylab("EUR per Flattr") +
   labs(color = "Flattred Things", size = "EUR per Thing") +  #  set legend titles; arguments have to be same as in ggplot() call
   stat_smooth(mapping = aes(best_thing$period, best_thing$EUR_per_click, size = best_thing$all_revenue),
@@ -120,7 +120,7 @@ flattr_plot <- ggplot(data = raw,
                      expand = c(0, 0)) + 
   scale_x_date(labels = date_format("%b '%y"),  # month name abbr. & short year
                breaks = date_breaks(width = "1 month"),  # force major gridlines; learned from http://stackoverflow.com/a/9742126
-               expand = c(0.01, 0.01)) +  # remove blank space around data; learned from http://stackoverflow.com/a/26558070
+               expand = c(0.01, 0.01)) +  # reduce blank space around data; learned from http://stackoverflow.com/a/26558070
   guides(col = guide_legend(reverse = TRUE)) +  # aligns legend order with col(our) order in plot; learned from http://docs.ggplot2.org/0.9.3.1/guide_legend.html
   set_advanced_theme()
 flattr_plot
@@ -173,4 +173,3 @@ export_plot(monthly_domain_plot, "flattr-revenue-months-domain.png", height_modi
 
 # restore original working directory; only useful if you use other scripts in parallel => comment out with # while tinkering with this script, or the files won't be exported to your Flattr folder
 setwd(original_wd)
-
