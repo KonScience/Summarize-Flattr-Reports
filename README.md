@@ -9,7 +9,7 @@ Usage Instructions
 1. Download and install both [RStudio](http://www.rstudio.com/products/rstudio/download/) and [R](http://cran.rstudio.com/).
 1. Open the script (.r file) in RStudio and run it with `alt+CMD+R` (Mac) or `Alt+CTRL+R` (Win) and find the newly generated files in the same folder as the .csv files you downloaded from Flattr.
   - This process may take anything from a few seconds to several minutes, depending on your number of Flattr Revenue Reports, Things in them, and the speed of your computer. You can follow the progress in RStudios' `Console` and `Plot` tabs. Example: 18 Reports & 200 Things at [2.3 GHz](http://www.everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i5-2.3-13-early-2011-unibody-thunderbolt-specs.html) => 10sec.
-1. Please contribute ideas, criticism and code, by [opening an issue](https://github.com/KonScience/Summarize-Flattr-Reports/issues/new) or [forking](https://github.com/KonScience/Summarize-Flattr-Reports/fork) and sending a pull request.
+1. Please contribute ideas, criticism and code, by [opening an issue](https://github.com/KonScience/Summarize-Flattr-Reports/issues/new) or [forking](https://github.com/KonScience/Summarize-Flattr-Reports/fork) and sending a pull request. In particular, please let me know if the diagrams become difficult to interpret at certain dataset sizes.
 
 Ideas
 ---
