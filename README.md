@@ -6,8 +6,9 @@ Usage Instructions
 ---
 1. In [your "Transactions"-list on Flattr](https://flattr.com/dashboard/transactions), open each "Monthly revenue"-report, click "Download as CSV"and save them to a folder of your choice.
 1. Download [this script](https://github.com/KonScience/Summarise-Flattr-Reports/blob/master/summarise-flattr-reports.R) to the same or any other folder.
-1. Download [RStudio](http://www.rstudio.com/products/rstudio/download/) and install.
-1. Open the script (.r file) in RStudio and run it with `alt+CMD+R` (should take just a few seconds) and find the newly generated files in the same folder as the .csv files you downloaded from Flattr.
+1. Download and install both [RStudio](http://www.rstudio.com/products/rstudio/download/) and [R](http://cran.rstudio.com/).
+1. Open the script (.r file) in RStudio and run it with `alt+CMD+R` (Mac) or `Alt+CTRL+R` (Win) and find the newly generated files in the same folder as the .csv files you downloaded from Flattr.
+  - This process may take anything from a few seconds to several minutes, depending on your number of Flattr Revenue Reports, Things in them, and the speed of your computer. You can follow the progress in RStudios' `Console` and `Plot` tabs. Example: 18 Reports & 200 Things at [2.3 GHz](http://www.everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i5-2.3-13-early-2011-unibody-thunderbolt-specs.html) => 10sec.
 1. Please contribute ideas, criticism and code, by [opening an issue](https://github.com/KonScience/Summarize-Flattr-Reports/issues/new) or [forking](https://github.com/KonScience/Summarize-Flattr-Reports/fork) and sending a pull request.
 
 Ideas
@@ -23,7 +24,7 @@ Ideas
 - ~~summarise Flattr clicks per month, not ordered by thing~~ [DONE](https://github.com/KonScience/Summarize-Flattr-Reports/commit/000f9f18bba90586aa47155dbdcea4448680fff9)
 - predictions (anybody knows the statistics behind this?)
 - episodes vs. other things (probably needs reg-ex on slugs)
-- webapp via Shiny that processes given data for a Flattr-click
+- webapp via Shiny that processes given data ~~for a Flattr-click~~ [Not a good idea](https://stackoverflow.com/questions/8971918/using-flattr-as-paywall)
 - install on server to auto-run & publish diagram 
 
 Thanks and Greetings :-)
