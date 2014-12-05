@@ -4,12 +4,17 @@ R script to create summary CSV files and diagrams from Flattr's Monthly Revenue 
 
 Usage Instructions
 ---
-1. In [your "Transactions"-list on Flattr](https://flattr.com/dashboard/transactions), open each "Monthly revenue"-report, click "Download as CSV"and save them to a folder of your choice.
-1. Download [this script](https://github.com/KonScience/Summarise-Flattr-Reports/blob/master/summarise-flattr-reports.R) to the same or any other folder.
 1. Download and install both [RStudio](http://www.rstudio.com/products/rstudio/download/) and [R](http://cran.rstudio.com/).
-1. Open the script (.r file) in RStudio and run it with `alt+CMD+R` (Mac) or `Alt+CTRL+R` (Win) and find the newly generated files in the same folder as the .csv files you downloaded from Flattr.
-  - This process may take anything from a few seconds to several minutes, depending on your number of Flattr Revenue Reports, Things in them, and the speed of your computer. You can follow the progress in RStudios' `Console` and `Plot` tabs. Example: 18 Reports & 200 Things at [2.3 GHz](http://www.everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i5-2.3-13-early-2011-unibody-thunderbolt-specs.html) => 10sec.
-1. Please contribute ideas, criticism and code, by [opening an issue](https://github.com/KonScience/Summarize-Flattr-Reports/issues/new) or [forking](https://github.com/KonScience/Summarize-Flattr-Reports/fork) and sending a pull request. In particular, please let me know if the diagrams become difficult to interpret at certain dataset sizes.
+1. Go to [your Flattr Transactions](https://flattr.com/dashboard/transactions).
+  1. Open each "Monthly revenue"-report (or start with only a few).
+  1. Click "Download as CSV".
+  1. Save them to a folder of your choice.
+1. Download [this script](https://github.com/KonScience/Summarise-Flattr-Reports/blob/master/summarise-flattr-reports.R) to the same or any other folder.
+  1. Open the script (.r file) in RStudio.
+  1. Run it with `alt+cmd+R` (Mac) or `ctrl+alt+R` (Win).
+  1. Follow its progress in RStudios' `Console` and `Plot` tabs. This may take few seconds to several minutes, depending on your number of Flattr Revenue Reports, data points in them, and the speed of your computer. Example: 20 Reports with 200 data points at [2.3 GHz](http://www.everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i5-2.3-13-early-2011-unibody-thunderbolt-specs.html): 10sec.
+  1. Find the newly generated .csv files and .png diagrams in the same folder as the .csv files you downloaded from Flattr.
+1. Please contribute ideas, criticism and code, by [opening an issue](https://github.com/KonScience/Summarize-Flattr-Reports/issues/new) or [forking](https://github.com/KonScience/Summarize-Flattr-Reports/fork) and sending a pull request. In particular, please let me know at which size of the dataset the diagrams become difficult to interpret.
 
 Ideas
 ---
