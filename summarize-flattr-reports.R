@@ -53,6 +53,10 @@ for (i in 1:dim(raw)[1]){
   raw$all_revenue[i] <- sum(subset(raw, title == raw$title[i])$revenue)
 }
 
+# length of dataset for auto-sizing diagrams
+N_months <- length(Flattr_filenames)
+N_things <- length(unique(raw$title))
+
 # define export functions for tables & plots
 
 export_csv <- function(data_source, filename){
@@ -61,10 +65,10 @@ export_csv <- function(data_source, filename){
               row.names = FALSE)
 }
 
-export_plot <- function(plot_name, filename, height_modifier){
+export_plot <- function(plot_name, filename){
   ggsave(plot = plot_name, filename,
-         height = dim(per_month_and_thing)[1]/height_modifier,  # number of things determined by 1st entry in dataframe dimension result 
-         width = length(Flattr_filenames),  # number of months determined by number of report files
+         height = N_things/3,  # number of things determined by 1st entry in dataframe dimension result 
+         width = N_months,  # number of months determined by number of report files
          limitsize = FALSE)
 }
 
@@ -83,9 +87,6 @@ per_month <- ddply(raw, "period", summarize, all_clicks = sum(clicks), all_reven
 per_month <- per_month[order(per_month$period),]
 export_csv(per_month, "flattr-revenue-months.csv")
 
-# length of dataset for auto-sizing diagrams
-N_months <- length(unique(raw$period))
-
 # themeing function for following plots
 set_advanced_theme <- function(){
   theme(axis.text = element_text(size = N_months),
@@ -94,7 +95,6 @@ set_advanced_theme <- function(){
         axis.title.y = element_text(size = N_months*1.2),
         panel.grid.major = element_line(color = "lightgrey", size = N_months/40),
         panel.grid.minor.x = element_blank(),
-        panel.grid.major.y = element_line(color = "lightgrey", size = N_months/40),
         panel.background = element_rect(fill = "white"),
         complete = FALSE)} # learned from http://docs.ggplot2.org/0.9.3/theme.html
 
@@ -125,7 +125,7 @@ flattr_plot <- ggplot(data = raw,
   guides(col = guide_legend(reverse = TRUE)) +  # aligns legend order with col(our) order in plot; learned from http://docs.ggplot2.org/0.9.3.1/guide_legend.html
   set_advanced_theme()
 flattr_plot
-export_plot(flattr_plot, "flattr-revenue-clicks.png", height_modifier = 12)
+export_plot(flattr_plot, "flattr-revenue-clicks.png")
 
 monthly_advanced_plot <- ggplot(data = per_month_and_thing, aes(x = period, y = all_revenue, fill = factor(title))) +
   geom_bar(stat = "identity") +
@@ -137,7 +137,7 @@ monthly_advanced_plot <- ggplot(data = per_month_and_thing, aes(x = period, y = 
   guides(fill = guide_legend(reverse = TRUE)) +  # aligns legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
   set_advanced_theme()
 monthly_advanced_plot
-export_plot(monthly_advanced_plot, "flattr-revenue-months.png", height_modifier = 15)
+export_plot(monthly_advanced_plot, "flattr-revenue-months.png")
 
 monthly_simple_plot <- ggplot(data = per_month, aes(x = period, y = all_revenue)) +
   geom_bar(stat = "identity", group = 1, fill = "#ED8C3B") + 
@@ -170,7 +170,7 @@ monthly_domain_plot <- ggplot(data = per_month_and_domain, aes(x = period, y = a
   guides(fill = guide_legend(reverse = TRUE)) +  # aligns legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
   set_advanced_theme()
 monthly_domain_plot
-export_plot(monthly_domain_plot, "flattr-revenue-months-domain.png", height_modifier = 15)
+export_plot(monthly_domain_plot, "flattr-revenue-months-domain.png")
 
 # restore original working directory; only useful if you use other scripts in parallel => comment out with # while tinkering with this script, or the files won't be exported to your Flattr folder
 setwd(original_wd)
