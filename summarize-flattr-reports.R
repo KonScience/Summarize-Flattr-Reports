@@ -53,9 +53,10 @@ for (i in 1:dim(raw)[1]){
   raw$all_revenue[i] <- sum(subset(raw, title == raw$title[i])$revenue)
 }
 
-# length of dataset for auto-sizing diagrams
+# determine dataset size to auto-adjust plots
 N_months <- length(Flattr_filenames)
 N_things <- length(unique(raw$title))
+
 
 # define export functions for tables & plots
 
@@ -66,11 +67,9 @@ export_csv <- function(data_source, filename){
 }
 
 export_plot <- function(plot_name, filename){
-  ggsave(plot = plot_name, filename,
-         height = N_things/3,  # number of things determined by 1st entry in dataframe dimension result 
-         width = N_months,  # number of months determined by number of report files
-         limitsize = FALSE)
+  ggsave(plot = plot_name, filename, height = N_things / 3, width = N_months, limitsize = FALSE)
 }
+
 
 # summarize & order by title to account for changes in Thing ID and URLs (due to redirection after permalink changes)
 per_thing <- ddply(.data = raw, .variables = "title", .fun = summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
@@ -99,58 +98,56 @@ set_advanced_theme <- function(){
         complete = FALSE)} # learned from http://docs.ggplot2.org/0.9.3/theme.html
 
 
-# plot revenue per click over time; colored by thing, with trendlines for everything & best thing
+# revenue per click and month colored by thing, with trends for everything & best thing
 best_thing <- subset(per_month_and_thing, title == per_thing[1,1])  #  reduces data frame to best thing, for later trendline
 best_thing$EUR_per_click <- best_thing$all_revenue / best_thing$all_clicks
 
-flattr_plot <- ggplot(data = raw,
-                      mapping = aes(x = period, y = EUR_per_click,
-                                    size = raw$revenue,  #  points sized according to revenue of that thing in that month => bubble plot
-                                    colour = factor(title))) + 
-  geom_jitter() +  # same as geom_point(position = "jitter"); spreads data points randomly around true x value bit; day-exact resolution not (yet) possible
-  ylab("EUR per Flattr") +
-  labs(color = "Flattred Things", size = "EUR per Thing") +  #  set legend titles; arguments have to be same as in ggplot() call
+flattr_plot <- ggplot(data = raw, mapping = aes(x = period, y = EUR_per_click,
+                                                size = raw$revenue,  #  points sized according to revenue of that thing in that month => bubble plot
+                                                colour = factor(title)))  +
+  geom_jitter()  +  # same as geom_point(position = "jitter"); spreads data points randomly around true x value bit; day-exact resolution not (yet) possible
+  ylab("EUR per Flattr")  +
+  labs(color = "Flattred Things", size = "EUR per Thing")  +  #  set legend titles; arguments have to be same as in ggplot() call
   stat_smooth(mapping = aes(best_thing$period, best_thing$EUR_per_click, size = best_thing$all_revenue),
-              data = best_thing, method = "auto", show_guide = FALSE, size = N_months/20, 
+              data = best_thing, method = "auto", show_guide = FALSE, size = N_months/20,
               se = FALSE,  #  confidence interval indicator
-              linetype = "dashed") +   # learned from http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
+              linetype = "dashed")  +   # learned from http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
   stat_smooth(aes(group = 1),  # plots trendline over all values; otherwise: one for each thing; learned from http://stackoverflow.com/a/12810890
-              method = "auto", se = FALSE, color = "darkgrey", show_guide = FALSE, size = N_months/20) +
+              method = "auto", se = FALSE, color = "darkgrey", show_guide = FALSE, size = N_months/20)  +
   scale_y_continuous(limits = c(0,mean(raw$EUR_per_click) * 5),  # omit y-values larger than 5x arithmetic mean learned from http://stackoverflow.com/a/26558070
-                     expand = c(0, 0)) + 
+                     expand = c(0, 0))  +
   scale_x_date(labels = date_format("%b '%y"),  # month name abbr. & short year
                breaks = date_breaks(width = "1 month"),  # force major gridlines; learned from http://stackoverflow.com/a/9742126
-
-               expand = c(0.01, 0.01)) +  # reduce blank space around data; learned from http://stackoverflow.com/a/26558070
-  guides(col = guide_legend(reverse = TRUE)) +  # aligns legend order with col(our) order in plot; learned from http://docs.ggplot2.org/0.9.3.1/guide_legend.html
+               expand = c(0.01, 0.01))  +  # reduce blank space around data; learned from http://stackoverflow.com/a/26558070
+  guides(col = guide_legend(reverse = TRUE))  +  # aligns legend order with col(our) order in plot; learned from http://docs.ggplot2.org/0.9.3.1/guide_legend.html
   set_advanced_theme()
 flattr_plot
 export_plot(flattr_plot, "flattr-revenue-clicks.png")
 
-monthly_advanced_plot <- ggplot(data = per_month_and_thing, aes(x = period, y = all_revenue, fill = factor(title))) +
-  geom_bar(stat = "identity") +
-  ylab("EUR received") +
-  xlab(NULL) +  # learned from http://www.talkstats.com/showthread.php/54720-ggplot2-ylab-and-xlab-hell?s=445d87d53add5909ac683c187166c9fd&p=154224&viewfull=1#post154224
-  labs(fill = "Flattr-Things") +
-  scale_y_continuous(limits = c(0,max(per_month_and_thing$all_revenue) * 1.1), expand = c(0, 0)) +
-  scale_x_date(expand = c(0, 0)) +
-  guides(fill = guide_legend(reverse = TRUE)) +  # aligns legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
+# revenue per month and thing
+monthly_advanced_plot <- ggplot(per_month_and_thing, aes(x = period, y = all_revenue, fill = factor(title)))  +
+  geom_bar(stat = "identity")  +
+  ylab("EUR received")  +
+  xlab(NULL)  +  # learned from http://www.talkstats.com/showthread.php/54720-ggplot2-ylab-and-xlab-hell?s=445d87d53add5909ac683c187166c9fd&p=154224&viewfull=1#post154224
+  labs(fill = "Flattr-Things")  +  scale_y_continuous(limits = c(0,max(per_month_and_thing$all_revenue) * 1.1), expand = c(0, 0))  +
+  scale_x_date(expand = c(0, 0))  +
+  guides(fill = guide_legend(reverse = TRUE))  +  # align legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
   set_advanced_theme()
 monthly_advanced_plot
 export_plot(monthly_advanced_plot, "flattr-revenue-months.png")
 
-monthly_simple_plot <- ggplot(data = per_month, aes(x = period, y = all_revenue)) +
-  geom_bar(stat = "identity", group = 1, fill = "#ED8C3B") + 
-  ylab("EUR received") + xlab(NULL) + 
-  stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_months/5) +  # draws a fitted trendline with confidence interval
+# total revenue per month with trend
+monthly_simple_plot <- ggplot(data = per_month, aes(x = period, y = all_revenue))  +
+  geom_bar(stat = "identity", group = 1, fill = "#ED8C3B")  +
+  ylab("EUR received")  + xlab(NULL)  +
+  stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_months/5)  +  # fit trend plus confidence interval
   scale_y_continuous(limits = c(0,max(per_month$all_revenue) * 1.1),  # omit negative y-values & limit positive y-axis to 10% overhead over maximum value
-                     expand = c(0, 0)) +
-  set_advanced_theme()
+                     expand = c(0, 0))  +  set_advanced_theme()
 monthly_simple_plot
 ggsave("flattr-revenue-months-summarized.png", monthly_simple_plot, limitsize = FALSE)
 
 
-# find out Flattr revenue per location of button
+# revenue per location of button
 
 # append domain of flattr-thing by splitting by "/" and selecting the 3rd value
 raw$domain <- sapply(strsplit(raw$url, "/"),"[",3)
@@ -160,14 +157,15 @@ per_month_and_domain <- ddply(raw, c("period", "domain"), summarize, all_clicks 
 per_month_and_domain <- per_month_and_domain[order(per_month_and_domain$domain),]
 export_csv(per_month_and_domain, "flattr-revenue-clicks-domain.csv")
 
-monthly_domain_plot <- ggplot(data = per_month_and_domain, aes(x = period, y = all_revenue, fill = factor(domain))) +
-  geom_bar(stat = "identity") +
-  ylab("EUR received") +
-  xlab(NULL) +  # learned from http://www.talkstats.com/showthread.php/54720-ggplot2-ylab-and-xlab-hell?s=445d87d53add5909ac683c187166c9fd&p=154224&viewfull=1#post154224
-  labs(fill = "Domains") +
-  scale_y_continuous(limits = c(0,max(per_month_and_domain$all_revenue) * 1.1), expand = c(0, 0), breaks = seq(0, round(max(per_month$all_revenue)*1.1), round(max(per_month$all_revenue)/10))) +
-  scale_x_date(labels = date_format("%b '%y"), breaks = date_breaks(width = "1 month"), expand = c(0, 0)) +
-  guides(fill = guide_legend(reverse = TRUE)) +  # aligns legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
+monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_revenue, fill = factor(domain)))  +
+  geom_bar(stat = "identity")  +  ylab("EUR received")  +
+  xlab(NULL)  +  # learned from http://www.talkstats.com/showthread.php/54720-ggplot2-ylab-and-xlab-hell?s=445d87d53add5909ac683c187166c9fd&p=154224&viewfull=1#post154224
+  labs(fill = "Domains")  +
+  scale_y_continuous(limits = c(0,max(per_month_and_domain$all_revenue) * 1.1), expand = c(0, 0),
+                     breaks = seq(0, round(max(per_month$all_revenue) * 1.1),
+                                  round(max(per_month$all_revenue)/10)))  +
+  scale_x_date(labels = date_format("%b '%y"), breaks = date_breaks(width = "1 month"), expand = c(0, 0))  +
+  guides(fill = guide_legend(reverse = TRUE))  +  # aligns legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
   set_advanced_theme()
 monthly_domain_plot
 export_plot(monthly_domain_plot, "flattr-revenue-months-domain.png")
