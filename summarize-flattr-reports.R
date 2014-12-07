@@ -1,5 +1,7 @@
 # READ ME: https://github.com/KonScience/Summarize-Flattr-Reports#summarize-flattr-reports
 
+Sys.setlocale("LC_ALL", "UTF-8")  # respect non-ASCII symbols like German umlauts,
+
 # load packages for data frame manipulation & diagram drawing; learned from http://stackoverflow.com/a/9341735
 # update.packages(checkBuilt = TRUE, ask = FALSE) # update all packages
 
@@ -68,6 +70,7 @@ export_csv <- function(data_source, filename){
 
 export_plot <- function(plot_name, filename){
   ggsave(plot = plot_name, filename, height = N_things / 3, width = N_months, limitsize = FALSE)
+  return(plot_name)  # display plot preview in RStudio
 }
 
 
@@ -91,7 +94,7 @@ set_advanced_theme <- function(){
   theme(axis.text = element_text(size = N_months),
         axis.text.x = element_text(angle = 30, hjust = 1),  # hjust prevents overlap with panel; learned from http://stackoverflow.com/a/1331400
         axis.title.x = element_blank(), # remove axis title, because months labels are unambiguous already
-        axis.title.y = element_text(size = N_months*1.2),
+        axis.title.y = element_text(size = N_months * 1.2),
         panel.grid.major = element_line(color = "lightgrey", size = N_months/40),
         panel.grid.minor.x = element_blank(),
         panel.background = element_rect(fill = "white"),
@@ -121,7 +124,6 @@ flattr_plot <- ggplot(data = raw, mapping = aes(x = period, y = EUR_per_click,
                expand = c(0.01, 0.01))  +  # reduce blank space around data; learned from http://stackoverflow.com/a/26558070
   guides(col = guide_legend(reverse = TRUE))  +  # aligns legend order with col(our) order in plot; learned from http://docs.ggplot2.org/0.9.3.1/guide_legend.html
   set_advanced_theme()
-flattr_plot
 export_plot(flattr_plot, "flattr-revenue-clicks.png")
 
 # revenue per month and thing
@@ -133,7 +135,6 @@ monthly_advanced_plot <- ggplot(per_month_and_thing, aes(x = period, y = all_rev
   scale_x_date(expand = c(0, 0))  +
   guides(fill = guide_legend(reverse = TRUE))  +  # align legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
   set_advanced_theme()
-monthly_advanced_plot
 export_plot(monthly_advanced_plot, "flattr-revenue-months.png")
 
 # total revenue per month with trend
@@ -167,7 +168,6 @@ monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_reve
   scale_x_date(labels = date_format("%b '%y"), breaks = date_breaks(width = "1 month"), expand = c(0, 0))  +
   guides(fill = guide_legend(reverse = TRUE))  +  # aligns legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
   set_advanced_theme()
-monthly_domain_plot
 export_plot(monthly_domain_plot, "flattr-revenue-months-domain.png")
 
 # restore original working directory; only useful if you use other scripts in parallel => comment out with # while tinkering with this script, or the files won't be exported to your Flattr folder
