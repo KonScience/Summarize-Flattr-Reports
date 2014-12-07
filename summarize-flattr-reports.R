@@ -124,7 +124,8 @@ flattr_plot <- ggplot(data = raw, mapping = aes(x = period, y = EUR_per_click,
   scale_x_date(labels = date_format("%b '%y"),  # month name abbr. & short year
                breaks = date_breaks(width = "1 month"),  # force major gridlines; learned from http://stackoverflow.com/a/9742126
                expand = c(0.01, 0.01))  +  # reduce blank space around data; learned from http://stackoverflow.com/a/26558070
-  guides(col = guide_legend(reverse = TRUE))  +  # aligns legend order with col(our) order in plot; learned from http://docs.ggplot2.org/0.9.3.1/guide_legend.html
+  guides(col = guide_legend(reverse = TRUE,    # aligns legend order with col(our) order in plot; learned from http://docs.ggplot2.org/0.9.3.1/guide_legend.html
+                            override.aes = list(size = N_months / 4)))  +
   set_advanced_theme()
 export_plot(flattr_plot, "flattr-revenue-clicks.png")
 
