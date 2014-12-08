@@ -1,7 +1,5 @@
 # READ ME: https://github.com/KonScience/Summarize-Flattr-Reports#summarize-flattr-reports
 
-Sys.setlocale("LC_ALL", "UTF-8")  # respect non-ASCII symbols like German umlauts, learned from https://stackoverflow.com/questions/8145886/change-time-locale-for-r
-
 # load packages for data frame manipulation & diagram drawing; learned from http://stackoverflow.com/a/9341735
 # update.packages(checkBuilt = TRUE, ask = FALSE) # update all packages
 
@@ -43,6 +41,7 @@ setwd(flattr_dir)
 raw <- do.call("rbind",  #  constructs and executes a call of the rbind function  => combines R objects
                lapply(Flattr_filenames, # applies function read.csv over list or vector
                       read.csv,
+                      encoding = "UTF-8",  # learned from RTFM
                       sep = ";", dec = ",",  # csv defaults: , & . but Flattr uses "European" style
                       stringsAsFactors = FALSE)) # Function structure learned from https://stat.ethz.ch/pipermail/r-help/2010-October/255593.html
 
