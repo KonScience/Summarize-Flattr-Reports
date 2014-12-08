@@ -111,7 +111,7 @@ flattr_plot <- ggplot(data = raw, mapping = aes(x = period, y = EUR_per_click,
                                                 size = raw$revenue,  #  points sized according to revenue of that thing in that month => bubble plot
                                                 colour = factor(title)))  +
   geom_jitter()  +  # same as geom_point(position = "jitter"); spreads data points randomly around true x value bit; day-exact resolution not (yet) possible
-  labs(list(title = "Flattr Revenue Development Per Click\n", x = NULL, y = "EUR per Flattr\n"))  +  # learned from http://docs.ggplot2.org/current/labs.html
+  labs(list(title = "Development of Flattr Revenue per Click\n", x = NULL, y = "EUR per Flattr\n"))  +  # learned from http://docs.ggplot2.org/current/labs.html
   labs(color = "Flattred Things", size = "EUR per Thing")  +  #  set legend titles; arguments have to be same as in ggplot() call
   stat_smooth(mapping = aes(best_thing$period, best_thing$EUR_per_click, size = best_thing$all_revenue),
               data = best_thing, method = "auto", show_guide = FALSE, size = N_months/20,
@@ -124,25 +124,25 @@ flattr_plot <- ggplot(data = raw, mapping = aes(x = period, y = EUR_per_click,
   scale_x_date(labels = date_format("%b '%y"),  # month name abbr. & short year
                breaks = date_breaks(width = "1 month"),  # force major gridlines; learned from http://stackoverflow.com/a/9742126
                expand = c(0.01, 0.01))  +  # reduce blank space around data; learned from http://stackoverflow.com/a/26558070
-  guides(col = guide_legend(reverse = TRUE,    # aligns legend order with col(our) order in plot; learned from http://docs.ggplot2.org/0.9.3.1/guide_legend.html
-                            override.aes = list(size = N_months / 4)))  +
+  guides(col = guide_legend(reverse = TRUE,  # align legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
+                            override.aes = list(size = N_months / 4)))  +  # set point size in legend idenpendently of size in plot; learned from http://docs.ggplot2.org/current/guide_legend.html
   set_advanced_theme()
 export_plot(flattr_plot, "flattr-revenue-clicks.png")
 
 # revenue per month and thing
 monthly_advanced_plot <- ggplot(per_month_and_thing, aes(x = period, y = all_revenue, fill = factor(title)))  +
   geom_bar(stat = "identity")  +
-  labs(list(title = "Flattr Revenue Development of Things\n", x = NULL, y = "EUR received\n"))  +
+  labs(list(title = "Development of Flattr Revenue by Things\n", x = NULL, y = "EUR received\n"))  +
   labs(fill = "Flattred Things")  +  scale_y_continuous(limits = c(0,max(per_month_and_thing$all_revenue) * 1.1), expand = c(0, 0))  +
   scale_x_date(expand = c(0, 0))  +
-  guides(fill = guide_legend(reverse = TRUE))  +  # align legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
+  guides(fill = guide_legend(reverse = TRUE))  + 
   set_advanced_theme()
 export_plot(monthly_advanced_plot, "flattr-revenue-months.png")
 
 # total revenue per month with trend
 monthly_simple_plot <- ggplot(data = per_month, aes(x = period, y = all_revenue))  +
   geom_bar(stat = "identity", group = 1, fill = "#ED8C3B")  +
-  labs(list(title = "Flattr Revenue Development\n", x = NULL, y = "EUR received\n"))  +
+  labs(list(title = "Development of Flattr Revenue\n", x = NULL, y = "EUR received\n"))  +
   stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_months/5)  +  # fit trend plus confidence interval
   scale_y_continuous(limits = c(0,max(per_month$all_revenue) * 1.1),  # omit negative y-values & limit positive y-axis to 10% overhead over maximum value
                      expand = c(0, 0))  +  set_advanced_theme()
@@ -162,7 +162,7 @@ export_csv(per_month_and_domain, "flattr-revenue-clicks-domain.csv")
 
 monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_revenue, fill = factor(domain)))  +
   geom_bar(stat = "identity")  +
-  labs(list(title = "Revenue Development by Button Locations\n", x = NULL, y = "EUR received\n"))  +
+  labs(list(title = "Development of Flattr Revenue by Button Locations\n", x = NULL, y = "EUR received\n"))  +
   labs(fill = "Domains")  +
   scale_y_continuous(limits = c(0,max(per_month_and_domain$all_revenue) * 1.1), expand = c(0, 0),
                      breaks = seq(0, round(max(per_month$all_revenue) * 1.1),
