@@ -1,7 +1,5 @@
 # READ ME: https://github.com/KonScience/Summarize-Flattr-Reports#summarize-flattr-reports
 
-Sys.setlocale("LC_ALL", "UTF-8")  # respect non-ASCII symbols like German umlauts, learned from https://stackoverflow.com/questions/8145886/change-time-locale-for-r
-
 # load packages for data frame manipulation & diagram drawing; learned from http://stackoverflow.com/a/9341735
 # update.packages(checkBuilt = TRUE, ask = FALSE) # update all packages
 
@@ -43,8 +41,11 @@ setwd(flattr_dir)
 raw <- do.call("rbind",  #  constructs and executes a call of the rbind function  => combines R objects
                lapply(Flattr_filenames, # applies function read.csv over list or vector
                       read.csv,
+                      encoding = "UTF-8",  # learned from RTFM, but works only on Win7
                       sep = ";", dec = ",",  # csv defaults: , & . but Flattr uses "European" style
                       stringsAsFactors = FALSE)) # Function structure learned from https://stat.ethz.ch/pipermail/r-help/2010-October/255593.html
+
+Sys.setlocale("LC_ALL", "UTF-8")  # respect non-ASCII symbols like German umlauts on Mac OSX, learned from https://stackoverflow.com/questions/8145886/
 
 # append 1st days to months & convert to date format; learned from http://stackoverflow.com/a/4594269
 raw$period <- as.Date(paste(raw$period, "-01"), format="%Y-%m -%d")
@@ -135,7 +136,7 @@ monthly_advanced_plot <- ggplot(per_month_and_thing, aes(x = period, y = all_rev
   labs(list(title = "Development of Flattr Revenue by Things\n", x = NULL, y = "EUR received\n"))  +
   labs(fill = "Flattred Things")  +  scale_y_continuous(limits = c(0,max(per_month_and_thing$all_revenue) * 1.1), expand = c(0, 0))  +
   scale_x_date(expand = c(0, 0))  +
-  guides(fill = guide_legend(reverse = TRUE))  + 
+  guides(fill = guide_legend(reverse = TRUE))  +
   set_advanced_theme()
 export_plot(monthly_advanced_plot, "flattr-revenue-months.png")
 
