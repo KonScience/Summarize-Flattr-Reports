@@ -126,8 +126,8 @@ flattr_plot <- ggplot(data = raw, mapping = aes(x = period, y = EUR_per_click,
                breaks = date_breaks(width = "1 month"),  # force major gridlines; learned from http://stackoverflow.com/a/9742126
                expand = c(0.01, 0.01))  +  # reduce blank space around data; learned from http://stackoverflow.com/a/26558070
   scale_fill_identity(aes(x = period, y = EUR_per_click, colour = factor(title), guide = "legend"))  +
-  guides(fill = guide_legend(reverse = TRUE,  # align legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
-                             override.aes = list(fill = raw$title)))  +
+  guides(col = guide_legend(reverse = TRUE,  # align legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
+                             override.aes = list(shape = 15, size = mean(raw$EUR_per_click) * 40)))  +  # replace geom_point() legend symbol with imitation of that of geom_bar(); learned from http://stackoverflow.com/a/27404156/4341322
   set_advanced_theme()
 export_plot(flattr_plot, "flattr-revenue-clicks.png")
 
