@@ -125,6 +125,7 @@ flattr_plot <- ggplot(data = raw, mapping = aes(x = period, y = EUR_per_click,
   scale_x_date(labels = date_format("%b '%y"),  # month name abbr. & short year
                breaks = date_breaks(width = "1 month"),  # force major gridlines; learned from http://stackoverflow.com/a/9742126
                expand = c(0.01, 0.01))  +  # reduce blank space around data; learned from http://stackoverflow.com/a/26558070
+  scale_fill_identity(aes(x = period, y = EUR_per_click, colour = factor(title), guide = "legend"))  +
   guides(fill = guide_legend(reverse = TRUE,  # align legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
                              override.aes = list(fill = raw$title)))  +
   set_advanced_theme()
