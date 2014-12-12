@@ -12,9 +12,9 @@ Usage Instructions
 1. Download [this script](https://github.com/KonScience/Summarize-Flattr-Reports/blob/master/summarize-flattr-reports.R) to the same or any other folder.
   1. Open the script (.r file) in RStudio.
   1. Run it with `alt+cmd+R` (Mac) or `ctrl+alt+R` (Win).
-  1. Follow its progress in RStudios' `Console` and `Plot` tabs. This may take few seconds to several minutes, depending on your number of Flattr Revenue Reports, data points in them, and the speed of your computer. Example: 20 Reports with 200 data points at [2.3 GHz](http://www.everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i5-2.3-13-early-2011-unibody-thunderbolt-specs.html): 10sec.
+  1. Follow its progress in RStudios' `Console` and `Plot` tabs. This may take few seconds to several minutes, depending on your number of Flattr Revenue Reports, data points in them, and the speed of your computer. Example: computing 200 data points spread over 20 Reports at [2.3 GHz](http://www.everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i5-2.3-13-early-2011-unibody-thunderbolt-specs.html) takes 10-20s.
   1. Find the newly generated .csv files and .png diagrams in the same folder as the .csv files you downloaded from Flattr.
-1. Please contribute ideas, criticism and code, by [opening an issue](https://github.com/KonScience/Summarize-Flattr-Reports/issues/new) or [forking](https://github.com/KonScience/Summarize-Flattr-Reports/fork) and sending a pull request. In particular, please let me know at which size of the dataset the diagrams become difficult to interpret.
+1. Please [report back](https://github.com/KonScience/Summarize-Flattr-Reports/issues/new) :-) Are the diagrams useful? If not, at which dataset size? Which other summaries, calculations or diagrams would you find useful?
 
 Ideas
 ---
