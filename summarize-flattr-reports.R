@@ -25,6 +25,7 @@ library(plyr)
 args = (commandArgs(TRUE))
 
 if (length(args) == 0) { # execute via: Rscript path/to/script.r path/to/flattr-revenue-YYYYMM.csv
+  print("Please select one of the 'flattr-revenue-....csv' files from the folder you downloaded them to.")
   first_flattr_file <- file.choose()
   flattr_dir <- dirname(first_flattr_file) # learned from http://stackoverflow.com/a/18003224
 } else {
