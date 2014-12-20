@@ -1,20 +1,6 @@
 # READ ME: https://github.com/KonScience/Summarize-Flattr-Reports#summarize-flattr-reports
 
-# load packages for data frame manipulation & diagram drawing; learned from http://stackoverflow.com/a/9341735
-# update.packages(checkBuilt = TRUE, ask = FALSE) # update all packages
-
-if (!"scales" %in% installed.packages()) {
-  install.packages("scales")
-}
-
-if (!"ggplot2" %in% installed.packages()) {
-  install.packages("ggplot2")
-}
-
-if (!"plyr" %in% installed.packages()) {
-  install.packages("plyr")
-}
-
+# load packages for data frame manipulation & diagram drawing
 # see http://www.r-bloggers.com/library-vs-require-in-r/ for require() vs. library() discussion
 library(scales)
 library(ggplot2)

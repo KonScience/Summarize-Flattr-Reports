@@ -10,8 +10,8 @@ Usage Instructions
   1. Click "Download as CSV".
   1. Save them to a folder of your choice.
 1. Download [this script](https://github.com/KonScience/Summarise-Flattr-Reports/blob/master/summarise-flattr-reports.R) to the same or any other folder.
-  1. Open the script (.r file) in RStudio.
-  1. Run it with `alt+cmd+R` (Mac) or `ctrl+alt+R` (Win).
+  1. Open RStudio, copy-paste this command `install.packages(c("plyr", "ggplot2", "scales"))` into the console (bottom left) and run it by pressing `Return/Enter`.
+  1. Open the script (.r file) in RStudio and run it with `alt + cmd + R` (Mac) or `ctrl + alt + R` (Win).
   1. Follow its progress in RStudios' `Console` and `Plot` tabs. This may take few seconds to several minutes, depending on your number of Flattr Revenue Reports, data points in them, and the speed of your computer. Example: 20 Reports with 200 data points at [2.3 GHz](http://www.everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i5-2.3-13-early-2011-unibody-thunderbolt-specs.html): 10sec.
   1. Find the newly generated .csv files and .png diagrams in the same folder as the .csv files you downloaded from Flattr.
 1. Please contribute ideas, criticism and code, by [opening an issue](https://github.com/KonScience/Summarize-Flattr-Reports/issues/new) or [forking](https://github.com/KonScience/Summarize-Flattr-Reports/fork) and sending a pull request. In particular, please let me know at which size of the dataset the diagrams become difficult to interpret.
@@ -30,7 +30,7 @@ Ideas
 - predictions (anybody knows the statistics behind this?)
 - episodes vs. other things (probably needs reg-ex on slugs)
 - webapp via Shiny that processes given data ~~for a Flattr-click~~ [Not a good idea](https://stackoverflow.com/questions/8971918/using-flattr-as-paywall)
-- install on server to auto-run & publish diagram 
+- install on server to auto-run & publish diagram
 
 Thanks and Greetings :-)
 ---
