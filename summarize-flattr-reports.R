@@ -24,7 +24,22 @@ Flattr_filenames <- list.files(flattr_dir, pattern = "flattr-revenue-[0-9]*.csv"
 original_wd <- getwd()
 setwd(flattr_dir)
 
-# read data from CSVs into data frame
+try(known_raw <- read.csv("flattr-revenue-raw.csv", encoding = "UTF-8", sep = ";", dec = ",", stringsAsFactors = FALSE)) {
+
+# check for existing raw date & merge with new
+if (dim(known_raw)[1] < length(Flattr_filenames)) {
+  known_months <- paste(paste("flattr-revenue",  # turn months into filenames
+                              sub("-", "", unique(known_raw$period)),
+                              sep = "-"),
+                        "csv", sep = ".")
+
+  new_months <- setdiff(Flattr_filenames, known_months)
+  old_months <- intersect(Flattr_filenames, known_months)
+  new_raw <- do.call("rbind", lapply(new_months, read.csv, encoding = "UTF-8", sep = ";", dec = ",", stringsAsFactors = FALSE))
+  #raw <- append(known_raw, new_raw)
+}}
+
+# read data from all CSVs into data frame
 raw <- do.call("rbind",  #  constructs and executes a call of the rbind function  => combines R objects
                lapply(Flattr_filenames, # applies function read.csv over list or vector
                       read.csv,
@@ -33,6 +48,8 @@ raw <- do.call("rbind",  #  constructs and executes a call of the rbind function
                       stringsAsFactors = FALSE)) # Function structure learned from https://stat.ethz.ch/pipermail/r-help/2010-October/255593.html
 
 Sys.setlocale("LC_ALL", "UTF-8")  # respect non-ASCII symbols like German umlauts on Mac OSX, learned from https://stackoverflow.com/questions/8145886/
+
+write.table(raw, "flattr-revenue-raw.csv", sep = ";", dec = ",")
 
 # append 1st days to months & convert to date format; learned from http://stackoverflow.com/a/4594269
 raw$period <- as.Date(paste(raw$period, "-01"), format="%Y-%m -%d")
@@ -162,4 +179,4 @@ monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_reve
 export_plot(monthly_domain_plot, "flattr-revenue-months-domain.png")
 
 # restore original working directory; only useful if you use other scripts in parallel => comment out with # while tinkering with this script, or the files won't be exported to your Flattr folder
-setwd(original_wd)
+#setwd(original_wd)
