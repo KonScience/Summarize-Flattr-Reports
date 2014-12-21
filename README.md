@@ -32,6 +32,12 @@ Ideas
 - webapp via Shiny that processes given data ~~for a Flattr-click~~ [Not a good idea](https://stackoverflow.com/questions/8971918/using-flattr-as-paywall)
 - install on server to auto-run & publish diagram
 
+
+Known Issues
+-——
+- monthly_simple_plot contains statistical elements whose computation runs into errors if the number of Flattr Revenue Reports is below 5. Other graphs may also throw warnings. To avoid this, insert `#` before any line with `stat_` to omit these computations.
+ 
+
 Thanks and Greetings :-)
 ---
 - Dr. Rick Scavetta of [Science Craft](http://www.science-craft.com/) and  [Konstanz Graduate School Chemical Biology](http://www.chembiol.uni-konstanz.de/) for the Data Analysis course

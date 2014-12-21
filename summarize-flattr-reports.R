@@ -24,8 +24,9 @@ Flattr_filenames <- list.files(flattr_dir, pattern = "flattr-revenue-[0-9]*.csv"
 original_wd <- getwd()
 setwd(flattr_dir)
 
+try(known_raw <- read.csv("flattr-revenue-raw.csv", encoding = "UTF-8", sep = ";", dec = ",", stringsAsFactors = FALSE))
+
 if ("flattr-revenue-raw.csv" %in% list.files(flattr_dir, pattern = "*.csv")) {
-  known_raw <- read.csv("flattr-revenue-raw.csv", encoding = "UTF-8", sep = ";", dec = ",", stringsAsFactors = FALSE)
   # check for existing raw date & merge with new
   if (length(unique(known_raw$period)) < length(Flattr_filenames)) {
     known_months <- paste(paste("flattr-revenue",  # turn months into filenames
@@ -33,9 +34,9 @@ if ("flattr-revenue-raw.csv" %in% list.files(flattr_dir, pattern = "*.csv")) {
                                 sep = "-"),
                           "csv", sep = ".")
 
-  new_months <- setdiff(Flattr_filenames, known_months)
-  new_raw <- do.call("rbind", lapply(new_months, read.csv, encoding = "UTF-8", sep = ";", dec = ",", stringsAsFactors = FALSE))
-  raw <- rbind(known_raw, new_raw)  # learned from http://stackoverflow.com/a/27313467
+    new_months <- setdiff(Flattr_filenames, known_months)
+    new_raw <- do.call("rbind", lapply(new_months, read.csv, encoding = "UTF-8", sep = ";", dec = ",", stringsAsFactors = FALSE))
+    raw <- rbind(known_raw, new_raw)  # learned from http://stackoverflow.com/a/27313467
   }} else {  # read data from all CSVs into data frame
     raw <- do.call("rbind",  #  constructs and executes a call of the rbind function  => combines R objects
                    lapply(Flattr_filenames, # applies function read.csv over list or vector
