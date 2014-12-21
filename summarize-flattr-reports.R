@@ -34,12 +34,9 @@ if ("flattr-revenue-raw.csv" %in% list.files(flattr_dir, pattern = "*.csv")) {
                           "csv", sep = ".")
 
   new_months <- setdiff(Flattr_filenames, known_months)
-  old_months <- intersect(Flattr_filenames, known_months)
   new_raw <- do.call("rbind", lapply(new_months, read.csv, encoding = "UTF-8", sep = ";", dec = ",", stringsAsFactors = FALSE))
-
-  for (i in 1:length(new_raw)) {
-    raw <- as.data.frame(append(known_raw, new_raw[i,]))
-  }}} else {  # read data from all CSVs into data frame
+  raw <- rbind(known_raw, new_raw)  # learned from http://stackoverflow.com/a/27313467
+  }} else {  # read data from all CSVs into data frame
     raw <- do.call("rbind",  #  constructs and executes a call of the rbind function  => combines R objects
                    lapply(Flattr_filenames, # applies function read.csv over list or vector
                           read.csv,
@@ -180,4 +177,5 @@ monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_reve
 export_plot(monthly_domain_plot, "flattr-revenue-months-domain.png")
 
 # restore original working directory; only useful if you use other scripts in parallel => comment out with # while tinkering with this script, or the files won't be exported to your Flattr folder
-#setwd(original_wd)
+setwd(original_wd)
+
