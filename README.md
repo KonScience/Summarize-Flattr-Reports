@@ -9,7 +9,7 @@ Usage Instructions
   1. Open each "Monthly revenue"-report (or start with only a few).
   1. Click "Download as CSV".
   1. Save them to a folder of your choice.
-1. Download [this script](https://github.com/KonScience/Summarize-Flattr-Reports/blob/master/summarize-flattr-reports.R) to the same or any other folder.
+1. Download [this repository](https://github.com/KonScience/Summarize-Flattr-Reports/archive/master.zip) to the same or any other folder and unpack the .zip.
   1. Open the script (.r file) in RStudio.
   1. Run it with `alt+cmd+R` (Mac) or `ctrl+alt+R` (Win).
   1. Follow its progress in RStudios' `Console` and `Plot` tabs. This may take few seconds to several minutes, depending on your number of Flattr Revenue Reports, data points in them, and the speed of your computer. Example: computing 200 data points spread over 20 Reports at [2.3 GHz](http://www.everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i5-2.3-13-early-2011-unibody-thunderbolt-specs.html) takes 10-20s.
