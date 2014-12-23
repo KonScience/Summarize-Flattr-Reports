@@ -1,20 +1,6 @@
 # READ ME: https://github.com/KonScience/Summarize-Flattr-Reports#summarize-flattr-reports
 
-# load packages for data frame manipulation & diagram drawing; learned from http://stackoverflow.com/a/9341735
-# update.packages(checkBuilt = TRUE, ask = FALSE) # update all packages
-
-if (!"scales" %in% installed.packages()) {
-  install.packages("scales")
-}
-
-if (!"ggplot2" %in% installed.packages()) {
-  install.packages("ggplot2")
-}
-
-if (!"plyr" %in% installed.packages()) {
-  install.packages("plyr")
-}
-
+# load packages for data frame manipulation & diagram drawing
 # see http://www.r-bloggers.com/library-vs-require-in-r/ for require() vs. library() discussion
 library(scales)
 library(ggplot2)
@@ -25,6 +11,7 @@ library(plyr)
 args = (commandArgs(TRUE))
 
 if (length(args) == 0) { # execute via: Rscript path/to/script.r path/to/flattr-revenue-YYYYMM.csv
+  print("Please select one of the 'flattr-revenue-....csv' files from the folder you downloaded them to.")
   first_flattr_file <- file.choose()
   flattr_dir <- dirname(first_flattr_file) # learned from http://stackoverflow.com/a/18003224
 } else {
@@ -37,15 +24,31 @@ Flattr_filenames <- list.files(flattr_dir, pattern = "flattr-revenue-[0-9]*.csv"
 original_wd <- getwd()
 setwd(flattr_dir)
 
-# read data from CSVs into data frame
-raw <- do.call("rbind",  #  constructs and executes a call of the rbind function  => combines R objects
-               lapply(Flattr_filenames, # applies function read.csv over list or vector
-                      read.csv,
-                      encoding = "UTF-8",  # learned from RTFM, but works only on Win7
-                      sep = ";", dec = ",",  # csv defaults: , & . but Flattr uses "European" style
-                      stringsAsFactors = FALSE)) # Function structure learned from https://stat.ethz.ch/pipermail/r-help/2010-October/255593.html
+try(known_raw <- read.csv("flattr-revenue-raw.csv", encoding = "UTF-8", sep = ";", dec = ",", stringsAsFactors = FALSE))
+
+if ("flattr-revenue-raw.csv" %in% list.files(flattr_dir, pattern = "*.csv")) {
+  # check for existing raw date & merge with new
+  if (length(unique(known_raw$period)) < length(Flattr_filenames)) {
+    known_months <- paste(paste("flattr-revenue",  # turn months into filenames
+                                sub("-", "", unique(known_raw$period)),
+                                sep = "-"),
+                          "csv", sep = ".")
+
+    new_months <- setdiff(Flattr_filenames, known_months)
+    new_raw <- do.call("rbind", lapply(new_months, read.csv, encoding = "UTF-8", sep = ";", dec = ",", stringsAsFactors = FALSE))
+    raw <- rbind(known_raw, new_raw)  # learned from http://stackoverflow.com/a/27313467
+  }} else {  # read data from all CSVs into data frame
+    raw <- do.call("rbind",  #  constructs and executes a call of the rbind function  => combines R objects
+                   lapply(Flattr_filenames, # applies function read.csv over list or vector
+                          read.csv,
+                          encoding = "UTF-8",  # learned from RTFM, but works only on Win7
+                          sep = ";", dec = ",",  # csv defaults: , & . but Flattr uses "European" style
+                          stringsAsFactors = FALSE)) # Function structure learned from https://stat.ethz.ch/pipermail/r-help/2010-October/255593.html
+  }
 
 Sys.setlocale("LC_ALL", "UTF-8")  # respect non-ASCII symbols like German umlauts on Mac OSX, learned from https://stackoverflow.com/questions/8145886/
+
+write.table(raw, "flattr-revenue-raw.csv", sep = ";", dec = ",")
 
 # append 1st days to months & convert to date format; learned from http://stackoverflow.com/a/4594269
 raw$period <- as.Date(paste(raw$period, "-01"), format="%Y-%m -%d")
@@ -98,7 +101,7 @@ set_advanced_theme <- function(){
         axis.title.x = element_blank(), # remove axis title, because months labels are unambiguous already
         axis.title.y = element_text(size = N_months * 1.2),
         legend.title = element_text(size = N_months / 1.4),
-        panel.grid.major = element_line(color = "lightgrey", size = N_months/40),
+        panel.grid.major = element_line(color = "lightgrey", size = N_months / 40),
         panel.grid.minor.x = element_blank(),
         panel.background = element_rect(fill = "white"),
         complete = FALSE)} # learned from http://docs.ggplot2.org/0.9.3/theme.html
@@ -115,18 +118,19 @@ flattr_plot <- ggplot(data = raw, mapping = aes(x = period, y = EUR_per_click,
   labs(list(title = "Development of Flattr Revenue per Click\n", x = NULL, y = "EUR per Flattr\n"))  +  # learned from http://docs.ggplot2.org/current/labs.html
   labs(color = "Flattred Things", size = "EUR per Thing")  +  #  set legend titles; arguments have to be same as in ggplot() call
   stat_smooth(mapping = aes(best_thing$period, best_thing$EUR_per_click, size = best_thing$all_revenue),
-              data = best_thing, method = "auto", show_guide = FALSE, size = N_months/20,
+              data = best_thing, method = "auto", show_guide = FALSE, size = N_months / 20,
               se = FALSE,  #  confidence interval indicator
               linetype = "dashed")  +   # learned from http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
   stat_smooth(aes(group = 1),  # plots trendline over all values; otherwise: one for each thing; learned from http://stackoverflow.com/a/12810890
-              method = "auto", se = FALSE, color = "darkgrey", show_guide = FALSE, size = N_months/20)  +
-  scale_y_continuous(limits = c(0,mean(raw$EUR_per_click) * 5),  # omit y-values larger than 5x arithmetic mean learned from http://stackoverflow.com/a/26558070
+              method = "auto", se = FALSE, color = "darkgrey", show_guide = FALSE, size = N_months / 20)  +
+  scale_y_continuous(limits = c(0, mean(raw$EUR_per_click) * 5),  # omit y-values larger than 5x arithmetic mean learned from http://stackoverflow.com/a/26558070
                      expand = c(0, 0))  +
   scale_x_date(labels = date_format("%b '%y"),  # month name abbr. & short year
                breaks = date_breaks(width = "1 month"),  # force major gridlines; learned from http://stackoverflow.com/a/9742126
                expand = c(0.01, 0.01))  +  # reduce blank space around data; learned from http://stackoverflow.com/a/26558070
+  scale_fill_identity(aes(x = period, y = EUR_per_click, colour = factor(title), guide = "legend"))  +
   guides(col = guide_legend(reverse = TRUE,  # align legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
-                            override.aes = list(size = N_months / 4)))  +  # set point size in legend idenpendently of size in plot; learned from http://docs.ggplot2.org/current/guide_legend.html
+                             override.aes = list(shape = 15, size = mean(raw$EUR_per_click) * 40)))  +  # replace geom_point() legend symbol with imitation of that of geom_bar(); learned from http://stackoverflow.com/a/27404156/4341322
   set_advanced_theme()
 export_plot(flattr_plot, "flattr-revenue-clicks.png")
 
@@ -134,7 +138,7 @@ export_plot(flattr_plot, "flattr-revenue-clicks.png")
 monthly_advanced_plot <- ggplot(per_month_and_thing, aes(x = period, y = all_revenue, fill = factor(title)))  +
   geom_bar(stat = "identity")  +
   labs(list(title = "Development of Flattr Revenue by Things\n", x = NULL, y = "EUR received\n"))  +
-  labs(fill = "Flattred Things")  +  scale_y_continuous(limits = c(0,max(per_month_and_thing$all_revenue) * 1.1), expand = c(0, 0))  +
+  labs(fill = "Flattred Things")  +  scale_y_continuous(limits = c(0, max(per_month_and_thing$all_revenue) * 1.1), expand = c(0, 0))  +
   scale_x_date(expand = c(0, 0))  +
   guides(fill = guide_legend(reverse = TRUE))  +
   set_advanced_theme()
@@ -144,8 +148,8 @@ export_plot(monthly_advanced_plot, "flattr-revenue-months.png")
 monthly_simple_plot <- ggplot(data = per_month, aes(x = period, y = all_revenue))  +
   geom_bar(stat = "identity", group = 1, fill = "#ED8C3B")  +
   labs(list(title = "Development of Flattr Revenue\n", x = NULL, y = "EUR received\n"))  +
-  stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_months/5)  +  # fit trend plus confidence interval
-  scale_y_continuous(limits = c(0,max(per_month$all_revenue) * 1.1),  # omit negative y-values & limit positive y-axis to 10% overhead over maximum value
+  stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_months / 5)  +  # fit trend plus confidence interval
+  scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1),  # omit negative y-values & limit positive y-axis to 10% overhead over maximum value
                      expand = c(0, 0))  +  set_advanced_theme()
 monthly_simple_plot
 ggsave("flattr-revenue-months-summarized.png", monthly_simple_plot, limitsize = FALSE)
@@ -165,9 +169,9 @@ monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_reve
   geom_bar(stat = "identity")  +
   labs(list(title = "Development of Flattr Revenue by Button Locations\n", x = NULL, y = "EUR received\n"))  +
   labs(fill = "Domains")  +
-  scale_y_continuous(limits = c(0,max(per_month_and_domain$all_revenue) * 1.1), expand = c(0, 0),
+  scale_y_continuous(limits = c(0, max(per_month_and_domain$all_revenue) * 1.1), expand = c(0, 0),
                      breaks = seq(0, round(max(per_month$all_revenue) * 1.1),
-                                  round(max(per_month$all_revenue)/10)))  +
+                                  round(max(per_month$all_revenue) / 10)))  +
   scale_x_date(labels = date_format("%b '%y"), breaks = date_breaks(width = "1 month"), expand = c(0, 0))  +
   guides(fill = guide_legend(reverse = TRUE))  +  # aligns legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
   set_advanced_theme()
@@ -175,3 +179,4 @@ export_plot(monthly_domain_plot, "flattr-revenue-months-domain.png")
 
 # restore original working directory; only useful if you use other scripts in parallel => comment out with # while tinkering with this script, or the files won't be exported to your Flattr folder
 setwd(original_wd)
+
