@@ -33,7 +33,7 @@ Ideas
 - [ ] install on server to auto-run & publish diagram
 
 Known Issues
--——
+---
 - monthly_simple_plot contains statistical elements whose computation runs into errors if the number of Flattr Revenue Reports is below 5. Other graphs may also throw warnings. To avoid this, insert `#` before any line with `stat_` to omit these computations.
 
 Thanks and Greetings :-)
