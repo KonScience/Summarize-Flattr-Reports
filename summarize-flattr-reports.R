@@ -15,7 +15,11 @@ if (length(args) == 0) { # execute via: Rscript path/to/script.r path/to/flattr-
   first_flattr_file <- file.choose()
   flattr_dir <- dirname(first_flattr_file) # learned from http://stackoverflow.com/a/18003224
 } else {
-  flattr_dir <- dirname(paste(getwd(), args[1], sep="/")) # set directory by cli argument
+  if (substring(args[1], 1, 1) == "/") {
+    flattr_dir <- dirname(paste(args[1], sep="/")) # set absolute directory by cli argument
+  } else {
+    flattr_dir <- dirname(paste(getwd(), args[1], sep="/")) # set relative directory by cli argument
+  }
 }
 
 Flattr_filenames <- list.files(flattr_dir, pattern = "flattr-revenue-[0-9]*.csv")
