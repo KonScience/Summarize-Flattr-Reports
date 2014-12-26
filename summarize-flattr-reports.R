@@ -29,7 +29,7 @@ try(known_raw <- read.csv("flattr-revenue-raw.csv", encoding = "UTF-8", sep = ";
 
 if ("flattr-revenue-raw.csv" %in% list.files(flattr_dir, pattern = "*.csv")) {
   # check for existing raw date & merge with new
-  if (length(unique(known_raw$period)) < length(Flattr_filenames)) {
+  if (length(unique(known_raw$period)) <= length(Flattr_filenames)) {
     known_months <- paste(paste("flattr-revenue",  # turn months into filenames
                                 sub("-", "", unique(known_raw$period)),
                                 sep = "-"),
