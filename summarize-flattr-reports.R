@@ -20,15 +20,16 @@ if (length(args) == 0) { # execute via: Rscript path/to/script.r path/to/flattr-
 
 Flattr_filenames <- list.files(flattr_dir, pattern = "flattr-revenue-[0-9]*.csv")
 
-# move working directory to .csv files but saves original
+# move working directory to .csv files but save original
 original_wd <- getwd()
 setwd(flattr_dir)
 
+# check for summary file of previously processed data & add new reports, instead of reading in every files again
 try(known_raw <- read.csv("flattr-revenue-raw.csv", encoding = "UTF-8", sep = ";", dec = ",", stringsAsFactors = FALSE))
 
 if ("flattr-revenue-raw.csv" %in% list.files(flattr_dir, pattern = "*.csv")) {
   # check for existing raw date & merge with new
-  if (length(unique(known_raw$period)) < length(Flattr_filenames)) {
+  if (length(unique(known_raw$period)) <= length(Flattr_filenames)) {
     known_months <- paste(paste("flattr-revenue",  # turn months into filenames
                                 sub("-", "", unique(known_raw$period)),
                                 sep = "-"),
@@ -43,11 +44,12 @@ if ("flattr-revenue-raw.csv" %in% list.files(flattr_dir, pattern = "*.csv")) {
                           read.csv,
                           encoding = "UTF-8",  # learned from RTFM, but works only on Win7
                           sep = ";", dec = ",",  # csv defaults: , & . but Flattr uses "European" style
-                          stringsAsFactors = FALSE)) # Function structure learned from https://stat.ethz.ch/pipermail/r-help/2010-October/255593.html
+                          stringsAsFactors = FALSE))  # Function structure learned from https://stat.ethz.ch/pipermail/r-help/2010-October/255593.html
   }
 
 Sys.setlocale("LC_ALL", "UTF-8")  # respect non-ASCII symbols like German umlauts on Mac OSX, learned from https://stackoverflow.com/questions/8145886/
 
+# export aggregated data for next (month's) run
 write.table(raw, "flattr-revenue-raw.csv", sep = ";", dec = ",")
 
 # append 1st days to months & convert to date format; learned from http://stackoverflow.com/a/4594269
@@ -73,7 +75,7 @@ export_csv <- function(data_source, filename){
 }
 
 export_plot <- function(plot_name, filename){
-  ggsave(plot = plot_name, filename, height = N_things / 3, width = N_months, limitsize = FALSE)
+  ggsave(plot = plot_name, filename, height = N_things / 2.5, width = N_months, limitsize = FALSE)
   return(plot_name)  # display plot preview in RStudio
 }
 
@@ -95,7 +97,7 @@ export_csv(per_month, "flattr-revenue-months.csv")
 
 # themeing function for following plots
 set_advanced_theme <- function(){
-  theme(plot.title = element_text(size = N_months * 1.4),
+  theme(plot.title = element_text(size = N_months * 1.2),
         axis.text = element_text(size = N_months),
         axis.text.x = element_text(angle = 30, hjust = 1),  # hjust prevents overlap with panel; learned from http://stackoverflow.com/a/1331400
         axis.title.x = element_blank(), # remove axis title, because months labels are unambiguous already
@@ -179,4 +181,3 @@ export_plot(monthly_domain_plot, "flattr-revenue-months-domain.png")
 
 # restore original working directory; only useful if you use other scripts in parallel => comment out with # while tinkering with this script, or the files won't be exported to your Flattr folder
 setwd(original_wd)
-
