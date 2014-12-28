@@ -29,9 +29,9 @@ original_wd <- getwd()
 setwd(flattr_dir)
 
 # check for summary file of previously processed data & add new reports, instead of reading in every files again
-try(known_raw <- read.csv("flattr-revenue-raw.csv", encoding = "UTF-8", sep = ";", dec = ",", stringsAsFactors = FALSE))
+try(known_raw <- read.csv("flattr-revenue-000000.csv", encoding = "UTF-8", sep = ";", dec = ",", stringsAsFactors = FALSE))
 
-if ("flattr-revenue-raw.csv" %in% list.files(flattr_dir, pattern = "*.csv")) {
+if ("flattr-revenue-000000.csv" %in% list.files(flattr_dir, pattern = "*.csv")) {
   # check for existing raw date & merge with new
   if (length(unique(known_raw$period)) <= length(Flattr_filenames)) {
     known_months <- paste(paste("flattr-revenue",  # turn months into filenames
@@ -54,7 +54,7 @@ if ("flattr-revenue-raw.csv" %in% list.files(flattr_dir, pattern = "*.csv")) {
 Sys.setlocale("LC_ALL", "UTF-8")  # respect non-ASCII symbols like German umlauts on Mac OSX, learned from https://stackoverflow.com/questions/8145886/
 
 # export aggregated data for next (month's) run
-write.table(raw, "flattr-revenue-raw.csv", sep = ";", dec = ",")
+write.table(raw, "flattr-revenue-000000.csv", sep = ";", dec = ",")
 
 # append 1st days to months & convert to date format; learned from http://stackoverflow.com/a/4594269
 raw$period <- as.Date(paste(raw$period, "-01"), format="%Y-%m -%d")
