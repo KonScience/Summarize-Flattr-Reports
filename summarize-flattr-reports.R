@@ -78,9 +78,12 @@ export_csv <- function(data_source, filename){
               row.names = FALSE)
 }
 
-export_plot <- function(plot_name, filename){
+export_plot <- function(plot_name, filename,
+                        display_plot = TRUE){  # parameter pre-loading / defaulting learned from hirnbloggade to allow for deactivation of plot display
   ggsave(plot = plot_name, filename, height = N_things / 2.5, width = N_months, limitsize = FALSE)
-  return(plot_name)  # display plot preview in RStudio
+  if (display_plot != FALSE){
+    return(plot_name)  # display plot preview in RStudio
+  }
 }
 
 
