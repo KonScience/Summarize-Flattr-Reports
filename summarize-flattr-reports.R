@@ -93,20 +93,6 @@ per_month <- ddply(raw, "period", summarize, all_clicks = sum(clicks), all_reven
 per_month <- per_month[order(per_month$period),]
 export_csv(per_month, "flattr-revenue-months.csv")
 
-# themeing function for following plots
-# set_advanced_theme <- function(){
-#   theme(plot.title = element_text(size = N_months * 1.2),
-#         axis.text = element_text(size = N_months),
-#         axis.text.x = element_text(angle = 30, hjust = 1),  # hjust prevents overlap with panel; learned from http://stackoverflow.com/a/1331400
-#         axis.title.x = element_blank(), # remove axis title, because months labels are unambiguous already
-#         axis.title.y = element_text(size = N_months * 1.2),
-#         legend.title = element_text(size = N_months / 1.4),
-#         panel.grid.major = element_line(color = "lightgrey", size = N_months / 40),
-#         panel.grid.minor.x = element_blank(),
-#         panel.background = element_rect(fill = "white"),
-#         complete = FALSE)} # learned from http://docs.ggplot2.org/0.9.3/theme.html
-
-
 # revenue per click and month colored by thing, with trends for everything & best thing
 best_thing <- subset(per_month_and_thing, title == per_thing[1,1])  #  reduces data frame to best thing, for later trendline
 best_thing$EUR_per_click <- best_thing$all_revenue / best_thing$all_clicks
@@ -132,18 +118,22 @@ ggsave("flattr-revenue-clicks.png", flattr_plot, limitsize = FALSE)
 monthly_advanced_plot <- ggplot(per_month_and_thing, aes(x = period, y = all_revenue, fill = factor(title)))  +
   geom_bar(stat = "identity")  +
   labs(list(title = "Development of Flattr Revenue by Things\n", x = NULL, y = "EUR received\n"))  +
-  labs(fill = "Flattred Things")  +  scale_y_continuous(limits = c(0, max(per_month_and_thing$all_revenue) * 1.1), expand = c(0, 0))  +
+  scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1), expand = c(0, 0))  +
   scale_x_date(expand = c(0, 0))  +
   theme(legend.position = "none")
+monthly_advanced_plot
 ggsave("flattr-revenue-months.png", monthly_advanced_plot, limitsize = FALSE)
 
 # total revenue per month with trend
 monthly_simple_plot <- ggplot(data = per_month, aes(x = period, y = all_revenue))  +
   geom_bar(stat = "identity", group = 1, fill = "#ED8C3B")  +
-  labs(list(title = "Development of Flattr Revenue\n", x = NULL, y = "EUR received\n"))  +
+  labs(list(title = "Development of Flattr Revenue\n",
+            y = "EUR received\n",
+            x = NULL))  +
   stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_months / 5)  +  # fit trend plus confidence interval
   scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1),  # omit negative y-values & limit positive y-axis to 10% overhead over maximum value
-                     expand = c(0, 0))
+                     expand = c(0, 0))  +
+  scale_x_date(expand = c(0, 0))
 ggsave("flattr-revenue-months-summarized.png", monthly_simple_plot, limitsize = FALSE)
 
 
@@ -159,7 +149,9 @@ export_csv(per_month_and_domain, "flattr-revenue-clicks-domain.csv")
 
 monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_revenue, fill = factor(domain)))  +
   geom_bar(stat = "identity")  +
-  labs(list(title = "Development of Flattr Revenue by Button Locations\n", x = NULL, y = "EUR received\n"))  +
+  labs(list(title = "Development of Flattr Revenue by Button Locations\n",
+            y = "EUR received\n",
+            x = NULL))  +
   labs(fill = "Domains")  +
   scale_y_continuous(limits = c(0, max(per_month_and_domain$all_revenue) * 1.1), expand = c(0, 0),
                      breaks = seq(0, round(max(per_month$all_revenue) * 1.1),
