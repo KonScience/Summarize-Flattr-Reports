@@ -78,15 +78,6 @@ export_csv <- function(data_source, filename){
               row.names = FALSE)
 }
 
-export_plot <- function(plot_name, filename,
-                        display_plot = TRUE){  # parameter pre-loading / defaulting learned from hirnbloggade to allow for deactivation of plot display
-  ggsave(plot = plot_name, filename, height = N_things / 2.5, width = N_months, limitsize = FALSE)
-  if (display_plot != FALSE){
-    return(plot_name)  # display plot preview in RStudio
-  }
-}
-
-
 # summarize & order by title to account for changes in Thing ID and URLs (due to redirection after permalink changes)
 per_thing <- ddply(.data = raw, .variables = "title", .fun = summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
 per_thing <- per_thing[order(per_thing$all_revenue, decreasing = TRUE),]
@@ -103,17 +94,17 @@ per_month <- per_month[order(per_month$period),]
 export_csv(per_month, "flattr-revenue-months.csv")
 
 # themeing function for following plots
-set_advanced_theme <- function(){
-  theme(plot.title = element_text(size = N_months * 1.2),
-        axis.text = element_text(size = N_months),
-        axis.text.x = element_text(angle = 30, hjust = 1),  # hjust prevents overlap with panel; learned from http://stackoverflow.com/a/1331400
-        axis.title.x = element_blank(), # remove axis title, because months labels are unambiguous already
-        axis.title.y = element_text(size = N_months * 1.2),
-        legend.title = element_text(size = N_months / 1.4),
-        panel.grid.major = element_line(color = "lightgrey", size = N_months / 40),
-        panel.grid.minor.x = element_blank(),
-        panel.background = element_rect(fill = "white"),
-        complete = FALSE)} # learned from http://docs.ggplot2.org/0.9.3/theme.html
+# set_advanced_theme <- function(){
+#   theme(plot.title = element_text(size = N_months * 1.2),
+#         axis.text = element_text(size = N_months),
+#         axis.text.x = element_text(angle = 30, hjust = 1),  # hjust prevents overlap with panel; learned from http://stackoverflow.com/a/1331400
+#         axis.title.x = element_blank(), # remove axis title, because months labels are unambiguous already
+#         axis.title.y = element_text(size = N_months * 1.2),
+#         legend.title = element_text(size = N_months / 1.4),
+#         panel.grid.major = element_line(color = "lightgrey", size = N_months / 40),
+#         panel.grid.minor.x = element_blank(),
+#         panel.background = element_rect(fill = "white"),
+#         complete = FALSE)} # learned from http://docs.ggplot2.org/0.9.3/theme.html
 
 
 # revenue per click and month colored by thing, with trends for everything & best thing
@@ -187,4 +178,4 @@ monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_reve
 export_plot(monthly_domain_plot, "flattr-revenue-months-domain.png")
 
 # restore original working directory; only useful if you use other scripts in parallel => comment out with # while tinkering with this script, or the files won't be exported to your Flattr folder
-setwd(original_wd)
+#setwd(original_wd)
