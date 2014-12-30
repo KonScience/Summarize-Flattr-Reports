@@ -69,29 +69,29 @@ for (i in 1:dim(raw)[1]){
 N_months <- length(Flattr_filenames)
 N_things <- length(unique(raw$title))
 
-
-# define export functions for tables & plots
-
-export_csv <- function(data_source, filename){
-  write.table(x = data_source, file = filename,
-              sep = ";", dec = ",",  # adhere to Flattr's csv style
-              row.names = FALSE)
-}
-
 # summarize & order by title to account for changes in Thing ID and URLs (due to redirection after permalink changes)
 per_thing <- ddply(.data = raw, .variables = "title", .fun = summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
 per_thing <- per_thing[order(per_thing$all_revenue, decreasing = TRUE),]
-export_csv(per_thing, "flattr-revenue-things.csv")
+write.table(x = per_thing,
+            file = "flattr-revenue-things.csv",
+            row.names = FALSE
+            )
 
 # summarize & order by month and thing to provide click-value development over time
 per_month_and_thing <- ddply(raw, c("period", "title", "EUR_per_click"), summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
 per_month_and_thing <- per_month_and_thing[order(per_month_and_thing$title),]
-export_csv(per_month_and_thing, "flattr-revenue-clicks.csv")
+write.table(per_month_and_thing,
+            "flattr-revenue-clicks.csv",
+            row.names = FALSE
+            )
 
 # summarize & export revenue per month
 per_month <- ddply(raw, "period", summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
 per_month <- per_month[order(per_month$period),]
-export_csv(per_month, "flattr-revenue-months.csv")
+write.table(per_month,
+            "flattr-revenue-months.csv",
+            row.names = FALSE
+            )
 
 # revenue per click and month colored by thing, with trends for everything & best thing
 best_thing <- subset(per_month_and_thing, title == per_thing[1,1])  #  reduces data frame to best thing, for later trendline
@@ -145,7 +145,10 @@ raw$domain <- sapply(strsplit(raw$url, "/"),"[",3)
 # summarize & order by month and domain
 per_month_and_domain <- ddply(raw, c("period", "domain"), summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
 per_month_and_domain <- per_month_and_domain[order(per_month_and_domain$domain),]
-export_csv(per_month_and_domain, "flattr-revenue-clicks-domain.csv")
+write.table(per_month_and_domain,
+            "flattr-revenue-clicks-domain.csv",
+            row.names = FALSE
+            )
 
 monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_revenue, fill = factor(domain)))  +
   geom_bar(stat = "identity")  +
