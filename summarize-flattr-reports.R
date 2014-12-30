@@ -35,14 +35,25 @@ if ("flattr-revenue-000000.csv" %in% list.files(flattr_dir, pattern = "*.csv")) 
   # check for existing raw date & merge with new
   if (length(unique(known_raw$period)) <= length(Flattr_filenames)) {
     known_months <- paste(paste("flattr-revenue",  # turn months into filenames
-                                sub("-", "", unique(known_raw$period)),
+                                sub("-",
+                                    "",
+                                    unique(known_raw$period)),
                                 sep = "-"),
-                          "csv", sep = ".")
+                          "csv",
+                          sep = ".")
 
     new_months <- setdiff(Flattr_filenames, known_months)
-    new_raw <- do.call("rbind", lapply(new_months, read.csv, encoding = "UTF-8", sep = ";", dec = ",", stringsAsFactors = FALSE))
+
+    new_raw <- do.call("rbind",
+                       lapply(new_months,
+                              read.csv,
+                              encoding = "UTF-8",
+                              sep = ";",
+                              dec = ",",
+                              stringsAsFactors = FALSE))
     raw <- rbind(known_raw, new_raw)  # learned from http://stackoverflow.com/a/27313467
-  }} else {  # read data from all CSVs into data frame
+    }
+  } else {  # read data from all CSVs into data frame
     raw <- do.call("rbind",  #  constructs and executes a call of the rbind function  => combines R objects
                    lapply(Flattr_filenames, # applies function read.csv over list or vector
                           read.csv,
@@ -70,28 +81,36 @@ N_months <- length(Flattr_filenames)
 N_things <- length(unique(raw$title))
 
 # summarize & order by title to account for changes in Thing ID and URLs (due to redirection after permalink changes)
-per_thing <- ddply(.data = raw, .variables = "title", .fun = summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
+per_thing <- ddply(.data = raw,
+                   .variables = "title",
+                   .fun = summarize,
+                   all_clicks = sum(clicks),
+                   all_revenue = sum(revenue))
 per_thing <- per_thing[order(per_thing$all_revenue, decreasing = TRUE),]
 write.table(x = per_thing,
             file = "flattr-revenue-things.csv",
-            row.names = FALSE
-            )
+            row.names = FALSE)
 
 # summarize & order by month and thing to provide click-value development over time
-per_month_and_thing <- ddply(raw, c("period", "title", "EUR_per_click"), summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
+per_month_and_thing <- ddply(raw,
+                             c("period", "title", "EUR_per_click"),
+                             summarize, all_clicks = sum(clicks),
+                             all_revenue = sum(revenue))
 per_month_and_thing <- per_month_and_thing[order(per_month_and_thing$title),]
 write.table(per_month_and_thing,
             "flattr-revenue-clicks.csv",
-            row.names = FALSE
-            )
+            row.names = FALSE)
 
 # summarize & export revenue per month
-per_month <- ddply(raw, "period", summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
+per_month <- ddply(raw,
+                   "period",
+                   summarize,
+                   all_clicks = sum(clicks),
+                   all_revenue = sum(revenue))
 per_month <- per_month[order(per_month$period),]
 write.table(per_month,
             "flattr-revenue-months.csv",
-            row.names = FALSE
-            )
+            row.names = FALSE)
 
 # revenue per click and month colored by thing, with trends for everything & best thing
 best_thing <- subset(per_month_and_thing, title == per_thing[1,1])  #  reduces data frame to best thing, for later trendline
@@ -143,28 +162,22 @@ ggsave("flattr-revenue-months-summarized.png", monthly_simple_plot, limitsize = 
 raw$domain <- sapply(strsplit(x = raw$url,
                               split = "/"),
                      "[",  # ???
-                     3  # select 3rd string = domain
-                     )
+                     3)  # select 3rd string = domain
 
 for (i in 1:length(raw$domain)) {
   raw$domain[i] <- gsub(pattern = "www.",
-                          replacement = "",
-                          x = raw$domain[i])
-}
+                        replacement = "",
+                        x = raw$domain[i])}
 
 per_month_and_domain <- ddply(raw,
                               c("period", "domain"),
                               summarize,
                               all_clicks = sum(clicks),
-                              all_revenue = sum(revenue)
-                              )
-
+                              all_revenue = sum(revenue))
 per_month_and_domain <- per_month_and_domain[order(per_month_and_domain$domain),]
-
 write.table(per_month_and_domain,
             "flattr-revenue-clicks-domain.csv",
-            row.names = FALSE
-            )
+            row.names = FALSE)
 
 monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_revenue, fill = factor(domain)))  +
   geom_bar(stat = "identity")  +
@@ -172,11 +185,11 @@ monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_reve
             y = "EUR received\n",
             x = NULL))  +
   labs(fill = "Domains")  +
-  scale_y_continuous(limits = c(0, max(per_month_and_domain$all_revenue) * 1.1), expand = c(0, 0),
-                     breaks = seq(0, round(max(per_month$all_revenue) * 1.1),
-                                  round(max(per_month$all_revenue) / 10)))  +
+  scale_y_continuous(limits = c(0, max(per_month_and_domain$all_revenue) * 1.1),
+                     expand = c(0, 0))  +
   scale_x_date(labels = date_format("%b '%y"), breaks = date_breaks(width = "3 month"), expand = c(0, 0))  +
   guides(fill = guide_legend(reverse = TRUE))  # aligns legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
+monthly_domain_plot
 ggsave("flattr-revenue-months-domain.png", monthly_domain_plot, limitsize = FALSE)
 
 # restore original working directory; only useful if you use other scripts in parallel => comment out with # while tinkering with this script, or the files won't be exported to your Flattr folder
