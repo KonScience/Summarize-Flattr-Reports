@@ -139,12 +139,28 @@ ggsave("flattr-revenue-months-summarized.png", monthly_simple_plot, limitsize = 
 
 # revenue per location of button
 
-# append domain of flattr-thing by splitting by "/" and selecting the 3rd value
-raw$domain <- sapply(strsplit(raw$url, "/"),"[",3)
-
 # summarize & order by month and domain
-per_month_and_domain <- ddply(raw, c("period", "domain"), summarize, all_clicks = sum(clicks), all_revenue = sum(revenue))
+raw$domain <- sapply(strsplit(x = raw$url,
+                              split = "/"),
+                     "[",  # ???
+                     3  # select 3rd string = domain
+                     )
+
+for (i in 1:length(raw$domain)) {
+  raw$domain[i] <- gsub(pattern = "www.",
+                          replacement = "",
+                          x = raw$domain[i])
+}
+
+per_month_and_domain <- ddply(raw,
+                              c("period", "domain"),
+                              summarize,
+                              all_clicks = sum(clicks),
+                              all_revenue = sum(revenue)
+                              )
+
 per_month_and_domain <- per_month_and_domain[order(per_month_and_domain$domain),]
+
 write.table(per_month_and_domain,
             "flattr-revenue-clicks-domain.csv",
             row.names = FALSE
