@@ -161,8 +161,8 @@ ggsave("flattr-revenue-months-summarized.png", monthly_simple_plot, limitsize = 
 # summarize & order by month and domain
 raw$domain <- sapply(strsplit(x = raw$url,
                               split = "/"),
-                     "[",  # ???
-                     3)  # select 3rd string = domain
+                     "[",  # indexing operator, see https://stackoverflow.com/questions/3703803/apply-strsplit-rowwise/3703855#comment3905951_3703855
+                     3)  # select index 3 of list = domain
 
 for (i in 1:length(raw$domain)) {
   raw$domain[i] <- gsub(pattern = "www.",
