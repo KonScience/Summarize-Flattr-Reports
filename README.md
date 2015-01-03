@@ -7,12 +7,12 @@ Usage Instructions
 1. Download and install both [RStudio](http://www.rstudio.com/products/rstudio/download/) and [R](http://cran.rstudio.com/).
 1. Go to [your Flattr Transactions](https://flattr.com/dashboard/transactions).
   1. Open each "Monthly revenue"-report (or start with only a few).
-  1. Click "Download as CSV".
+  1. Click "Download as CSV" below the table of Things.
   1. Save them to a folder of your choice.
 1. Download [this repository](https://github.com/KonScience/Summarize-Flattr-Reports/archive/master.zip) to the same or any other folder and unpack the .zip.
-  1. Open RStudio, copy-paste this command `install.packages(c("plyr", "ggplot2", "scales"))` into the console (bottom left) and run it by pressing `Return/Enter`.
-  1. Open the script (.r file) in RStudio and run it with `alt + cmd + R` (Mac) or `ctrl + alt + R` (Win).
-  1. Follow its progress in RStudios' `Console` and `Plot` tabs. This may take few seconds to several minutes, depending on your number of Flattr Revenue Reports, data points in them, and the speed of your computer. Example: 20 Reports with 200 data points at [2.3 GHz](http://www.everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i5-2.3-13-early-2011-unibody-thunderbolt-specs.html): 10sec.
+  1. Open RStudio, copy-paste this command `install.packages(c("plyr", "ggplot2", "scales"))` into the console (bottom left) and run it by pressing `Return/Enter`. Some progress of new packages being installed should be visible. If an error is shown instead, copy-paste the error message into a search engine you don't completely distrust.
+  1. Once these packages are installed, open the script (.r file) in RStudio and run it with `alt + cmd + R` (Mac) or `ctrl + alt + R` (Win).
+  1. Follow its progress in RStudios' `Console` and `Plot` tabs. This may take few seconds to several minutes, depending on your number of Flattr Revenue Reports, data points in them, and the speed of your computer. Example: 20 Reports with 200 data points at [2.3 GHz](http://www.everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i5-2.3-13-early-2011-unibody-thunderbolt-specs.html): 10-20sec.
   1. Find the newly generated .csv files and .png diagrams in the same folder as the .csv files you downloaded from Flattr.
 1. Please [report back](https://github.com/KonScience/Summarize-Flattr-Reports/issues/new) :-) Are the diagrams useful? If not, at which dataset size? Which other summaries, calculations or diagrams would you find useful?
 
