@@ -34,7 +34,11 @@ Ideas
 
 Known Issues
 ---
-- monthly_simple_plot contains statistical elements whose computation runs into errors if the number of Flattr Revenue Reports is below 5. Other graphs may also throw warnings. To avoid this, insert `#` before any line with `stat_` to omit these computations.
+- monthly_simple_plot contains statistical elements whose computation runs into errors if the number of Flattr Revenue Reports is below 5. Other graphs may also throw warnings. To avoid this while plotting such small datasets, insert `#` before any line with `stat_`. Better yet: [download more Revenue Reports, see `2.`](https://github.com/KonScience/Summarize-Flattr-Reports#usage-instructions)
+
+Contribution Guidelines
+---
+I try to follow the [gitflow branching model](http://nvie.com/posts/a-successful-git-branching-model/). Therefore, please branch off `develop` whenever possible, give the new branch a descriptive name and merge it back into `develop`. 
 
 Thanks and Greetings :-)
 ---

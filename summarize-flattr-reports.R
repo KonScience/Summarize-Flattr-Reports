@@ -22,7 +22,7 @@ if (length(args) == 0) { # execute via: Rscript path/to/script.r path/to/flattr-
   }
 }
 
-Flattr_filenames <- list.files(flattr_dir, pattern = "flattr-revenue-201[0-9]*.csv")
+Flattr_filenames <- list.files(flattr_dir, pattern = "flattr-revenue-20[0-9]{4}.csv")
 
 # move working directory to .csv files but save original
 original_wd <- getwd()
