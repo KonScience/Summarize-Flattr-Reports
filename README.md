@@ -38,7 +38,7 @@ Known Issues
 
 Contribution Guidelines
 ---
-fI try to follow the [gitflow branching model](http://nvie.com/posts/a-successful-git-branching-model/). Therefore, please branch off `develop` whenever possible, give the new branch a descriptive name and merge it back into `develop`. 
+I try to follow the [gitflow branching model](http://nvie.com/posts/a-successful-git-branching-model/). Therefore, please branch off `develop` whenever possible, give the new branch a descriptive name and merge it back into `develop`. 
 
 Thanks and Greetings :-)
 ---
