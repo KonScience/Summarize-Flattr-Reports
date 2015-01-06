@@ -179,6 +179,21 @@ write.table(per_month_and_domain,
             "flattr-revenue-clicks-domain.csv",
             row.names = FALSE)
 
+
+# revenue by location of Flattr button
+
+monthly_domain_plot <- qplot(x = period,
+                             y = all_revenue,
+                             data = per_month_and_domain,
+                             fill = domain,
+                             geom = "bar",
+                             stat = "identity",
+                             main = "Development of Flattr Revenue by Button Locations",
+                             xlab = NULL,
+                             ylab = "EUR received")
+monthly_domain_plot
+ggsave("flattr-revenue-months-domain-qplot.png", monthly_domain_plot, limitsize = FALSE)
+
 monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_revenue, fill = factor(domain)))  +
   geom_bar(stat = "identity")  +
   labs(list(title = "Development of Flattr Revenue by Button Locations\n",
@@ -190,7 +205,7 @@ monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_reve
   scale_x_date(labels = date_format("%b '%y"), breaks = date_breaks(width = "3 month"), expand = c(0, 0))  +
   guides(fill = guide_legend(reverse = TRUE))  # aligns legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
 monthly_domain_plot
-ggsave("flattr-revenue-months-domain.png", monthly_domain_plot, limitsize = FALSE)
+ggsave("flattr-revenue-months-domain-ggplot.png", monthly_domain_plot, limitsize = FALSE)
 
 # restore original working directory; only useful if you use other scripts in parallel => comment out with # while tinkering with this script, or the files won't be exported to your Flattr folder
 #setwd(original_wd)
