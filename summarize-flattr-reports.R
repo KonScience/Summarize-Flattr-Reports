@@ -146,14 +146,6 @@ monthly_advanced_plot <- qplot(x = period,
 monthly_advanced_plot
 ggsave("flattr-revenue-months-qplot.png", monthly_advanced_plot, limitsize = FALSE)
 
-monthly_advanced_plot <- ggplot(per_month_and_thing, aes(x = period, y = all_revenue, fill = factor(title)))  +
-  geom_bar(stat = "identity")  +
-  labs(list(title = "Development of Flattr Revenue by Things\n", x = NULL, y = "EUR received\n"))  +
-  scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1), expand = c(0, 0))  +
-  scale_x_date(expand = c(0, 0))  +
-  theme(legend.position = "none")
-monthly_advanced_plot
-ggsave("flattr-revenue-months-ggplot.png", monthly_advanced_plot, limitsize = FALSE)
 
 # total revenue per month with trend
 
