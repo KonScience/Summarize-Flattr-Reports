@@ -134,6 +134,18 @@ flattr_plot <- ggplot(data = raw, mapping = aes(x = period, y = EUR_per_click,
 ggsave("flattr-revenue-clicks.png", flattr_plot, limitsize = FALSE)
 
 # revenue per month and thing
+monthly_advanced_plot <- qplot(x = period,
+                               y = all_revenue,
+                               fill = title,
+                               data = per_month_and_thing,
+                               geom = "bar",
+                               stat = "identity",
+                               main = "Development of Flattr Revenue by Things",
+                               xlab = NULL,
+                               ylab = "EUR received")
+monthly_advanced_plot
+ggsave("flattr-revenue-months-qplot.png", monthly_advanced_plot, limitsize = FALSE)
+
 monthly_advanced_plot <- ggplot(per_month_and_thing, aes(x = period, y = all_revenue, fill = factor(title)))  +
   geom_bar(stat = "identity")  +
   labs(list(title = "Development of Flattr Revenue by Things\n", x = NULL, y = "EUR received\n"))  +
@@ -141,7 +153,7 @@ monthly_advanced_plot <- ggplot(per_month_and_thing, aes(x = period, y = all_rev
   scale_x_date(expand = c(0, 0))  +
   theme(legend.position = "none")
 monthly_advanced_plot
-ggsave("flattr-revenue-months.png", monthly_advanced_plot, limitsize = FALSE)
+ggsave("flattr-revenue-months-ggplot.png", monthly_advanced_plot, limitsize = FALSE)
 
 # total revenue per month with trend
 
@@ -157,22 +169,8 @@ monthly_simple_plot
 ggsave("flattr-revenue-months-summarized-qplot.png", monthly_simple_plot, limitsize = FALSE)
 
 
-monthly_simple_plot <- ggplot(data = per_month, aes(x = period, y = all_revenue))  +
-  geom_bar(stat = "identity", group = 1, fill = "#ED8C3B")  +
-  labs(list(title = "Development of Flattr Revenue\n",
-            y = "EUR received\n",
-            x = NULL))  +
-  stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_months / 5)  +  # fit trend plus confidence interval
-  scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1),  # omit negative y-values & limit positive y-axis to 10% overhead over maximum value
-                     expand = c(0, 0))  +
-  scale_x_date(expand = c(0, 0))
-monthly_simple_plot
-ggsave("flattr-revenue-months-summarized-ggplot.png", monthly_simple_plot, limitsize = FALSE)
+# revenue per location of button; summarize & order by month and domain
 
-
-# revenue per location of button
-
-# summarize & order by month and domain
 raw$domain <- sapply(strsplit(x = raw$url,
                               split = "/"),
                      "[",  # indexing operator, see https://stackoverflow.com/questions/3703803/apply-strsplit-rowwise/3703855#comment3905951_3703855
@@ -193,8 +191,6 @@ write.table(per_month_and_domain,
             "flattr-revenue-clicks-domain.csv",
             row.names = FALSE)
 
-
-# revenue by location of Flattr button
 monthly_domain_plot <- qplot(x = period,
                              y = all_revenue,
                              data = per_month_and_domain,
