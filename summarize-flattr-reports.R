@@ -8,7 +8,7 @@ library(plyr)
 
 # get all filenames of Flattr Monthly Revenue CSV; assumes that all were downloaded into same folder
 
-args = (commandArgs(TRUE))
+args = (commandArgs(trailingOnly = TRUE))
 
 if (length(args) == 0) { # execute via: Rscript path/to/script.r path/to/flattr-revenue-000000.csv
   print("Please select one of the 'flattr-revenue-....csv' files from the folder you downloaded them to.")
@@ -16,9 +16,9 @@ if (length(args) == 0) { # execute via: Rscript path/to/script.r path/to/flattr-
   flattr_dir <- dirname(first_flattr_file) # learned from http://stackoverflow.com/a/18003224
 } else {
   if (substring(args[1], 1, 1) == "/") {
-    flattr_dir <- dirname(paste(args[1], sep="/")) # set absolute directory by cli argument
+    flattr_dir <- dirname(args[1]) # set absolute directory by cli argument
   } else {
-    flattr_dir <- dirname(paste(getwd(), args[1], sep="/")) # set relative directory by cli argument
+    flattr_dir <- dirname(file.path(getwd(), args[1], fsep = .Platform$file.sep)) # set relative directory by cli argument
   }
 }
 
