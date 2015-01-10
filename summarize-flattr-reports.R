@@ -131,6 +131,7 @@ flattr_plot <- ggplot(data = raw, mapping = aes(x = period, y = EUR_per_click,
   scale_y_continuous(limits = c(0, mean(raw$EUR_per_click) * 5),  # omit y-values larger than 5x arithmetic mean learned from http://stackoverflow.com/a/26558070
                      expand = c(0, 0))  +
   theme(legend.position = "none")
+flattr_plot
 ggsave("flattr-revenue-clicks.png", flattr_plot, limitsize = FALSE)
 
 # revenue per month and thing
@@ -153,6 +154,7 @@ monthly_simple_plot <- ggplot(data = per_month, aes(x = period, y = all_revenue)
   scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1),  # omit negative y-values & limit positive y-axis to 10% overhead over maximum value
                      expand = c(0, 0))  +
   scale_x_date(expand = c(0, 0))
+monthly_simple_plot
 ggsave("flattr-revenue-months-summarized.png", monthly_simple_plot, limitsize = FALSE)
 
 
