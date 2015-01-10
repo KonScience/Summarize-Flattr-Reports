@@ -10,12 +10,12 @@ library(plyr)
 
 args = (commandArgs(trailingOnly = TRUE))
 
-if (length(args) == 0) { # execute via: Rscript path/to/script.r path/to/flattr-revenue-000000.csv
+if (length(args) == 0) { # execute via: Rscript path/to/summarize-flattr-reports.R path/to/flattr-revenue-000000.csv
   print("Please select one of the 'flattr-revenue-....csv' files from the folder you downloaded them to.")
   first_flattr_file <- file.choose()
   flattr_dir <- dirname(first_flattr_file) # learned from http://stackoverflow.com/a/18003224
 } else {
-  if ((substring(args[1], 1, 1) == "/") || (substring(args[1], 2, 2)) == ":") {
+  if ((substring(args[1], 1, 1) == "/") || (substring(args[1], 2, 2) == ":")) {
     flattr_dir <- dirname(args[1]) # set absolute directory by cli argument
   } else {
     flattr_dir <- dirname(file.path(getwd(), args[1], fsep = .Platform$file.sep)) # set relative directory by cli argument
