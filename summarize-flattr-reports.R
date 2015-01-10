@@ -41,9 +41,7 @@ if ("flattr-revenue-000000.csv" %in% list.files(flattr_dir, pattern = "*.csv")) 
                                 sep = "-"),
                           "csv",
                           sep = ".")
-
     new_months <- setdiff(Flattr_filenames, known_months)
-
     new_raw <- do.call("rbind",
                        lapply(new_months,
                               read.csv,
@@ -52,8 +50,7 @@ if ("flattr-revenue-000000.csv" %in% list.files(flattr_dir, pattern = "*.csv")) 
                               dec = ",",
                               stringsAsFactors = FALSE))
     raw <- rbind(known_raw, new_raw)  # learned from http://stackoverflow.com/a/27313467
-    }
-  } else {  # read data from all CSVs into data frame
+  }} else {  # read data from all CSVs into data frame
     raw <- do.call("rbind",  #  constructs and executes a call of the rbind function  => combines R objects
                    lapply(Flattr_filenames, # applies function read.csv over list or vector
                           read.csv,
@@ -177,10 +174,6 @@ per_month_and_domain <- ddply(raw,
                               summarize,
                               all_clicks = sum(clicks),
                               all_revenue = sum(revenue))
-per_month_and_domain <- per_month_and_domain[order(per_month_and_domain$all_revenue),]
-write.table(per_month_and_domain,
-            "flattr-revenue-clicks-domain.csv",
-            row.names = FALSE)
 
 monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_revenue, fill = factor(domain)))  +
   geom_bar(stat = "identity")  +
@@ -188,11 +181,15 @@ monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_reve
             y = "EUR received\n",
             x = NULL))  +
   labs(fill = "Domains")  +
-  scale_x_date(labels = date_format("%b '%y"), breaks = date_breaks(width = "3 month"), expand = c(0, 0))  +
-  guides(fill = guide_legend(reverse = TRUE))  +  # aligns legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
-  theme_bw()
+  scale_x_date(labels = date_format("%b '%y"), breaks = date_breaks(width = "3 month"), expand = c(0, 0))
   monthly_domain_plot
 ggsave("flattr-revenue-months-domain.png", monthly_domain_plot, limitsize = FALSE)
+
+# sort & export after plotting in order to preserve alphabatic sorting in of domains in plot
+per_month_and_domain <- per_month_and_domain[order(per_month_and_domain$all_revenue),]
+write.table(per_month_and_domain,
+            "flattr-revenue-clicks-domain.csv",
+            row.names = FALSE)
 
 # restore original working directory; only useful if you use other scripts in parallel => comment out with # while tinkering with this script, or the files won't be exported to your Flattr folder
 #setwd(original_wd)
