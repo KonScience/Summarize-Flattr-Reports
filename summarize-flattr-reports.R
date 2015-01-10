@@ -33,7 +33,7 @@ try(known_raw <- read.csv("flattr-revenue-000000.csv", encoding = "UTF-8", sep =
 
 if ("flattr-revenue-000000.csv" %in% list.files(flattr_dir, pattern = "*.csv")) {
   # check for existing raw date & merge with new
-  if (length(unique(known_raw$period)) <= length(Flattr_filenames)) {
+  if (length(unique(known_raw$period)) < length(Flattr_filenames)) {
     known_months <- paste(paste("flattr-revenue",  # turn months into filenames
                                 sub("-",
                                     "",
@@ -177,7 +177,7 @@ per_month_and_domain <- ddply(raw,
                               summarize,
                               all_clicks = sum(clicks),
                               all_revenue = sum(revenue))
-per_month_and_domain <- per_month_and_domain[order(per_month_and_domain$domain),]
+per_month_and_domain <- per_month_and_domain[order(per_month_and_domain$all_revenue),]
 write.table(per_month_and_domain,
             "flattr-revenue-clicks-domain.csv",
             row.names = FALSE)
@@ -188,8 +188,6 @@ monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_reve
             y = "EUR received\n",
             x = NULL))  +
   labs(fill = "Domains")  +
-  scale_y_continuous(limits = c(0, max(per_month_and_domain$all_revenue) * 1.1),
-                     expand = c(0, 0))  +
   scale_x_date(labels = date_format("%b '%y"), breaks = date_breaks(width = "3 month"), expand = c(0, 0))  +
   guides(fill = guide_legend(reverse = TRUE))  +  # aligns legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
   theme_bw()
