@@ -10,15 +10,15 @@ library(plyr)
 
 args <- commandArgs(trailingOnly = TRUE)
 
-if (length(args) == 0) { # execute via: Rscript path/to/script.r path/to/flattr-revenue-000000.csv
+if (length(args) == 0) { # execute via: Rscript path/to/summarize-flattr-reports.R path/to/flattr-revenue-000000.csv
   print("Please select one of the 'flattr-revenue-....csv' files from the folder you downloaded them to.")
   first_flattr_file <- file.choose()
   flattr_dir <- dirname(first_flattr_file) # learned from http://stackoverflow.com/a/18003224
 } else {
-  if (substring(args[1], 1, 1) == "/") {
-    flattr_dir <- dirname(paste(args[1], sep="/")) # set absolute directory by cli argument
+  if ((substring(args[1], 1, 1) == "/") || (substring(args[1], 2, 2) == ":")) {
+    flattr_dir <- dirname(args[1]) # set absolute directory by cli argument
   } else {
-    flattr_dir <- dirname(paste(getwd(), args[1], sep="/")) # set relative directory by cli argument
+    flattr_dir <- dirname(file.path(getwd(), args[1], fsep = .Platform$file.sep)) # set relative directory by cli argument
   }
 }
 
@@ -34,7 +34,7 @@ try(known_raw <- read.csv2("flattr-revenue-000000.csv", encoding = "UTF-8"))
 
 if ("flattr-revenue-000000.csv" %in% list.files(flattr_dir, pattern = "*.csv")) {
   # check for existing raw date & merge with new
-  if (length(unique(known_raw$period)) <= length(Flattr_filenames)) {
+  if (length(unique(known_raw$period)) < length(Flattr_filenames)) {
     known_months <- paste(paste("flattr-revenue",  # turn months into filenames
                                 sub("-",
                                     "",
@@ -42,16 +42,13 @@ if ("flattr-revenue-000000.csv" %in% list.files(flattr_dir, pattern = "*.csv")) 
                                 sep = "-"),
                           "csv",
                           sep = ".")
-
     new_months <- setdiff(Flattr_filenames, known_months)
-
     new_raw <- do.call("rbind",
                        lapply(new_months,
                               read.csv2,
                               encoding = "UTF-8"))
     raw <- rbind(known_raw, new_raw)  # learned from http://stackoverflow.com/a/27313467
-    }
-  } else {  # read data from all CSVs into data frame
+  }} else {  # read data from all CSVs into data frame
     raw <- do.call("rbind",  #  constructs and executes a call of the rbind function  => combines R objects
                    lapply(Flattr_filenames, # applies function read.csv2 over list or vector
                           read.csv2,
@@ -127,7 +124,7 @@ flattr_plot <- ggplot(data = raw, mapping = aes(x = period, y = EUR_per_click,
               method = "auto", se = FALSE, color = "darkgrey", show_guide = FALSE, size = N_months / 20)  +
   scale_y_continuous(limits = c(0, mean(raw$EUR_per_click) * 5),  # omit y-values larger than 5x arithmetic mean learned from http://stackoverflow.com/a/26558070
                      expand = c(0, 0))  +
-  theme(legend.position = "none")
+  theme(legend.position = "none", panel.background = element_rect(fill = "white"))
 flattr_plot
 ggsave("flattr-revenue-clicks.png", flattr_plot, limitsize = FALSE)
 
@@ -137,7 +134,7 @@ monthly_advanced_plot <- ggplot(per_month_and_thing, aes(x = period, y = all_rev
   labs(list(title = "Development of Flattr Revenue by Things\n", x = NULL, y = "EUR received\n"))  +
   scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1), expand = c(0, 0))  +
   scale_x_date(expand = c(0, 0))  +
-  theme(legend.position = "none")
+  theme(legend.position = "none", panel.background = element_rect(fill = "white"))
 monthly_advanced_plot
 ggsave("flattr-revenue-months.png", monthly_advanced_plot, limitsize = FALSE)
 
@@ -150,7 +147,8 @@ monthly_simple_plot <- ggplot(data = per_month, aes(x = period, y = all_revenue)
   stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_months / 5)  +  # fit trend plus confidence interval
   scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1),  # omit negative y-values & limit positive y-axis to 10% overhead over maximum value
                      expand = c(0, 0))  +
-  scale_x_date(expand = c(0, 0))
+  scale_x_date(expand = c(0, 0))  +
+  theme_bw()
 monthly_simple_plot
 ggsave("flattr-revenue-months-summarized.png", monthly_simple_plot, limitsize = FALSE)
 
@@ -173,10 +171,6 @@ per_month_and_domain <- ddply(raw,
                               summarize,
                               all_clicks = sum(clicks),
                               all_revenue = sum(revenue))
-per_month_and_domain <- per_month_and_domain[order(per_month_and_domain$domain),]
-write.csv2(per_month_and_domain,
-           "flattr-revenue-clicks-domain.csv",
-           row.names = FALSE)
 
 monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_revenue, fill = factor(domain)))  +
   geom_bar(stat = "identity")  +
@@ -184,12 +178,15 @@ monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_reve
             y = "EUR received\n",
             x = NULL))  +
   labs(fill = "Domains")  +
-  scale_y_continuous(limits = c(0, max(per_month_and_domain$all_revenue) * 1.1),
-                     expand = c(0, 0))  +
-  scale_x_date(labels = date_format("%b '%y"), breaks = date_breaks(width = "3 month"), expand = c(0, 0))  +
-  guides(fill = guide_legend(reverse = TRUE))  # aligns legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
-monthly_domain_plot
+  scale_x_date(labels = date_format("%b '%y"), breaks = date_breaks(width = "3 month"), expand = c(0, 0))
+  monthly_domain_plot
 ggsave("flattr-revenue-months-domain.png", monthly_domain_plot, limitsize = FALSE)
+
+# sort & export after plotting in order to preserve alphabatic sorting in of domains in plot
+per_month_and_domain <- per_month_and_domain[order(per_month_and_domain$all_revenue),]
+write.table(per_month_and_domain,
+            "flattr-revenue-clicks-domain.csv",
+            row.names = FALSE)
 
 # restore original working directory; only useful if you use other scripts in parallel => comment out with # while tinkering with this script, or the files won't be exported to your Flattr folder
 #setwd(original_wd)
