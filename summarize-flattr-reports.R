@@ -48,13 +48,13 @@ if ("flattr-revenue-000000.csv" %in% list.files(flattr_dir, pattern = "*.csv")) 
                               read.csv2,
                               encoding = "UTF-8"))
     raw <- rbind(known_raw, new_raw)  # learned from http://stackoverflow.com/a/27313467
-  }} else {  # read data from all CSVs into data frame
+  } else {  # read data from all CSVs into data frame
     raw <- do.call("rbind",  #  constructs and executes a call of the rbind function  => combines R objects
                    lapply(Flattr_filenames, # applies function read.csv2 over list or vector
                           read.csv2,
                           encoding = "UTF-8" # learned from RTFM, but works only on Win7
                    ))  # Function structure learned from https://stat.ethz.ch/pipermail/r-help/2010-October/255593.html
-  }
+  }} else {raw <- do.call("rbind", lapply(Flattr_filenames, read.csv2, encoding = "UTF-8"))}  # same as inner else, just to catch edge case of repetive plotting without adding new Revenue Reports
 
 Sys.setlocale("LC_ALL", "UTF-8")  # respect non-ASCII symbols like German umlauts on Mac OSX, learned from https://stackoverflow.com/questions/8145886/
 
@@ -179,9 +179,13 @@ monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_reve
   geom_bar(stat = "identity")  +
   labs(list(title = "Development of Flattr Revenue by Button Locations\n",
             y = "EUR received\n",
-            x = NULL))  +
-  labs(fill = "Domains")  +
-  scale_x_date(labels = date_format("%b '%y"), breaks = date_breaks(width = "3 month"), expand = c(0, 0))
+            x = NULL,
+            fill = "Domains"))  +
+  guides(fill = guide_legend(reverse = TRUE))  +
+  scale_x_date(expand = c(0,0))  +
+  scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1),
+                     expand = c(0, 0))  +
+  theme_bw()
   monthly_domain_plot
 ggsave("flattr-revenue-months-domain.png", monthly_domain_plot, limitsize = FALSE)
 
