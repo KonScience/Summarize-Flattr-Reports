@@ -127,9 +127,11 @@ flattr_plot <- ggplot(data = raw, mapping = aes(x = period, y = EUR_per_click,
               method = "auto", se = FALSE, color = "darkgrey", show_guide = FALSE, size = N_months / 20)  +
   scale_y_continuous(limits = c(0, mean(raw$EUR_per_click) * 5),  # omit y-values larger than 5x arithmetic mean learned from http://stackoverflow.com/a/26558070
                      expand = c(0, 0))  +
-  theme(legend.position = "none", panel.background = element_rect(fill = "white"))
+  guides(colour = guide_legend(reverse = TRUE,  # align legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
+                               override.aes = list(shape = 15, size = mean(raw$EUR_per_click) * 40)))  +  # replace geom_point() legend symbol with imitation of that of geom_bar(); learned from http://stackoverflow.com/a/27404156/4341322
+  theme_minimal(base_size = N_months)
 flattr_plot
-ggsave("flattr-revenue-clicks.png", flattr_plot, limitsize = FALSE)
+ggsave("flattr-revenue-clicks.png", flattr_plot, height = N_months/1.25, width = N_months)
 
 # revenue per month and thing
 monthly_advanced_plot <- ggplot(per_month_and_thing, aes(x = period, y = all_revenue, fill = factor(title)))  +
@@ -137,9 +139,10 @@ monthly_advanced_plot <- ggplot(per_month_and_thing, aes(x = period, y = all_rev
   labs(list(title = "Development of Flattr Revenue by Things\n", x = NULL, y = "EUR received\n"))  +
   scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1), expand = c(0, 0))  +
   scale_x_date(expand = c(0, 0))  +
-  theme(legend.position = "none", panel.background = element_rect(fill = "white"))
+  guides(fill = guide_legend(reverse = TRUE, override.aes = list(shape = 15, size = mean(raw$EUR_per_click) * 40)))  +  # replace geom_point() legend symbol with imitation of that of geom_bar(); learned from http://stackoverflow.com/a/27404156/4341322
+  theme_minimal(base_size = N_months)
 monthly_advanced_plot
-ggsave("flattr-revenue-months.png", monthly_advanced_plot, limitsize = FALSE)
+ggsave("flattr-revenue-months.png", monthly_advanced_plot, height = N_months/1.25, width = N_months)
 
 # total revenue per month with trend
 monthly_simple_plot <- ggplot(data = per_month, aes(x = period, y = all_revenue))  +
@@ -151,7 +154,7 @@ monthly_simple_plot <- ggplot(data = per_month, aes(x = period, y = all_revenue)
   scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1),  # omit negative y-values & limit positive y-axis to 10% overhead over maximum value
                      expand = c(0, 0))  +
   scale_x_date(expand = c(0, 0))  +
-  theme_bw()
+  theme_minimal(base_size = N_months)
 monthly_simple_plot
 ggsave("flattr-revenue-months-summarized.png", monthly_simple_plot, limitsize = FALSE)
 
