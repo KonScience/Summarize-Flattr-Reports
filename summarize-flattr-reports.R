@@ -147,7 +147,7 @@ ggsave("flattr-revenue-months-qplot.png", monthly_advanced_plot, limitsize = FAL
 
 # total revenue per month with trend
 monthly_simple_plot <- ggplot(data = per_month, aes(x = period, y = all_revenue, fill = "#ED8C3B"))  +
-  geom_bar(stat = "identity", group = 1, )  +
+  geom_bar(stat = "identity", group = 1, fill = "#ED8C3B")  +
   labs(list(title = "Development of Flattr Revenue",
             y = "EUR received",
             x = NULL))  +
