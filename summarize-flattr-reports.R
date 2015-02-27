@@ -117,8 +117,10 @@ flattr_plot <- ggplot(data = raw, mapping = aes(x = period, y = EUR_per_click,
                                                 size = raw$revenue,  #  points sized according to revenue of that thing in that month => bubble plot
                                                 colour = factor(title)))  +
   geom_jitter()  +  # same as geom_point(position = "jitter"); spreads data points randomly around true x value bit; day-exact resolution not (yet) possible
-  labs(list(title = "Development of Flattr Revenue per Click\n", x = NULL,
-            y = expression("EUR per Flattr (outliers omitted)")))  +  # learned from http://docs.ggplot2.org/current/labs.html
+  labs(list(title = "Development of Flattr Revenue per Click", x = NULL,
+            y = expression("EUR per Flattr (outliers omitted)"),
+            size = "Revenue from Thing"),
+            colour = "Things")  +  # learned from http://docs.ggplot2.org/current/labs.html
   stat_smooth(mapping = aes(best_thing$period, best_thing$EUR_per_click, size = best_thing$all_revenue),
               data = best_thing, method = "auto", show_guide = FALSE, size = N_months / 20,
               se = FALSE,  #  confidence interval indicator
@@ -128,19 +130,17 @@ flattr_plot <- ggplot(data = raw, mapping = aes(x = period, y = EUR_per_click,
   scale_y_continuous(limits = c(0, mean(raw$EUR_per_click) * 5),  # omit y-values larger than 5x arithmetic mean learned from http://stackoverflow.com/a/26558070
                      expand = c(0, 0))  +
   guides(colour = guide_legend(reverse = TRUE,  # align legend order with fill order of bars in plot; learned from http://www.cookbook-r.com/Graphs/Legends_%28ggplot2%29/#kinds-of-scales
-                               override.aes = list(shape = 15, size = mean(raw$EUR_per_click) * 40)))  +  # replace geom_point() legend symbol with imitation of that of geom_bar(); learned from http://stackoverflow.com/a/27404156/4341322
-  theme_minimal(base_size = N_months)
+                               override.aes = list(shape = 15, size = mean(raw$EUR_per_click) * 40)))
 flattr_plot
 ggsave("flattr-revenue-clicks.png", flattr_plot, height = N_months/1.25, width = N_months)
 
 # revenue per month and thing
 monthly_advanced_plot <- ggplot(per_month_and_thing, aes(x = period, y = all_revenue, fill = factor(title)))  +
   geom_bar(stat = "identity")  +
-  labs(list(title = "Development of Flattr Revenue by Things\n", x = NULL, y = "EUR received\n"))  +
+  labs(list(title = "Development of Flattr Revenue by Things", x = NULL, y = "EUR received", fill = "Things"))  +
   scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1), expand = c(0, 0))  +
   scale_x_date(expand = c(0, 0))  +
-  guides(fill = guide_legend(reverse = TRUE, override.aes = list(shape = 15, size = mean(raw$EUR_per_click) * 40)))  +  # replace geom_point() legend symbol with imitation of that of geom_bar(); learned from http://stackoverflow.com/a/27404156/4341322
-  theme_minimal(base_size = N_months)
+  guides(fill = guide_legend(reverse = TRUE, override.aes = list(shape = 15, size = mean(raw$EUR_per_click) * 40)))  # replace geom_point() legend symbol with imitation of that of geom_bar(); learned from http://stackoverflow.com/a/27404156/4341322
 monthly_advanced_plot
 ggsave("flattr-revenue-months.png", monthly_advanced_plot, height = N_months/1.25, width = N_months)
 
