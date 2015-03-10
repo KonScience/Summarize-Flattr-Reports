@@ -184,7 +184,7 @@ monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_reve
   scale_x_date(expand = c(0,0))  +
   scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1),
                      expand = c(0, 0))  +
-  scale_fill_brewer(palette = "Accent")
+  scale_fill_brewer(type = "qual")
   monthly_domain_plot
 ggsave("flattr-revenue-months-domain.png", monthly_domain_plot, limitsize = FALSE)
 
@@ -198,7 +198,7 @@ monthly_domain_plot_fractions <- ggplot(per_month_and_domain,
   guides(fill = guide_legend(reverse = TRUE))  +
   scale_x_date(expand = c(0,0))  +
   scale_y_continuous(expand = c(0, 0))  +
-  scale_fill_brewer(palette = "Accent")
+  scale_fill_brewer(type = "qual")
 monthly_domain_plot_fractions
 ggsave("flattr-revenue-months-domain-fractions.png", monthly_domain_plot, limitsize = FALSE)
 
