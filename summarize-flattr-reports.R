@@ -118,7 +118,7 @@ flattr_plot <- ggplot(data = raw, mapping = aes(x = period, y = EUR_per_click,
                                                 colour = factor(title)))  +
   geom_jitter()  +  # same as geom_point(position = "jitter"); spreads data points randomly around true x value bit; day-exact resolution not (yet) possible
   labs(list(title = "Development of Flattr Revenue per Click\n", x = NULL,
-            y = expression("EUR per Flattr (outliers omitted)")))  +  # learned from http://docs.ggplot2.org/current/labs.html
+            y = expression("EUR per Flattr (extremes omitted)")))  +  # learned from http://docs.ggplot2.org/current/labs.html
   stat_smooth(mapping = aes(best_thing$period, best_thing$EUR_per_click, size = best_thing$all_revenue),
               data = best_thing, method = "auto", show_guide = FALSE, size = N_months / 20,
               se = FALSE,  #  confidence interval indicator
@@ -183,9 +183,24 @@ monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_reve
   guides(fill = guide_legend(reverse = TRUE))  +
   scale_x_date(expand = c(0,0))  +
   scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1),
-                     expand = c(0, 0))
+                     expand = c(0, 0))  +
+  scale_fill_brewer(palette = "Accent")
   monthly_domain_plot
 ggsave("flattr-revenue-months-domain.png", monthly_domain_plot, limitsize = FALSE)
+
+monthly_domain_plot_fractions <- ggplot(per_month_and_domain,
+                                       aes(period, all_revenue, fill = factor(domain)))  +
+  geom_bar(position = "fill",
+           stat = "identity")  +
+  labs(list(title = "Fractions of Flattr Revenue by Button Locations\n",
+            x = NULL, y = NULL,
+            fill = "Domains"))  +
+  guides(fill = guide_legend(reverse = TRUE))  +
+  scale_x_date(expand = c(0,0))  +
+  scale_y_continuous(expand = c(0, 0))  +
+  scale_fill_brewer(palette = "Accent")
+monthly_domain_plot_fractions
+ggsave("flattr-revenue-months-domain-fractions.png", monthly_domain_plot, limitsize = FALSE)
 
 # sort & export after plotting in order to preserve alphabatic sorting in of domains in plot
 per_month_and_domain <- per_month_and_domain[order(per_month_and_domain$all_revenue),]
