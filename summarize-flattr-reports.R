@@ -2,7 +2,9 @@
 
 # load packages for data frame manipulation & diagram drawing
 # see http://www.r-bloggers.com/library-vs-require-in-r/ for require() vs. library() discussion
-library(scales, ggplot2, plyr)
+library(scales)
+library(ggplot2)
+library(plyr)
 
 # get all filenames of Flattr Monthly Revenue CSV; assumes that all were downloaded into same folder
 
