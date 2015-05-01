@@ -27,7 +27,7 @@ Flattr_filenames <- list.files(flattr_dir, pattern = "flattr-revenue-20[0-9]{4}.
 # move working directory to .csv files but save original
 original_wd <- getwd()
 setwd(flattr_dir)
-options(stringsAsFactors = FALSE, row.names = FALSE)
+options(stringsAsFactors = FALSE, row.names = FALSE, limitsize = FALSE)
 
 # check for summary file of previously processed data & add new reports, instead of reading in every files again
 try(known_raw <- read.csv2("flattr-revenue-000000.csv", encoding = "UTF-8"))
@@ -133,7 +133,7 @@ flattr_plot  +
                      expand = c(0, 0))  +
   theme(legend.position = "none")  +
   theme_classic()  +
-  ggsave("flattr-revenue-clicks.png", flattr_plot, limitsize = FALSE)
+  ggsave("flattr-revenue-clicks.png", flattr_plot)
 
 # revenue per month and thing
 monthly_advanced_plot <- ggplot(per_month_and_thing,
@@ -150,7 +150,7 @@ monthly_advanced_plot +
   scale_x_date(expand = c(0, 0))  +
   theme(legend.position = "none")  +
   theme_classic()
-ggsave("flattr-revenue-months.png", monthly_advanced_plot, limitsize = FALSE)
+ggsave("flattr-revenue-months.png", monthly_advanced_plot)
 
 # total revenue per month with trend
 monthly_simple_plot <- ggplot(data = per_month,
@@ -171,7 +171,7 @@ monthly_simple_plot +
                      expand = c(0, 0))  +
   scale_x_date(expand = c(0, 0))  +
   theme_classic()
-ggsave("flattr-revenue-months-summarized.png", monthly_simple_plot, limitsize = FALSE)
+ggsave("flattr-revenue-months-summarized.png", monthly_simple_plot)
 
 
 # revenue per location of button
@@ -209,7 +209,7 @@ monthly_domain_plot +
                      expand = c(0, 0))  +
   scale_fill_brewer(type = "qual")  +
   theme_classic()
-ggsave("flattr-revenue-months-domain.png", monthly_domain_plot, limitsize = FALSE)
+ggsave("flattr-revenue-months-domain.png", monthly_domain_plot)
 
 monthly_domain_plot_fractions <- ggplot(per_month_and_domain,
                                         aes(period,
@@ -227,10 +227,8 @@ monthly_domain_plot_fractions +
   scale_y_continuous(expand = c(0, 0))  +
   scale_fill_brewer(type = "qual")  +
   theme_classic()
-ggsave("flattr-revenue-months-domain-fractions.png", monthly_domain_plot, limitsize = FALSE)
+ggsave("flattr-revenue-months-domain-fractions.png", monthly_domain_plot)
 
 # sort & export after plotting in order to preserve alphabatic sorting in of domains in plot
 per_month_and_domain <- per_month_and_domain[order(per_month_and_domain$all_revenue),]
-write.table(per_month_and_domain,
-            "flattr-revenue-clicks-domain.csv",
-            row.names = FALSE)
+write.csv2(per_month_and_domain, "flattr-revenue-clicks-domain.csv")
