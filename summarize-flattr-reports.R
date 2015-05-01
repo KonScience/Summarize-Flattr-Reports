@@ -27,7 +27,7 @@ Flattr_filenames <- list.files(flattr_dir, pattern = "flattr-revenue-20[0-9]{4}.
 # move working directory to .csv files but save original
 original_wd <- getwd()
 setwd(flattr_dir)
-options(stringsAsFactors = FALSE)
+options(stringsAsFactors = FALSE, row.names = FALSE)
 
 # check for summary file of previously processed data & add new reports, instead of reading in every files again
 try(known_raw <- read.csv2("flattr-revenue-000000.csv", encoding = "UTF-8"))
@@ -59,7 +59,7 @@ if ("flattr-revenue-000000.csv" %in% list.files(flattr_dir, pattern = "*.csv")) 
 Sys.setlocale("LC_ALL", "UTF-8")  # respect non-ASCII symbols like German umlauts on Mac OSX, learned from https://stackoverflow.com/questions/8145886/
 
 # export aggregated data for next (month's) run
-write.csv2(raw, "flattr-revenue-000000.csv", row.names = FALSE)
+write.csv2(x = raw, file = "flattr-revenue-000000.csv")
 
 # append 1st days to months & convert to date format; learned from http://stackoverflow.com/a/4594269
 raw$period <- as.Date(paste(raw$period, "-01"), format="%Y-%m -%d")
@@ -81,10 +81,7 @@ per_thing <- ddply(.data = raw,
                    all_clicks = sum(clicks),
                    all_revenue = sum(revenue))
 per_thing <- per_thing[order(per_thing$all_revenue, decreasing = TRUE),]
-rownames(per_thing) <- NULL
-write.csv2(x = per_thing,
-           file = "flattr-revenue-things.csv",
-           row.names = FALSE)
+write.csv2(per_thing, "flattr-revenue-things.csv")
 
 # summarize & order by month and thing to provide click-value development over time
 per_month_and_thing <- ddply(raw,
@@ -93,10 +90,7 @@ per_month_and_thing <- ddply(raw,
                              all_clicks = sum(clicks),
                              all_revenue = sum(revenue))
 per_month_and_thing <- per_month_and_thing[order(per_month_and_thing$title),]
-rownames(per_month_and_thing) <- NULL
-write.csv2(per_month_and_thing,
-           "flattr-revenue-clicks.csv",
-           row.names = FALSE)
+write.csv2(per_month_and_thing, "flattr-revenue-clicks.csv")
 
 # summarize & export revenue per month
 per_month <- ddply(raw,
@@ -105,13 +99,10 @@ per_month <- ddply(raw,
                    all_clicks = sum(clicks),
                    all_revenue = sum(revenue))
 per_month <- per_month[order(per_month$period),]
-write.csv2(per_month,
-           "flattr-revenue-months.csv",
-           row.names = FALSE)
+write.csv2(per_month, "flattr-revenue-months.csv")
 
 # revenue per click and month colored by thing, with trends for everything & best thing
 best_thing <- subset(per_month_and_thing, title == per_thing[1,1])  #  reduces data frame to best thing, for later trendline
-rownames(best_thing) <- NULL
 best_thing$EUR_per_click <- best_thing$all_revenue / best_thing$all_clicks
 
 flattr_plot <- ggplot(data = raw,
@@ -240,7 +231,6 @@ ggsave("flattr-revenue-months-domain-fractions.png", monthly_domain_plot, limits
 
 # sort & export after plotting in order to preserve alphabatic sorting in of domains in plot
 per_month_and_domain <- per_month_and_domain[order(per_month_and_domain$all_revenue),]
-rownames(per_month_and_domain) <- NULL
 write.table(per_month_and_domain,
             "flattr-revenue-clicks-domain.csv",
             row.names = FALSE)
