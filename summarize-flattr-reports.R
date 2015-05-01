@@ -89,7 +89,8 @@ write.csv2(x = per_thing,
 # summarize & order by month and thing to provide click-value development over time
 per_month_and_thing <- ddply(raw,
                              c("period", "title", "EUR_per_click"),
-                             summarize, all_clicks = sum(clicks),
+                             summarize,
+                             all_clicks = sum(clicks),
                              all_revenue = sum(revenue))
 per_month_and_thing <- per_month_and_thing[order(per_month_and_thing$title),]
 rownames(per_month_and_thing) <- NULL
@@ -113,48 +114,72 @@ best_thing <- subset(per_month_and_thing, title == per_thing[1,1])  #  reduces d
 rownames(best_thing) <- NULL
 best_thing$EUR_per_click <- best_thing$all_revenue / best_thing$all_clicks
 
-flattr_plot <- ggplot(data = raw, mapping = aes(x = period, y = EUR_per_click,
-                                                size = raw$revenue,  #  points sized according to revenue of that thing in that month => bubble plot
-                                                colour = factor(title)))  +
+flattr_plot <- ggplot(data = raw,
+                      mapping = aes(x = period,
+                                    y = EUR_per_click,
+                                    size = raw$revenue,  #  points sized according to revenue of that thing in that month => bubble plot
+                                    colour = factor(title)))
+flattr_plot  +
   geom_jitter()  +  # same as geom_point(position = "jitter"); spreads data points randomly around true x value bit; day-exact resolution not (yet) possible
-  labs(list(title = "Development of Flattr Revenue per Click", x = NULL,
-            y = expression("EUR per Flattr (extremes omitted)")))  +  # learned from http://docs.ggplot2.org/current/labs.html
-  stat_smooth(mapping = aes(best_thing$period, best_thing$EUR_per_click, size = best_thing$all_revenue),
-              data = best_thing, method = "auto", show_guide = FALSE, size = N_months / 20,
+  labs(title = "Development of Flattr Revenue per Click",
+       x = NULL,
+       y = expression("EUR per Flattr (extremes omitted)"))  +  # learned from http://docs.ggplot2.org/current/labs.html
+  stat_smooth(mapping = aes(best_thing$period,
+                            best_thing$EUR_per_click,
+                            size = best_thing$all_revenue),
+              data = best_thing, method = "auto",
+              show_guide = FALSE,
+              size = N_months / 20,
               se = FALSE,  #  confidence interval indicator
               linetype = "dashed")  +   # learned from http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
   stat_smooth(aes(group = 1),  # plots trendline over all values; otherwise: one for each thing; learned from http://stackoverflow.com/a/12810890
-              method = "auto", se = FALSE, color = "darkgrey", show_guide = FALSE, size = N_months / 20)  +
+              method = "auto",
+              se = FALSE,
+              color = "darkgrey",
+              show_guide = FALSE,
+              size = N_months / 20)  +
   scale_y_continuous(limits = c(0, mean(raw$EUR_per_click) * 5),  # omit y-values larger than 5x arithmetic mean learned from http://stackoverflow.com/a/26558070
                      expand = c(0, 0))  +
+  theme(legend.position = "none")  +
   theme_classic()  +
-  theme(legend.position = "none")
-flattr_plot
-ggsave("flattr-revenue-clicks.png", flattr_plot, limitsize = FALSE)
+  ggsave("flattr-revenue-clicks.png", flattr_plot, limitsize = FALSE)
 
 # revenue per month and thing
-monthly_advanced_plot <- ggplot(per_month_and_thing, aes(x = period, y = all_revenue, fill = factor(title)))  +
+monthly_advanced_plot <- ggplot(per_month_and_thing,
+                                aes(x = period,
+                                    y = all_revenue,
+                                    fill = factor(title)))
+monthly_advanced_plot +
   geom_bar(stat = "identity")  +
-  labs(list(title = "Development of Flattr Revenue by Things", x = NULL, y = "EUR received"))  +
-  scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1), expand = c(0, 0))  +
+  labs(title = "Development of Flattr Revenue by Things",
+       x = NULL,
+       y = "EUR received")  +
+  scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1),
+                     expand = c(0, 0))  +
   scale_x_date(expand = c(0, 0))  +
-  theme_classic()  +
-  theme(legend.position = "none")
-monthly_advanced_plot
+  theme(legend.position = "none")  +
+  theme_classic()
 ggsave("flattr-revenue-months.png", monthly_advanced_plot, limitsize = FALSE)
 
 # total revenue per month with trend
-monthly_simple_plot <- ggplot(data = per_month, aes(x = period, y = all_revenue))  +
-  geom_bar(stat = "identity", group = 1, fill = "#ED8C3B")  +
-  labs(list(title = "Development of Flattr Revenue",
-            y = "EUR received",
-            x = NULL))  +
-  stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_months / 5)  +  # fit trend plus confidence interval
+monthly_simple_plot <- ggplot(data = per_month,
+                              aes(x = period,
+                                  y = all_revenue))
+monthly_simple_plot +
+  geom_bar(stat = "identity",
+           group = 1,
+           fill = "#ED8C3B")  +
+  labs(title = "Development of Flattr Revenue",
+       x = NULL,
+       y = "EUR received")  +
+  stat_smooth(data = per_month,
+              method = "auto",
+              color = "#80B04A",
+              size = N_months / 5)  +  # fit trend plus confidence interval
   scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1),  # omit negative y-values & limit positive y-axis to 10% overhead over maximum value
                      expand = c(0, 0))  +
   scale_x_date(expand = c(0, 0))  +
   theme_classic()
-monthly_simple_plot
 ggsave("flattr-revenue-months-summarized.png", monthly_simple_plot, limitsize = FALSE)
 
 
@@ -177,34 +202,40 @@ per_month_and_domain <- ddply(raw,
                               all_clicks = sum(clicks),
                               all_revenue = sum(revenue))
 
-monthly_domain_plot <- ggplot(per_month_and_domain, aes(x = period, y = all_revenue, fill = factor(domain)))  +
+monthly_domain_plot <- ggplot(per_month_and_domain,
+                              aes(x = period,
+                                  y = all_revenue,
+                                  fill = factor(domain)))
+monthly_domain_plot +
   geom_bar(stat = "identity")  +
-  labs(list(title = "Development of Flattr Revenue by Button Locations",
-            y = "EUR received",
-            x = NULL,
-            fill = "Domains"))  +
+  labs(title = "Development of Flattr Revenue by Button Locations",
+       x = NULL,
+       y = "EUR received",
+       fill = "Domains")  +
   guides(fill = guide_legend(reverse = TRUE))  +
   scale_x_date(expand = c(0,0))  +
   scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1),
                      expand = c(0, 0))  +
   scale_fill_brewer(type = "qual")  +
   theme_classic()
-  monthly_domain_plot
 ggsave("flattr-revenue-months-domain.png", monthly_domain_plot, limitsize = FALSE)
 
 monthly_domain_plot_fractions <- ggplot(per_month_and_domain,
-                                       aes(period, all_revenue, fill = factor(domain)))  +
+                                        aes(period,
+                                            all_revenue,
+                                            fill = factor(domain)))
+monthly_domain_plot_fractions +
   geom_bar(position = "fill",
            stat = "identity")  +
-  labs(list(title = "Fractions of Flattr Revenue by Button Locations",
-            x = NULL, y = NULL,
-            fill = "Domains"))  +
+  labs(title = "Fractions of Flattr Revenue by Button Locations",
+       x = NULL,
+       y = NULL,
+       fill = "Domains")  +
   guides(fill = guide_legend(reverse = TRUE))  +
   scale_x_date(expand = c(0,0))  +
   scale_y_continuous(expand = c(0, 0))  +
   scale_fill_brewer(type = "qual")  +
   theme_classic()
-monthly_domain_plot_fractions
 ggsave("flattr-revenue-months-domain-fractions.png", monthly_domain_plot, limitsize = FALSE)
 
 # sort & export after plotting in order to preserve alphabatic sorting in of domains in plot
