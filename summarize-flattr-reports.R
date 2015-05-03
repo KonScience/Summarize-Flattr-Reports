@@ -107,7 +107,7 @@ flattr_plot <- ggplot(data = raw,
               data = best_thing,
               method = "auto",
               show_guide = FALSE,
-              size = N_months / 20,
+              size = N_things / N_months,
               se = FALSE,  #  confidence interval indicator
               linetype = "dashed")  +   # learned from http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
   stat_smooth(aes(group = 1),  # plots trendline over all values; otherwise: one for each thing; learned from http://stackoverflow.com/a/12810890
@@ -138,10 +138,10 @@ ggsave("flattr-revenue-months.png", height = N_things/3, width = N_months/1.5)
 monthly_simple_plot <- ggplot(per_month, aes(x = period, y = all_revenue))  +
   geom_bar(stat = "identity", group = 1, fill = "#ED8C3B")  +
   labs(title = "Development of Flattr Revenue", x = NULL, y = "EUR received")  +
-  stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_months/5)  +  # fit trend plus confidence interval
+  stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_things / N_months)  +  # fit trend plus confidence interval
   scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1), expand = c(0, 0))  +
   scale_x_date(expand = c(0, 0))  +
-  theme_classic(base_size = (N_things + N_months) / 10)
+  theme_classic(base_size = sqrt(N_things + N_months))
 monthly_simple_plot
 ggsave("flattr-revenue-months-summarized.png")
 
@@ -170,9 +170,9 @@ monthly_domain_plot <- ggplot(per_month_and_domain, aes(period, all_revenue, fil
   labs(title = "Development of Flattr Revenue by Button Locations", x = NULL, y = "EUR received", fill = "Domains")  +
   guides(fill = guide_legend(reverse = TRUE))  +
   scale_x_date(expand = c(0,0))  +
-  scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1), expand = c(0, 0))  +
+  scale_y_continuous(limits = c(0, max(per_month$all_revenue)), expand = c(0, 0))  +
   scale_fill_brewer(type = "qual")  +
-  theme_classic(base_size = (N_things + N_months) / 10)
+  theme_classic(base_size = sqrt(N_things + N_months))
 monthly_domain_plot
 ggsave("flattr-revenue-months-domain.png")
 
@@ -184,7 +184,7 @@ monthly_domain_plot_fractions <- ggplot(per_month_and_domain, aes(period, all_re
   scale_x_date(expand = c(0,0))  +
   scale_y_continuous(expand = c(0, 0))  +
   scale_fill_brewer(type = "qual")  +
-  theme_classic(base_size = (N_things + N_months) / 10)
+  theme_classic(base_size = sqrt(N_things + N_months))
 monthly_domain_plot_fractions
 ggsave("flattr-revenue-months-domain-fractions.png")
 
