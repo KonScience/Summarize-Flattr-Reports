@@ -119,10 +119,11 @@ flattr_plot <- ggplot(data = raw,
               color = "darkgrey",
               show_guide = FALSE,
               size = N_months / 20)  +
+  scale_x_date(breaks = "3 month", labels = date_format("%Y-%b"), expand = c(0, 0))  +
   scale_y_continuous(limits = c(0, mean(raw$EUR_per_click) * 5),  # omit extreme y-values; learned from http://stackoverflow.com/a/26558070
                      expand = c(0, 0))  +
-  theme_classic()  +
-  theme(legend.position = "none")
+  theme_classic(base_size = sqrt(N_months + N_things))  +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 15))
 flattr_plot
 ggsave("flattr-revenue-clicks.png")
 
@@ -131,7 +132,7 @@ monthly_advanced_plot <- ggplot(per_month_and_thing, aes(period, all_revenue, fi
   geom_bar(stat = "identity")  +
   labs(title = "Development of Flattr Revenue by Things", x = NULL, y = "EUR received", fill = "Thing")  +
   scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1), expand = c(0, 0))  +
-  scale_x_date(expand = c(0, 0))  +
+  scale_x_date(expand = c(0, 0), breaks = "3 month", labels = date_format("%Y-%b"))  +
   guides(fill = guide_legend(reverse = TRUE))  +
   theme_classic(base_size = (N_things + N_months) / 5)
 monthly_advanced_plot
@@ -143,8 +144,9 @@ monthly_simple_plot <- ggplot(per_month, aes(x = period, y = all_revenue))  +
   labs(title = "Development of Flattr Revenue", x = NULL, y = "EUR received")  +
   stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_things / N_months)  +  # fit trend plus confidence interval
   scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1), expand = c(0, 0))  +
-  scale_x_date(expand = c(0, 0))  +
-  theme_classic(base_size = sqrt(N_things + N_months))
+  scale_x_date(expand = c(0, 0), breaks = "3 month", labels = date_format("%Y-%b"))  +
+  theme_classic(base_size = sqrt(N_things + N_months))  +
+  theme(axis.text.x = element_text(angle = 15))
 monthly_simple_plot
 ggsave("flattr-revenue-months-summarized.png")
 
@@ -172,10 +174,11 @@ monthly_domain_plot <- ggplot(per_month_and_domain, aes(period, all_revenue, fil
   geom_bar(stat = "identity")  +
   labs(title = "Development of Flattr Revenue by Button Locations", x = NULL, y = "EUR received", fill = "Domains")  +
   guides(fill = guide_legend(reverse = TRUE, keywidth = 0.5, keyheight = 0.5))  +
-  scale_x_date(expand = c(0,0))  +
+  scale_x_date(expand = c(0,0), breaks = "3 month", labels = date_format("%Y-%b"))  +
   scale_y_continuous(limits = c(0, max(per_month$all_revenue)), expand = c(0, 0))  +
   scale_fill_brewer(type = "qual")  +
-  theme_classic(base_size = sqrt(N_things + N_months))
+  theme_classic(base_size = sqrt(N_things + N_months))  +
+  theme(axis.text.x = element_text(angle = 30))
 monthly_domain_plot
 ggsave("flattr-revenue-months-domain.png")
 
@@ -185,7 +188,7 @@ monthly_domain_plot_fractions <- ggplot(per_month_and_domain, aes(period, all_re
   labs(title = "Fractions of Flattr Revenue by Button Locations",
        x = NULL, y = NULL, fill = "Domains")  +
   guides(fill = guide_legend(reverse = TRUE, keywidth = 0.5, keyheight = 0.5))  +
-  scale_x_date(expand = c(0,0), breaks = "3 month")  +
+  scale_x_date(expand = c(0,0), breaks = "1 month", labels = date_format("%Y-%b"))  +
   scale_y_continuous(expand = c(0, 0))  +
   scale_fill_brewer(type = "qual")  +
   theme_classic(base_size = sqrt(N_things + N_months))
