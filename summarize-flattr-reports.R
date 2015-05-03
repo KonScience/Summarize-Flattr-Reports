@@ -139,14 +139,14 @@ monthly_advanced_plot
 ggsave("flattr-revenue-months.png", height = N_things/3, width = N_months/1.5)
 
 # total revenue per month with trend
-monthly_simple_plot <- ggplot(per_month, aes(x = period, y = all_revenue))  +
-  geom_bar(stat = "identity", group = 1, fill = "#ED8C3B")  +
+monthly_simple_plot <- ggplot(per_month, aes(x = period, y = all_revenue, size = per_month$all_revenue))  +
+  geom_point(colour = "#ED8C3B")  +
   labs(title = "Development of Flattr Revenue", x = NULL, y = "EUR received")  +
   stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_things / N_months)  +  # fit trend plus confidence interval
   scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1), expand = c(0, 0))  +
   scale_x_date(expand = c(0, 0), breaks = "3 month", labels = date_format("%Y-%b"))  +
   theme_classic(base_size = sqrt(N_things + N_months))  +
-  theme(axis.text.x = element_text(angle = 15))
+  theme(axis.text.x = element_text(angle = 15), legend.position = "none")
 monthly_simple_plot
 ggsave("flattr-revenue-months-summarized.png")
 
