@@ -3,7 +3,7 @@
 rm(list = ls())  # clean workspace
 original_wd <- getwd()  # save current working directory
 Sys.setlocale("LC_ALL", "UTF-8")  # respect non-ASCII symbols like German umlauts on Mac OSX, learned from https://stackoverflow.com/questions/8145886/
-options(stringsAsFactors = FALSE, row.names = FALSE, limitsize = FALSE) # set global options
+options(stringsAsFactors = FALSE, limitsize = FALSE) # set global options; row.names = FALSE has no effect, though
 
 # see http://www.r-bloggers.com/library-vs-require-in-r/ for require() vs. library() discussion
 library(scales)
@@ -49,7 +49,7 @@ if ("flattr-revenue-000000.csv" %in% list.files(flattr_dir, pattern = "*.csv")) 
                           encoding = "UTF-8" # learned from RTFM, but works only on Win7
                    ))  # Function structure learned from https://stat.ethz.ch/pipermail/r-help/2010-October/255593.html
   }} else {raw <- do.call("rbind", lapply(Flattr_filenames, read.csv2, encoding = "UTF-8"))}  # same as inner else, just to catch edge case of repetive plotting without adding new Revenue Reports
-write.csv2(x = raw, file = "flattr-revenue-000000.csv")
+write.csv2(x = raw, file = "flattr-revenue-000000.csv", row.names = FALSE)
 
 # append 1st days to months & convert to date format; learned from http://stackoverflow.com/a/4594269
 raw$period <- as.Date(paste(raw$period, "-01"), format="%Y-%m -%d")
@@ -69,7 +69,7 @@ per_thing <- ddply(.data = raw,
                    all_clicks = sum(clicks),
                    all_revenue = sum(revenue))
 per_thing <- per_thing[order(per_thing$all_revenue, decreasing = TRUE),]
-write.csv2(per_thing, "flattr-revenue-things.csv")
+write.csv2(per_thing, "flattr-revenue-things.csv", row.names = FALSE)
 
 # summarize & order by month and thing to provide click-value development over time
 per_month_and_thing <- ddply(raw,
@@ -78,7 +78,7 @@ per_month_and_thing <- ddply(raw,
                              all_clicks = sum(clicks),
                              all_revenue = sum(revenue))
 per_month_and_thing <- per_month_and_thing[order(per_month_and_thing$title),]
-write.csv2(per_month_and_thing, "flattr-revenue-clicks.csv")
+write.csv2(per_month_and_thing, "flattr-revenue-clicks.csv", row.names = FALSE)
 
 # summarize & export revenue per month
 per_month <- ddply(raw,
@@ -87,7 +87,7 @@ per_month <- ddply(raw,
                    all_clicks = sum(clicks),
                    all_revenue = sum(revenue))
 per_month <- per_month[order(per_month$period),]
-write.csv2(per_month, "flattr-revenue-months.csv")
+write.csv2(per_month, "flattr-revenue-months.csv", row.names = FALSE)
 
 # revenue per click and month colored by thing, with trends for everything & best thing
 best_thing <- subset(per_month_and_thing, title == per_thing[1,1])  #  reduces data frame to best thing, for later trendline
@@ -197,4 +197,4 @@ ggsave("flattr-revenue-months-domain-fractions.png")
 
 # sort & export after plotting in order to preserve alphabatic sorting in of domains in plot
 per_month_and_domain <- per_month_and_domain[order(per_month_and_domain$all_revenue),]
-write.csv2(per_month_and_domain, "flattr-revenue-clicks-domain.csv")
+write.csv2(per_month_and_domain, "flattr-revenue-clicks-domain.csv", row.names = FALSE)
