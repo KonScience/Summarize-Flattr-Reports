@@ -89,7 +89,7 @@ per_month <- ddply(raw,
 per_month <- per_month[order(per_month$period),]
 write.csv2(per_month, "flattr-revenue-months.csv", row.names = FALSE)
 
-# revenue per click and month colored by thing, with trends for everything & best thing
+# revenue per click and month coloured by thing, with trends for everything & best thing
 best_thing <- subset(per_month_and_thing, title == per_thing[1,1])  #  reduces data frame to best thing, for later trendline
 best_thing$EUR_per_click <- best_thing$all_revenue / best_thing$all_clicks
 
@@ -97,7 +97,7 @@ flattr_plot <- ggplot(data = raw,
                       mapping = aes(x = period,
                                     y = EUR_per_click,
                                     size = raw$revenue,  #  points sized according to revenue of that thing in that month => bubble plot
-                                    colour = factor(title)))
+                                    col = factor(title)))
 flattr_plot  +
   geom_jitter()  +  # same as geom_point(position = "jitter"); spreads data points randomly around true x value bit; day-exact resolution not (yet) possible
   stat_smooth(mapping = aes(x = best_thing$period,
@@ -112,7 +112,7 @@ flattr_plot  +
   stat_smooth(aes(group = 1),  # plots trendline over all values; otherwise: one for each thing; learned from http://stackoverflow.com/a/12810890
               method = "auto",
               se = FALSE,
-              color = "darkgrey",
+              col = "darkgrey",
               show_guide = FALSE,
               size = N_months / 20)  +
   scale_x_date(breaks = "3 month", labels = date_format("%Y-%b"), expand = c(0, 0))  +
@@ -121,7 +121,7 @@ flattr_plot  +
   labs(title = "Development of Flattr Revenue per Click",  # learned from http://docs.ggplot2.org/current/labs.html
        x = NULL,
        y = expression("EUR per Flattr (extremes omitted)"),
-       colour = "Thing",
+       col = "Thing",
        size = "Total revenue of Thing")  +
   theme_classic(base_size = sqrt(N_months + N_things))  +
   theme(legend.position = "none", axis.text.x = element_text(angle = 15))
@@ -141,8 +141,8 @@ ggsave("flattr-revenue-months.png", height = N_things/3, width = N_months/1.5)
 # total revenue per month with trend
 monthly_simple_plot <- ggplot(per_month, aes(x = period, y = all_revenue, size = per_month$all_revenue))
 monthly_simple_plot +
-  geom_point(colour = "#ED8C3B")  +
-  stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_things / N_months)  +  # fit trend plus confidence interval
+  geom_point(col = "#ED8C3B")  +
+  stat_smooth(data = per_month, method = "auto", col = "#80B04A", size = N_things / N_months)  +  # fit trend plus confidence interval
   scale_x_date(expand = c(0, 0), breaks = "3 month", labels = date_format("%Y-%b"))  +
   scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1), expand = c(0, 0))  +
   labs(title = "Development of Flattr Revenue", x = NULL, y = "EUR received")  +
