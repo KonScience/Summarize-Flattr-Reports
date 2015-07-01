@@ -6,9 +6,9 @@ Sys.setlocale("LC_ALL", "UTF-8")  # respect non-ASCII symbols like German umlaut
 options(stringsAsFactors = FALSE, limitsize = FALSE) # set global options; row.names = FALSE has no effect, though
 
 # see http://www.r-bloggers.com/library-vs-require-in-r/ for require() vs. library() discussion
-library(scales)
 library(ggplot2)
 library(plyr)
+library(scales)
 
 # get all filenames of Flattr Monthly Revenue CSV; assumes that all were downloaded into same folder
 args <- commandArgs(trailingOnly = TRUE)
