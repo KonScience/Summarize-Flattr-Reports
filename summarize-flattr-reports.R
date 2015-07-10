@@ -26,6 +26,7 @@ setwd(flattr_dir)
 
 # use summary file if available & create if not, instead of reading files individually
 try(known_raw <- read.csv2("flattr-revenue-000000.csv", encoding = "UTF-8"))
+known_raw$X <- NULL
 if ("flattr-revenue-000000.csv" %in% list.files(flattr_dir, pattern = "*.csv")) {
   # check for existing raw date & merge with new
   if (length(unique(known_raw$period)) < length(Flattr_filenames)) {
