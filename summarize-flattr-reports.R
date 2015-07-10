@@ -190,7 +190,7 @@ monthly_domain_plot_fractions +
   scale_x_date(expand = c(0,0), breaks = "1 month", labels = date_format("%Y-%b"))  +
   scale_y_continuous(expand = c(0, 0))  +
   scale_fill_brewer(type = "qual")  +
-  guides(fill = guide_legend(reverse = TRUE, keywidth = 0.5, keyheight = 0.5))  +
+  guides(fill = guide_legend(reverse = TRUE, keywidth = 0.75, keyheight = 0.75))  +
   labs(title = "Fractions of Flattr Revenue by Button Locations",
        x = NULL, y = NULL, fill = "Domains")  +
   theme_classic(base_size = sqrt(N_things + N_months))
