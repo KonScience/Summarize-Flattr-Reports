@@ -6,9 +6,9 @@ Sys.setlocale("LC_ALL", "UTF-8")  # respect non-ASCII symbols like German umlaut
 options(stringsAsFactors = FALSE, limitsize = FALSE) # set global options; row.names = FALSE has no effect, though
 
 # see http://www.r-bloggers.com/library-vs-require-in-r/ for require() vs. library() discussion
-library(scales)
 library(ggplot2)
 library(plyr)
+library(scales)
 
 # get all filenames of Flattr Monthly Revenue CSV; assumes that all were downloaded into same folder
 args <- commandArgs(trailingOnly = TRUE)
@@ -26,6 +26,7 @@ setwd(flattr_dir)
 
 # use summary file if available & create if not, instead of reading files individually
 try(known_raw <- read.csv2("flattr-revenue-000000.csv", encoding = "UTF-8"))
+known_raw$X <- NULL
 if ("flattr-revenue-000000.csv" %in% list.files(flattr_dir, pattern = "*.csv")) {
   # check for existing raw date & merge with new
   if (length(unique(known_raw$period)) < length(Flattr_filenames)) {
@@ -189,7 +190,7 @@ monthly_domain_plot_fractions +
   scale_x_date(expand = c(0,0), breaks = "1 month", labels = date_format("%Y-%b"))  +
   scale_y_continuous(expand = c(0, 0))  +
   scale_fill_brewer(type = "qual")  +
-  guides(fill = guide_legend(reverse = TRUE, keywidth = 0.5, keyheight = 0.5))  +
+  guides(fill = guide_legend(reverse = TRUE, keywidth = 0.75, keyheight = 0.75))  +
   labs(title = "Fractions of Flattr Revenue by Button Locations",
        x = NULL, y = NULL, fill = "Domains")  +
   theme_classic(base_size = sqrt(N_things + N_months))
