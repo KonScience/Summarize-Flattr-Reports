@@ -66,6 +66,16 @@ N_things <- length(unique(raw$title))
 # get data string for inclusion in exported filename
 date <- format(Sys.time(), "%Y-%m-%d")
 
+export_csv <- function(table, filename){
+  write.csv2(table,
+             paste(filename,
+                   date,
+                   ".csv",
+                   sep = "-"),
+             row.names = FALSE
+             )
+}
+
 # summarize & order by title to account for changes in Thing ID and URLs (due to redirection after permalink changes)
 per_thing <- ddply(.data = raw,
                    .variables = "title",
@@ -73,7 +83,7 @@ per_thing <- ddply(.data = raw,
                    all_clicks = sum(clicks),
                    all_revenue = sum(revenue))
 per_thing <- per_thing[order(per_thing$all_revenue, decreasing = TRUE),]
-write.csv2(per_thing, paste("flattr-revenue-things", date, ".csv"), row.names = FALSE)
+export_csv(per_thing, "flattr-revenue-things")
 
 # summarize & order by month and thing to provide click-value development over time
 per_month_and_thing <- ddply(raw,
@@ -82,7 +92,7 @@ per_month_and_thing <- ddply(raw,
                              all_clicks = sum(clicks),
                              all_revenue = sum(revenue))
 per_month_and_thing <- per_month_and_thing[order(per_month_and_thing$title),]
-write.csv2(per_month_and_thing, paste("flattr-revenue-clicks", date, ".csv"), row.names = FALSE)
+export_csv(per_month_and_thing, "flattr-revenue-clicks")
 
 # summarize & export revenue per month
 per_month <- ddply(raw,
@@ -91,7 +101,7 @@ per_month <- ddply(raw,
                    all_clicks = sum(clicks),
                    all_revenue = sum(revenue))
 per_month <- per_month[order(per_month$period),]
-write.csv2(per_month, paste("flattr-revenue-months", date, ".csv"), row.names = FALSE)
+export_csv(per_month, "flattr-revenue-months")
 
 # revenue per click and month colored by thing, with trends for everything & best thing
 best_thing <- subset(per_month_and_thing, title == per_thing[1,1])  #  reduces data frame to best thing, for later trendline
@@ -201,4 +211,4 @@ ggsave(paste("flattr-revenue-months-domain-fractions", date, ".png"))
 
 # sort & export after plotting in order to preserve alphabatic sorting in of domains in plot
 per_month_and_domain <- per_month_and_domain[order(per_month_and_domain$all_revenue),]
-write.csv2(per_month_and_domain, paste("flattr-revenue-clicks-domain", date, ".csv"), row.names = FALSE)
+export_csv(per_month_and_domain, "flattr-revenue-clicks-domain")
