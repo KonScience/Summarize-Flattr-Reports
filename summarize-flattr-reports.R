@@ -63,6 +63,9 @@ for (i in 1:nrow(raw)){raw$all_revenue[i] <- sum(subset(raw, title == raw$title[
 N_months <- length(Flattr_filenames)
 N_things <- length(unique(raw$title))
 
+# get data string for inclusion in exported filename
+date <- format(Sys.time(), "%Y-%m-%d")
+
 # summarize & order by title to account for changes in Thing ID and URLs (due to redirection after permalink changes)
 per_thing <- ddply(.data = raw,
                    .variables = "title",
@@ -70,7 +73,7 @@ per_thing <- ddply(.data = raw,
                    all_clicks = sum(clicks),
                    all_revenue = sum(revenue))
 per_thing <- per_thing[order(per_thing$all_revenue, decreasing = TRUE),]
-write.csv2(per_thing, "flattr-revenue-things.csv", row.names = FALSE)
+write.csv2(per_thing, paste("flattr-revenue-things", date, ".csv"), row.names = FALSE)
 
 # summarize & order by month and thing to provide click-value development over time
 per_month_and_thing <- ddply(raw,
@@ -79,7 +82,7 @@ per_month_and_thing <- ddply(raw,
                              all_clicks = sum(clicks),
                              all_revenue = sum(revenue))
 per_month_and_thing <- per_month_and_thing[order(per_month_and_thing$title),]
-write.csv2(per_month_and_thing, "flattr-revenue-clicks.csv", row.names = FALSE)
+write.csv2(per_month_and_thing, paste("flattr-revenue-clicks", date, ".csv"), row.names = FALSE)
 
 # summarize & export revenue per month
 per_month <- ddply(raw,
@@ -88,7 +91,7 @@ per_month <- ddply(raw,
                    all_clicks = sum(clicks),
                    all_revenue = sum(revenue))
 per_month <- per_month[order(per_month$period),]
-write.csv2(per_month, "flattr-revenue-months.csv", row.names = FALSE)
+write.csv2(per_month, paste("flattr-revenue-months", date, ".csv"), row.names = FALSE)
 
 # revenue per click and month colored by thing, with trends for everything & best thing
 best_thing <- subset(per_month_and_thing, title == per_thing[1,1])  #  reduces data frame to best thing, for later trendline
@@ -126,7 +129,7 @@ flattr_plot  +
        size = "Total revenue of Thing")  +
   theme_classic(base_size = sqrt(N_months + N_things))  +
   theme(legend.position = "none", axis.text.x = element_text(angle = 15))
-ggsave("flattr-revenue-clicks.png")
+ggsave(paste("flattr-revenue-clicks", date, ".png"))
 
 # revenue per month and thing
 monthly_advanced_plot <- ggplot(per_month_and_thing, aes(period, all_revenue, fill = factor(title)))
@@ -137,7 +140,7 @@ monthly_advanced_plot  +
   guides(fill = guide_legend(reverse = TRUE))  +
   labs(title = "Development of Flattr Revenue by Things", x = NULL, y = "EUR received", fill = "Thing")  +
   theme_classic(base_size = (N_things + N_months) / 5)
-ggsave("flattr-revenue-months.png", height = N_things/3, width = N_months/1.5)
+ggsave(paste("flattr-revenue-months", date, ".png"), height = N_things/3, width = N_months/1.5)
 
 # total revenue per month with trend
 monthly_simple_plot <- ggplot(per_month, aes(x = period, y = all_revenue, size = per_month$all_revenue))
@@ -149,7 +152,7 @@ monthly_simple_plot +
   labs(title = "Development of Flattr Revenue", x = NULL, y = "EUR received")  +
   theme_classic(base_size = sqrt(N_things + N_months))  +
   theme(axis.text.x = element_text(angle = 15), legend.position = "none")
-ggsave("flattr-revenue-months-summarized.png")
+ggsave(paste("flattr-revenue-months-summarized", date, ".png"))
 
 
 # revenue per location of button
@@ -181,7 +184,7 @@ monthly_domain_plot  +
   labs(title = "Development of Flattr Revenue by Button Locations", x = NULL, y = "EUR received", fill = "Domains")  +
   theme_classic(base_size = sqrt(N_things + N_months))  +
   theme(axis.text.x = element_text(angle = 30))
-ggsave("flattr-revenue-months-domain.png")
+ggsave(paste("flattr-revenue-months-domain", date, ".png"))
 
 monthly_domain_plot_fractions <- ggplot(per_month_and_domain, aes(period, all_revenue, fill = factor(domain)))
 monthly_domain_plot_fractions +
@@ -194,8 +197,8 @@ monthly_domain_plot_fractions +
   labs(title = "Fractions of Flattr Revenue by Button Locations",
        x = NULL, y = NULL, fill = "Domains")  +
   theme_classic(base_size = sqrt(N_things + N_months))
-ggsave("flattr-revenue-months-domain-fractions.png")
+ggsave(paste("flattr-revenue-months-domain-fractions", date, ".png"))
 
 # sort & export after plotting in order to preserve alphabatic sorting in of domains in plot
 per_month_and_domain <- per_month_and_domain[order(per_month_and_domain$all_revenue),]
-write.csv2(per_month_and_domain, "flattr-revenue-clicks-domain.csv", row.names = FALSE)
+write.csv2(per_month_and_domain, paste("flattr-revenue-clicks-domain", date, ".csv"), row.names = FALSE)
