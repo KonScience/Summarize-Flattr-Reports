@@ -63,29 +63,19 @@ for (i in 1:nrow(raw)){raw$all_revenue[i] <- sum(subset(raw, title == raw$title[
 N_months <- length(Flattr_filenames)
 N_things <- length(unique(raw$title))
 
-# get data string for inclusion in exported filename
+
+
 date <- format(Sys.time(), "%Y-%m-%d")
 
 export_csv <- function(table, filename){
-  write.csv2(table,
-             paste0(filename,
-                   "-",
-                   date,
-                   ".csv"),
-             row.names = FALSE
-             )
-}
+  write.csv2(table, paste0(filename, "-", date, ".csv"),
+             row.names = FALSE)}
 
 export_png <- function(p, fn, h = par("din")[2], w = par("din")[1]){
-  ggsave(filename = paste0(fn,
-                          "-",
-                          date,
-                          ".png"),
-         plot = p,
-         height = h,
-         width = w
-         )
-}
+  ggsave(filename = paste0(fn, "-", date, ".png"),
+         plot = p, height = h, width = w)
+  return(p)}
+
 
 # summarize & order by title to account for changes in Thing ID and URLs (due to redirection after permalink changes)
 per_thing <- ddply(.data = raw,
