@@ -68,21 +68,19 @@ date <- format(Sys.time(), "%Y-%m-%d")
 
 export_csv <- function(table, filename){
   write.csv2(table,
-             paste(filename,
+             paste0(filename,
                    "-",
                    date,
-                   ".csv",
-                   sep = ""),
+                   ".csv"),
              row.names = FALSE
              )
 }
 
 export_png <- function(p, fn, h = par("din")[2], w = par("din")[1]){
-  ggsave(filename = paste(fn,
+  ggsave(filename = paste0(fn,
                           "-",
                           date,
-                          ".png",
-                          sep = ""),
+                          ".png"),
          plot = p,
          height = h,
          width = w
