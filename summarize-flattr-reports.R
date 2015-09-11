@@ -77,7 +77,7 @@ export_csv <- function(table, filename){
              )
 }
 
-export_png <- function(p, fn, h = 10, w = 10){
+export_png <- function(p, fn, h = par("din")[2], w = par("din")[1]){
   ggsave(filename = paste(fn,
                           "-",
                           date,
