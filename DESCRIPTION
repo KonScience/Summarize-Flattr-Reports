@@ -1,0 +1,10 @@
+Package: summarizeflattrreports
+Title: generate reports of your flattr revenue
+Version: 0.1
+Description: R script to create summary CSV files and diagrams from Flattr's Monthly Revenue reports
+Depends: R (>= 3.1.0)
+License: public domain
+Imports:
+    ggplot2,
+    plyr,
+    scales

@@ -4,6 +4,12 @@ language: r
 
 sudo: required
 
+env:
+  global:
+    - OS=$(uname -s)
+  matrix:
+    - R_BUILD_ARGS=" " R_CHECK_ARGS="--as-cran"
+
 r_binary_packages:
   - ggplot2
   - plyr
