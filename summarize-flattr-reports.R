@@ -19,15 +19,19 @@ if (length(args) == 0) { # execute via: Rscript path/to/summarize-flattr-reports
 } else {
   if ((substring(args[1], 1, 1) == "/") || (substring(args[1], 2, 2) == ":")) {
     flattr_dir <- dirname(args[1]) # set absolute directory by cli argument
-  } else {flattr_dir <- dirname(file.path(getwd(), args[1], fsep = .Platform$file.sep))} # set relative directory by cli argument
+  } else {
+    flattr_dir <- dirname(file.path(getwd(), args[1], fsep = .Platform$file.sep)) # set relative directory by cli argument
+  }
 }
+
 Flattr_filenames <- list.files(flattr_dir, pattern = "flattr-revenue-20[0-9]{4}.csv")
+
 setwd(flattr_dir)
 
-# use summary file if available & create if not, instead of reading files individually
-try(known_raw <- read.csv2("flattr-revenue-000000.csv", encoding = "UTF-8"))
-known_raw$X <- NULL
 if ("flattr-revenue-000000.csv" %in% list.files(flattr_dir, pattern = "*.csv")) {
+  # use summary file if available & create if not, instead of reading files individually
+  try(known_raw <- read.csv2("flattr-revenue-000000.csv", encoding = "UTF-8"))
+  known_raw$X <- NULL
   # check for existing raw date & merge with new
   if (length(unique(known_raw$period)) < length(Flattr_filenames)) {
     known_months <- paste(paste("flattr-revenue",  # turn months into filenames
@@ -49,7 +53,10 @@ if ("flattr-revenue-000000.csv" %in% list.files(flattr_dir, pattern = "*.csv")) 
                           read.csv2,
                           encoding = "UTF-8" # learned from RTFM, but works only on Win7
                    ))  # Function structure learned from https://stat.ethz.ch/pipermail/r-help/2010-October/255593.html
-  }} else {raw <- do.call("rbind", lapply(Flattr_filenames, read.csv2, encoding = "UTF-8"))}  # same as inner else, just to catch edge case of repetive plotting without adding new Revenue Reports
+  }
+} else {
+  raw <- do.call("rbind", lapply(Flattr_filenames, read.csv2, encoding = "UTF-8")) # same as inner else, just to catch edge case of repetive plotting without adding new Revenue Reports
+}
 write.csv2(x = raw, file = "flattr-revenue-000000.csv", row.names = FALSE)
 
 # append 1st days to months & convert to date format; learned from http://stackoverflow.com/a/4594269
