@@ -2,7 +2,8 @@ Summarize Flattr Reports
 ---
 R script to create summary CSV files and diagrams from Flattr's Monthly Revenue reports. [Example here](http://www.konscience.de/uber-uns/#flattr-auswertung). You can also flattr this repo:
 
-[![Flattr Button](http://api.flattr.com/button/flattr-badge-large.png "Flattr This!")](http://flattr.com/thing/3665103/KonScienceSummarize-Flattr-Reports-on-GitHub "Summarize-Flattr_Reports")
+[![Flattr Button](http://api.flattr.com/button/flattr-badge-large.png "Flattr This!")](http://flattr.com/thing/3665103/KonScienceSummarize-Flattr-Reports-on-GitHub "Summarize-Flattr_Reports")  
+[![Build Status](https://travis-ci.org/SimonWaldherr/Summarize-Flattr-Reports.svg?branch=master)](https://travis-ci.org/SimonWaldherr/Summarize-Flattr-Reports)  
 
 Usage Instructions
 ---

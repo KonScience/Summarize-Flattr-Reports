@@ -1,0 +1,20 @@
+os: linux
+
+language: r
+
+sudo: required
+
+r_binary_packages:
+  - ggplot2
+  - plyr
+  - scales
+
+script:
+  - R --vanilla --file=summarize-flattr-reports.R --args flattr-revenue-201305.csv
+
+notifications:
+  email:
+    recipients:
+    - travis@simon.waldherr.eu
+    on_success: change
+    on_failure: change
