@@ -9,6 +9,7 @@ options(stringsAsFactors = FALSE, limitsize = FALSE) # set global options; row.n
 library(ggplot2)
 library(plyr)
 library(scales)
+library(forecast)
 
 # get all filenames of Flattr Monthly Revenue CSV; assumes that all were downloaded into same folder
 args <- commandArgs(trailingOnly = TRUE)
@@ -62,6 +63,9 @@ write.csv2(x = raw, file = "flattr-revenue-000000.csv", row.names = FALSE)
 # append 1st days to months & convert to date format; learned from http://stackoverflow.com/a/4594269
 raw$period <- as.Date(paste(raw$period, "-01"), format="%Y-%m -%d")
 raw$EUR_per_click <- raw$revenue / raw$clicks
+
+firstYear <- substring(raw$period[1], 1, 4)
+firstMonth <- substring(raw$period[1], 6, 7)
 
 # populate raw data with all_revenue for each thing
 for (i in 1:nrow(raw)){raw$all_revenue[i] <- sum(subset(raw, title == raw$title[i])$revenue)}
@@ -162,9 +166,43 @@ export_png(monthly_advanced_plot  +
            N_things/3,
            N_months/1.5)
 
-# total revenue per month with trend
-monthly_simple_plot <- ggplot(per_month, aes(x = period, y = all_revenue, size = per_month$all_revenue))
 
+
+
+arimaforecast <- function(forecast){
+  time <- attr(forecast$x, "tsp")
+  time <- seq(time[1], attr(forecast$mean, "tsp")[2], by=1/time[3])
+  lenx <- length(forecast$x)
+  lenm <- length(forecast$mean)
+
+  df <- data.frame(time=time,
+    x=c(forecast$x, forecast$mean),
+    forecast=c(rep(NA, lenx), forecast$mean),
+    lo1=c(rep(NA, lenx), forecast$lower[, 1]),
+    up1=c(rep(NA, lenx), forecast$upper[, 1]),
+    lo2=c(rep(NA, lenx), forecast$lower[, 2]),
+    up2=c(rep(NA, lenx), forecast$upper[, 2])
+  )
+
+  ggplot(df, aes(time, x)) +
+    geom_ribbon(aes(ymin=lo2, ymax=up2), fill="yellow") +
+    geom_ribbon(aes(ymin=lo1, ymax=up1), fill="orange") +
+    geom_line() +
+    geom_line(data=df[!is.na(df$forecast), ], aes(time, forecast), color="red", na.rm=TRUE) +
+      scale_x_continuous("") +
+      scale_y_continuous("")
+}
+
+revenue_ts <- ts(per_month$all_revenue, start=c(as.numeric(firstYear), as.numeric(firstMonth)), frequency=6)
+
+myforecast <- forecast(auto.arima(revenue_ts))
+export_png(arimaforecast(myforecast),
+          "flattr-arima")
+
+
+# total revenue per month with trend
+
+monthly_simple_plot <- ggplot(per_month, aes(x = period, y = all_revenue, size = per_month$all_revenue))
 export_png(monthly_simple_plot +
              geom_point(colour = "#ED8C3B")  +
              stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_things / N_months)  +  # fit trend plus confidence interval
