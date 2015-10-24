@@ -22,5 +22,6 @@ notifications:
   email:
     recipients:
     - travis@simon.waldherr.eu
+    - travisCI@konscience.de
     on_success: change
     on_failure: change
