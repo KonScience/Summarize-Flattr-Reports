@@ -166,15 +166,43 @@ export_png(monthly_advanced_plot  +
            N_things/3,
            N_months/1.5)
 
+
+
+
+arimaforecast <- function(forecast){
+  time <- attr(forecast$x, "tsp")
+  time <- seq(time[1], attr(forecast$mean, "tsp")[2], by=1/time[3])
+  lenx <- length(forecast$x)
+  lenm <- length(forecast$mean)
+
+  df <- data.frame(time=time,
+    x=c(forecast$x, forecast$mean),
+    forecast=c(rep(NA, lenx), forecast$mean),
+    lo1=c(rep(NA, lenx), forecast$lower[, 1]),
+    up1=c(rep(NA, lenx), forecast$upper[, 1]),
+    lo2=c(rep(NA, lenx), forecast$lower[, 2]),
+    up2=c(rep(NA, lenx), forecast$upper[, 2])
+  )
+
+  ggplot(df, aes(time, x)) +
+    geom_ribbon(aes(ymin=lo2, ymax=up2), fill="yellow") +
+    geom_ribbon(aes(ymin=lo1, ymax=up1), fill="orange") +
+    geom_line() +
+    geom_line(data=df[!is.na(df$forecast), ], aes(time, forecast), color="red", na.rm=TRUE) +
+      scale_x_continuous("") +
+      scale_y_continuous("")
+}
+
+revenue_ts <- ts(per_month$all_revenue, start=c(as.numeric(firstYear), as.numeric(firstMonth)), frequency=6)
+
+myforecast <- forecast(auto.arima(revenue_ts))
+export_png(arimaforecast(myforecast),
+          "flattr-arima")
+
+
 # total revenue per month with trend
 
-revenue_ts <- ts(per_month$all_revenue, start=c(as.numeric(firstYear), as.numeric(firstMonth)), frequency=12)
-
-forcast_arima=Arima(revenue_ts,c(3,0,0),seasonal=list(order=c(2,1,0),period=6),include.drift=TRUE)
-plot(forecast(forcast_arima))
-
 monthly_simple_plot <- ggplot(per_month, aes(x = period, y = all_revenue, size = per_month$all_revenue))
-
 export_png(monthly_simple_plot +
              geom_point(colour = "#ED8C3B")  +
              stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_things / N_months)  +  # fit trend plus confidence interval
