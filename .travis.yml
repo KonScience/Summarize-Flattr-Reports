@@ -1,0 +1,27 @@
+os: linux
+
+language: r
+
+sudo: required
+
+env:
+  global:
+    - OS=$(uname -s)
+  matrix:
+    - R_BUILD_ARGS=" " R_CHECK_ARGS="--as-cran"
+
+r_binary_packages:
+  - ggplot2
+  - plyr
+  - scales
+
+script:
+  - R --vanilla --file=summarize-flattr-reports.R --args flattr-revenue-201305.csv
+
+notifications:
+  email:
+    recipients:
+    - travis@simon.waldherr.eu
+    - travisCI@konscience.de
+    on_success: change
+    on_failure: change
