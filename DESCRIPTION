@@ -7,4 +7,5 @@ License: public domain
 Imports:
     ggplot2,
     plyr,
-    scales
+    scales,
+    forecast

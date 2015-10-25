@@ -14,6 +14,7 @@ r_binary_packages:
   - ggplot2
   - plyr
   - scales
+  - forecast
 
 script:
   - R --vanilla --file=summarize-flattr-reports.R --args flattr-revenue-201305.csv
