@@ -2,7 +2,8 @@ Summarize Flattr Reports
 ---
 R script to create summary CSV files and diagrams from Flattr's Monthly Revenue reports. [Example here](http://www.konscience.de/uber-uns/#flattr-auswertung). You can also flattr this repo:
 
-[![Flattr Button](http://api.flattr.com/button/flattr-badge-large.png "Flattr This!")](http://flattr.com/thing/3665103/KonScienceSummarize-Flattr-Reports-on-GitHub "Summarize-Flattr_Reports")
+[![Flattr Button](http://api.flattr.com/button/flattr-badge-large.png "Flattr This!")](http://flattr.com/thing/3665103/KonScienceSummarize-Flattr-Reports-on-GitHub "Summarize-Flattr_Reports")  
+[![Build Status](https://travis-ci.org/SimonWaldherr/Summarize-Flattr-Reports.svg?branch=master)](https://travis-ci.org/SimonWaldherr/Summarize-Flattr-Reports)  
 
 Usage Instructions
 ---
@@ -12,7 +13,7 @@ Usage Instructions
   1. Click "Download as CSV" below the table of Things.
   1. Save them to a folder of your choice.
 1. Download [this repository](https://github.com/KonScience/Summarize-Flattr-Reports/archive/master.zip) to the same or any other folder and unpack the .zip.
-  1. Open RStudio, copy-paste this command `install.packages(c("plyr", "ggplot2", "scales"))` into the console (bottom left) and run it by pressing `Return/Enter`. Some progress of new packages being installed should be visible. If an error is shown instead, copy-paste the error message into a search engine you don't completely distrust.
+  1. Open RStudio, copy-paste this command `install.packages(c("plyr", "ggplot2", "scales", "forecast"))` into the console (bottom left) and run it by pressing `Return/Enter`. Some progress of new packages being installed should be visible. If an error is shown instead, copy-paste the error message into a search engine you don't completely distrust.
   1. Once these packages are installed, open the script (.r file) in RStudio and run it with `alt + cmd + R` (Mac) or `ctrl + alt + R` (Win).
   1. Follow its progress in RStudios' `Console` and `Plot` tabs. This may take few seconds to several minutes, depending on your number of Flattr Revenue Reports, data points in them, and the speed of your computer. Example: 20 Reports with 200 data points at [2.3 GHz](http://www.everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i5-2.3-13-early-2011-unibody-thunderbolt-specs.html): 10-20sec.
   1. Find the newly generated .csv files and .png diagrams in the same folder as the .csv files you downloaded from Flattr.
