@@ -193,9 +193,13 @@ arimaforecast <- function(forecast){
       scale_y_continuous("")
 }
 
-revenue_ts <- ts(per_month$all_revenue, start=c(as.numeric(firstYear), as.numeric(firstMonth)), frequency=6)
-
-myforecast <- forecast(auto.arima(revenue_ts))
+revenue_ts <- msts(per_month$all_revenue, seasonal.periods=12, ts.frequency=12, deltat=1/12, start=c(as.numeric(firstYear),as.numeric(firstMonth)))
+#myforecast <- forecast(auto.arima(revenue_ts), h=10)
+#myforecast <- forecast(ets(revenue_ts), h=10)
+#myforecast <- forecast(Arima(revenue_ts, c(3,1,0)), h=10)
+#myforecast <- forecast(Arima(revenue_ts,c(2,0,0),seasonal = list(order = c(1,1,0),period = 6),include.drift = TRUE), h=10)
+#myforecast <- forecast(Arima(revenue_ts,order=c(2,1,1),include.mean = FALSE,include.drift = TRUE), h=10)
+myforecast <- forecast(ar(revenue_ts, method="burg"), h=10)
 export_png(arimaforecast(myforecast),
           "flattr-arima")
 
