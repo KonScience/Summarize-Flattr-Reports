@@ -2,12 +2,12 @@ Summarize Flattr Reports
 ---
 R script to create summary CSV files and diagrams from Flattr's Monthly Revenue reports. [Example here](http://www.konscience.de/uber-uns/#flattr-auswertung). You can also flattr this repo:
 
-[![Flattr Button](http://api.flattr.com/button/flattr-badge-large.png "Flattr This!")](http://flattr.com/thing/3665103/KonScienceSummarize-Flattr-Reports-on-GitHub "Summarize-Flattr_Reports")  
+[![Flattr Button](https://api.flattr.com/button/flattr-badge-large.png "Flattr This!")](http://flattr.com/thing/3665103/KonScienceSummarize-Flattr-Reports-on-GitHub "Summarize-Flattr_Reports")  
 [![Build Status](https://travis-ci.org/SimonWaldherr/Summarize-Flattr-Reports.svg?branch=master)](https://travis-ci.org/SimonWaldherr/Summarize-Flattr-Reports)  
 
 Usage Instructions
 ---
-1. Download and install both [RStudio](http://www.rstudio.com/products/rstudio/download/) and [R](http://cran.rstudio.com/).
+1. Download and install both [RStudio](https://www.rstudio.com/products/rstudio/download/) and [R](https://cran.rstudio.com/).
 1. Go to [your Flattr Transactions](https://flattr.com/dashboard/transactions).
   1. Open each "Monthly revenue"-report (or start with only a few).
   1. Click "Download as CSV" below the table of Things.
@@ -41,7 +41,7 @@ Known Issues
 
 Contribution Guidelines
 ---
-I try to follow the [gitflow branching model](http://nvie.com/posts/a-successful-git-branching-model/). Therefore, please branch off `develop` whenever possible, give the new branch a descriptive name and merge it back into `develop`. 
+I try to follow the [gitflow branching model](http://nvie.com/posts/a-successful-git-branching-model)/. Therefore, please branch off `develop` whenever possible, give the new branch a descriptive name and merge it back into `develop`. 
 
 Thanks and Greetings :-)
 ---
