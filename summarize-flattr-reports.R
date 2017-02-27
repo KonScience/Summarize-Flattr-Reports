@@ -127,7 +127,7 @@ export_png(flattr_plot  +
                                        size = best_thing$all_revenue),
                          data = best_thing,
                          method = "auto",
-                         show_guide = FALSE,
+                         show.legend = FALSE,
                          size = N_things / N_months,
                          se = FALSE,  #  confidence interval indicator
                          linetype = "dashed")  +   # learned from http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
@@ -135,9 +135,9 @@ export_png(flattr_plot  +
                          method = "auto",
                          se = FALSE,
                          color = "darkgrey",
-                         show_guide = FALSE,
+                         show.legend = FALSE,
                          size = N_months / 20)  +
-             scale_x_date(breaks = "3 month", labels = date_format("%Y-%b"), expand = c(0, 0))  +
+             scale_x_date(labels = date_format("%Y-%b"), expand = c(0, 0))  +
              scale_y_continuous(limits = c(0, mean(raw$EUR_per_click) * 5),  # omit extreme y-values; learned from http://stackoverflow.com/a/26558070
                                 expand = c(0, 0))  +
              labs(title = "Development of Flattr Revenue per Click",  # learned from http://docs.ggplot2.org/current/labs.html
@@ -153,7 +153,7 @@ export_png(flattr_plot  +
 monthly_advanced_plot <- ggplot(per_month_and_thing, aes(period, all_revenue, fill = factor(title)))
 export_png(monthly_advanced_plot  +
              geom_bar(stat = "identity")  +
-             scale_x_date(expand = c(0, 0), breaks = "3 month", labels = date_format("%Y-%b"))  +
+             scale_x_date(expand = c(0, 0), labels = date_format("%Y-%b"))  +
              scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1), expand = c(0, 0))  +
              guides(fill = guide_legend(reverse = TRUE))  +
              labs(title = "Development of Flattr Revenue by Things", x = NULL, y = "EUR received", fill = "Thing")  +
@@ -168,7 +168,7 @@ monthly_simple_plot <- ggplot(per_month, aes(x = period, y = all_revenue, size =
 export_png(monthly_simple_plot +
              geom_point(colour = "#ED8C3B")  +
              stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_things / N_months)  +  # fit trend plus confidence interval
-             scale_x_date(expand = c(0, 0), breaks = "3 month", labels = date_format("%Y-%b"))  +
+             scale_x_date(expand = c(0, 0), labels = date_format("%Y-%b"))  +
              scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1), expand = c(0, 0))  +
              labs(title = "Development of Flattr Revenue", x = NULL, y = "EUR received")  +
              theme_classic(base_size = sqrt(N_things + N_months))  +
@@ -198,7 +198,7 @@ per_month_and_domain <- ddply(raw,
 monthly_domain_plot <- ggplot(per_month_and_domain, aes(period, all_revenue, fill = factor(domain)))
 export_png(monthly_domain_plot  +
              geom_bar(stat = "identity")  +
-             scale_x_date(expand = c(0,0), breaks = "3 month", labels = date_format("%Y-%b"))  +
+             scale_x_date(expand = c(0,0), labels = date_format("%Y-%b"))  +
              scale_y_continuous(limits = c(0, max(per_month$all_revenue)), expand = c(0, 0))  +
              scale_fill_brewer(type = "qual")  +
              guides(fill = guide_legend(reverse = TRUE, keywidth = 0.75, keyheight = 0.75))  +
@@ -210,7 +210,7 @@ export_png(monthly_domain_plot  +
 monthly_domain_plot_fractions <- ggplot(per_month_and_domain, aes(period, all_revenue, fill = factor(domain)))
 export_png(monthly_domain_plot_fractions +
              geom_bar(position = "fill", stat = "identity")  +
-             scale_x_date(expand = c(0,0), breaks = "3 month", labels = date_format("%Y-%b"))  +
+             scale_x_date(expand = c(0,0), labels = date_format("%Y-%b"))  +
              scale_y_continuous(expand = c(0, 0))  +
              scale_fill_brewer(type = "qual")  +
              guides(fill = guide_legend(reverse = TRUE, keywidth = 0.75, keyheight = 0.75))  +
