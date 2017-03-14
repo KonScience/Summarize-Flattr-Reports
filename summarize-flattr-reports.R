@@ -1,61 +1,13 @@
 # Please read https://github.com/KonScience/Summarize-Flattr-Reports#summarize-flattr-reports
 
 rm(list = ls())  # clean workspace
-original_wd <- getwd()  # save current working directory
 Sys.setlocale("LC_ALL", "UTF-8")  # respect non-ASCII symbols like German umlauts on Mac OSX, learned from https://stackoverflow.com/questions/8145886/
 options(stringsAsFactors = FALSE, limitsize = FALSE) # set global options; row.names = FALSE has no effect, though
 
 # see http://www.r-bloggers.com/library-vs-require-in-r/ for require() vs. library() discussion
 library(ggplot2)
-
-# get all filenames of Flattr Monthly Revenue CSV; assumes that all were downloaded into same folder
-args <- commandArgs(trailingOnly = TRUE)
-if (length(args) == 0) { # execute via: Rscript path/to/summarize-flattr-reports.R path/to/flattr-revenue-000000.csv
-  print("Please select one of the 'flattr-revenue-....csv' files from the folder you downloaded them to.")
-  first_flattr_file <- file.choose()
-  flattr_dir <- dirname(first_flattr_file) # learned from http://stackoverflow.com/a/18003224
-} else {
-  if ((substring(args[1], 1, 1) == "/") || (substring(args[1], 2, 2) == ":")) {
-    flattr_dir <- dirname(args[1]) # set absolute directory by cli argument
-  } else {
-    flattr_dir <- dirname(file.path(getwd(), args[1], fsep = .Platform$file.sep)) # set relative directory by cli argument
-  }
-}
-
-Flattr_filenames <- list.files(flattr_dir, pattern = "flattr-revenue-20[0-9]{4}.csv")
-
-setwd(flattr_dir)
-
-if ("flattr-revenue-000000.csv" %in% list.files(flattr_dir, pattern = "*.csv")) {
-  # use summary file if available & create if not, instead of reading files individually
-  try(known_raw <- read.csv2("flattr-revenue-000000.csv", encoding = "UTF-8"))
-  known_raw$X <- NULL
-  # check for existing raw date & merge with new
-  if (length(unique(known_raw$period)) < length(Flattr_filenames)) {
-    known_months <- paste(paste("flattr-revenue",  # turn months into filenames
-                                sub("-",
-                                    "",
-                                    unique(known_raw$period)),
-                                sep = "-"),
-                          "csv",
-                          sep = ".")
-    new_months <- setdiff(Flattr_filenames, known_months)
-    new_raw <- do.call("rbind",
-                       lapply(new_months,
-                              read.csv2,
-                              encoding = "UTF-8"))
-    raw <- rbind(known_raw, new_raw)  # learned from http://stackoverflow.com/a/27313467
-  } else {  # read data from all CSVs into data frame
-    raw <- do.call("rbind",  #  constructs and executes a call of the rbind function  => combines R objects
-                   lapply(Flattr_filenames, # applies function read.csv2 over list or vector
-                          read.csv2,
-                          encoding = "UTF-8" # learned from RTFM, but works only on Win7
-                   ))  # Function structure learned from https://stat.ethz.ch/pipermail/r-help/2010-October/255593.html
-  }
-} else {
-  raw <- do.call("rbind", lapply(Flattr_filenames, read.csv2, encoding = "UTF-8")) # same as inner else, just to catch edge case of repetive plotting without adding new Revenue Reports
-}
 write.csv2(x = raw, file = "flattr-revenue-000000.csv", row.names = FALSE)
+raw <- readr::read_csv2("Summarize-Flattr-Reports/data/KonScience-fflattr-revenue.csv")
 
 # append 1st days to months & convert to date format; learned from http://stackoverflow.com/a/4594269
 raw$EUR_per_click <- raw$revenue / raw$clicks
