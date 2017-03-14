@@ -25,3 +25,4 @@ monthly_simple_plot <- ggplot(per_month, aes(x = period, y = all_revenue, size =
              theme(axis.text.x = element_text(angle = 15), legend.position = "none")
 monthly_simple_plot
 
+plotly::ggplotly(monthly_simple_plot)
