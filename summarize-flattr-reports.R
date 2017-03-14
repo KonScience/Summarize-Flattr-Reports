@@ -7,8 +7,6 @@ options(stringsAsFactors = FALSE, limitsize = FALSE) # set global options; row.n
 
 # see http://www.r-bloggers.com/library-vs-require-in-r/ for require() vs. library() discussion
 library(ggplot2)
-library(plyr)
-library(scales)
 
 # get all filenames of Flattr Monthly Revenue CSV; assumes that all were downloaded into same folder
 args <- commandArgs(trailingOnly = TRUE)
@@ -60,7 +58,6 @@ if ("flattr-revenue-000000.csv" %in% list.files(flattr_dir, pattern = "*.csv")) 
 write.csv2(x = raw, file = "flattr-revenue-000000.csv", row.names = FALSE)
 
 # append 1st days to months & convert to date format; learned from http://stackoverflow.com/a/4594269
-raw$period <- as.Date(paste(raw$period, "-01"), format="%Y-%m -%d")
 raw$EUR_per_click <- raw$revenue / raw$clicks
 
 # populate raw data with all_revenue for each thing
@@ -101,11 +98,12 @@ per_month_and_thing <- ddply(raw,
                              all_revenue = sum(revenue))
 per_month_and_thing <- per_month_and_thing[order(per_month_and_thing$title),]
 export_csv(per_month_and_thing, "flattr-revenue-clicks")
+raw$period <- lubridate::as_date(paste0(raw$period, "-01"), format = "%Y-%m-%d")
 
 # summarize & export revenue per month
-per_month <- ddply(raw,
+per_month <- plyr::ddply(raw,
                    "period",
-                   summarize,
+                   plyr::summarize,
                    all_clicks = sum(clicks),
                    all_revenue = sum(revenue))
 per_month <- per_month[order(per_month$period),]
@@ -168,7 +166,7 @@ monthly_simple_plot <- ggplot(per_month, aes(x = period, y = all_revenue, size =
 export_png(monthly_simple_plot +
              geom_point(colour = "#ED8C3B")  +
              stat_smooth(data = per_month, method = "auto", color = "#80B04A", size = N_things / N_months)  +  # fit trend plus confidence interval
-             scale_x_date(expand = c(0, 0), labels = date_format("%Y-%b"))  +
+             scale_x_date(expand = c(0, 0), labels = scales::date_format("%Y-%b"))  +
              scale_y_continuous(limits = c(0, max(per_month$all_revenue) * 1.1), expand = c(0, 0))  +
              labs(title = "Development of Flattr Revenue", x = NULL, y = "EUR received")  +
              theme_classic(base_size = sqrt(N_things + N_months))  +
