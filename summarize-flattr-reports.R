@@ -13,14 +13,13 @@ list.files(pattern = "flattr-revenue-20[0-9]{4}.csv",
 raw$period <- lubridate::as_date(paste0(raw$period, "-01"), format = "%Y-%m-%d")
 
 # summarize & export revenue per month with trend
-plyr::ddply(raw,
-            "period",
+plyr::ddply(raw, .variables = "period",
             plyr::summarize,
             all_clicks = sum(clicks),
             all_revenue = sum(revenue)) %>%
   ggplot(aes(x = period, y = all_revenue, size = all_revenue)) +
   geom_point(colour = "#ED8C3B")  +
-  stat_smooth(data = per_month, method = "auto", color = "#80B04A")  +  # fit trend plus confidence interval
+  stat_smooth(color = "#80B04A")  +  # fit trend plus confidence interval
   scale_x_date(labels = scales::date_format("%Y-%b"))  +
   labs(title = "Flattr Revenue", x = NULL, y = "EUR received")  +
   theme_minimal() +
