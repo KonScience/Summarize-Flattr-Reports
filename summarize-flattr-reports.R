@@ -4,7 +4,10 @@ Sys.setlocale("LC_ALL", "UTF-8")
 library(ggplot2)
 library(magrittr)
 
-raw <- readr::read_csv2("Summarize-Flattr-Reports/data/KonScience-fflattr-revenue.csv")
+list.files(pattern = "flattr-revenue-20[0-9]{4}.csv",
+           full.names = TRUE) %>%
+  purrr::map_df(.f = readr::read_csv2) ->
+  raw
 
 # append 1st days to months & convert to date format; learned from http://stackoverflow.com/a/4594269
 raw$period <- lubridate::as_date(paste0(raw$period, "-01"), format = "%Y-%m-%d")
